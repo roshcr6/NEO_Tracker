@@ -4,9 +4,10 @@
   --accent:#5ef2ff;
   --accent-2:#ffd166;
 }
-html,body{height:100%;}
+html,body{height:100%;width:100%;overflow:hidden;}
 body{
   margin:0;
+  padding:0;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -21,13 +22,15 @@ canvas{
   image-rendering: crisp-edges;
   background: transparent;
   box-shadow: 0 6px 30px rgba(0,0,0,0.8), inset 0 0 30px rgba(94,242,255,0.03);
-  border:6px solid #071428;
-  /* default CSS size near 16:9 desktop target; JS will recalc for best fit */
-  width:1280px;
-  height:720px;
-  max-width:95vw;
-  max-height:90vh;
-  position: relative; /* allow future overlays if needed */
+  border:none;
+  /* Fullscreen: JS will calculate to fill viewport */
+  width:100vw;
+  height:100vh;
+  max-width:100vw;
+  max-height:100vh;
+  position: fixed;
+  top:0;
+  left:0;
 }
 
 /* Simple on-screen instructions for small viewports */
@@ -62,6 +65,10 @@ body::before{
 .btn:hover{background:#0b2333}
 .controls-panel{background:#071428;padding:10px;margin-top:8px;border:1px solid rgba(255,255,255,0.02)}
 .hint{font-size:11px;color:#9ef3ff;text-align:center;margin-top:8px}
+
+/* Did you know section on menu */
+.did-you-know-section{margin-top:16px;}
+.did-you-know-label{font-size:16px;color:#5ef2ff;text-align:center;margin:0 0 4px 0;font-weight:bold;text-shadow:0 0 10px rgba(94,242,255,0.5);}
 
 /* Fun fact box */
 .fact{

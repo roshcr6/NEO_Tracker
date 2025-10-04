@@ -77,20 +77,18 @@ function loadAssets(list, cb){
 }
 
 // Logical resolution (small, pixel-art friendly) using a landscape 16:9 base
-// so the game scales to standard desktop sizes like 1280x720 crisply.
+// Fullscreen: game scales to fill entire viewport
 const LOGICAL_WIDTH = 320;
 const LOGICAL_HEIGHT = 180;
 let PIXEL_SCALE = 2; // will be recalculated on resize to an integer >=1
-const TARGET_CSS_WIDTH = 1280;
-const TARGET_CSS_HEIGHT = 720;
 
 let DPR = Math.max(1, window.devicePixelRatio || 1);
 
 function resizeCanvas(){
   DPR = Math.max(1, window.devicePixelRatio || 1);
-  // compute available CSS area but cap at target 1280x720
-  const maxCSSW = Math.min(TARGET_CSS_WIDTH, Math.floor(window.innerWidth * 0.95));
-  const maxCSSH = Math.min(TARGET_CSS_HEIGHT, Math.floor(window.innerHeight * 0.9));
+  // Use 100% of viewport for fullscreen
+  const maxCSSW = window.innerWidth;
+  const maxCSSH = window.innerHeight;
   // choose largest integer pixel scale that fits the logical resolution into maxCSSW/H
   const scaleW = Math.floor(maxCSSW / LOGICAL_WIDTH);
   const scaleH = Math.floor(maxCSSH / LOGICAL_HEIGHT);
@@ -99,9 +97,9 @@ function resizeCanvas(){
   // set actual canvas (pixel) size using DPR for crispness
   canvas.width = LOGICAL_WIDTH * PIXEL_SCALE * DPR;
   canvas.height = LOGICAL_HEIGHT * PIXEL_SCALE * DPR;
-  // set CSS size to logical * PIXEL_SCALE (this centers and sizes the canvas on screen)
-  canvas.style.width = (LOGICAL_WIDTH * PIXEL_SCALE) + 'px';
-  canvas.style.height = (LOGICAL_HEIGHT * PIXEL_SCALE) + 'px';
+  // set CSS size to fill viewport completely
+  canvas.style.width = maxCSSW + 'px';
+  canvas.style.height = maxCSSH + 'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
 }
 window.addEventListener('resize', resizeCanvas);
@@ -439,12 +437,11 @@ function draw(){
   }
 
   // HUD: hearts (top-left) and score (top-right)
-  // Hearts
-  for(let i=0;i<3;i++){
+  // Hearts - only show remaining hearts (they disappear when Earth is hit by meteors)
+  for(let i=0;i<hearts;i++){
     const hx = 4 + i*8;
     const hy = 6;
-    if(i < hearts) drawHeart(hx, hy, '#ff6b6b');
-    else drawHeart(hx, hy, '#3b3b3b');
+    drawHeart(hx, hy, '#ff6b6b');
   }
   // Score
   drawText(`SCORE ${score}`, LOGICAL_WIDTH - 6, 10, '#9ef3ff', 6, 'right');
@@ -469,6 +466,7 @@ function draw(){
     // Font size hierarchy (logical font sizes)
     const titleSize = 9;   // largest
     const finalSize = 6;   // medium
+    const didYouKnowSize = 5; // medium-small
     const factSize = 4;    // small
     const restartSize = 4; // small
     const factLineHeight = 1.1;
@@ -490,11 +488,12 @@ function draw(){
     // compute heights (logical) of each group
     const titleH = titleSize; // approx logical pixels
     const finalH = finalSize;
+    const didYouKnowH = gameOverFactNextChange > 0 ? didYouKnowSize : 0;
     const factH = Math.max(0, factLines) * (factSize * factLineHeight);
     const restartH = restartSize;
 
-    const groups = 4; // title, final, fact, restart
-    const totalContentH = titleH + finalH + factH + restartH + spacingLogical * (groups - 1);
+    const groups = gameOverFactNextChange > 0 ? 5 : 3; // title, final, [didyouknow, fact,] restart
+    const totalContentH = titleH + finalH + didYouKnowH + factH + restartH + spacingLogical * (groups - 1);
 
     // compute start Y (centered inside overlay rect)
     const startY = overlayTop + Math.round((overlayH - totalContentH) / 2);
@@ -507,8 +506,13 @@ function draw(){
     drawText(`FINAL: ${score}`, LOGICAL_WIDTH/2, cursorY + finalH/2, '#ffd166', finalSize, 'center');
     cursorY += finalH + spacingLogical;
 
-    // now draw the fact block (may be multiple lines); place its top at cursorY
+    // now draw the "Did you know?" label and fact block (may be multiple lines)
     if(gameOverFactNextChange > 0){
+      // Draw "Did you know?" label
+      drawText('Did you know?', LOGICAL_WIDTH/2, cursorY + didYouKnowH/2, '#5ef2ff', didYouKnowSize, 'center');
+      cursorY += didYouKnowH + Math.max(2, Math.floor(spacingLogical * 0.3)); // Small gap between label and fact
+      
+      // Draw the fact text
       const factText = FUN_FACTS[gameOverFactIndex];
       // drawWrappedText expects y as top-of-first-line; use cursorY
       drawWrappedText(factText, LOGICAL_WIDTH/2, cursorY, LOGICAL_WIDTH - 40, '#ffd166', factSize, 'center', factLineHeight);
