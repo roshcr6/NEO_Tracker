@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Orrery - Debug & Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0B3D91 0%, #1a1a2e 100%);
+            color: white;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .test-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .test-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .test-item h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #00ff88;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px 10px 10px 0;
+            background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-dot.checking {
+            background: #ffaa00;
+            animation: pulse 1s infinite;
+        }
+
+        .status-dot.success {
+            background: #00ff88;
+        }
+
+        .status-dot.error {
+            background: #ff4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            color: #00ff88;
+            margin: 10px 0;
+        }
+
+        .log {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+
+        .log-entry.info { color: #00d4ff; }
+        .log-entry.success { color: #00ff88; }
+        .log-entry.error { color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ NASA Orrery - Debug & Test</h1>
+
+        <!-- Status Check -->
+        <div class="test-section">
+            <h2>📊 Status Check</h2>
+            <div class="test-item">
+                <div id="file-check" class="status">
+                    <div class="status-dot checking"></div>
+                    <span>Checking files...</span>
+                </div>
+                <div id="script-check" class="status" style="display: none;">
+                    <div class="status-dot checking"></div>
+                    <span>Checking scripts...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="test-section">
+            <h2>🚀 Quick Access Methods</h2>
+            
+            <div class="test-item">
+                <h3>Method 1: Open in New Window</h3>
+                <button class="btn" onclick="openInNewWindow()">
+                    🪟 Open Orrery (New Window)
+                </button>
+            </div>
+
+            <div class="test-item">
+                <h3>Method 2: Open in Same Tab</h3>
+                <a href="/NASA-Live-Orrery/index.html" class="btn">
+                    📄 Open Orrery (Same Tab)
+                </a>
+            </div>
+
+            <div class="test-item">
+                <h3>Method 3: Embedded iFrame (Test)</h3>
+                <button class="btn btn-secondary" onclick="showIframe()">
+                    🖼️ Show Embedded Preview
+                </button>
+                <div id="iframe-container" style="margin-top: 20px; display: none;">
+                    <iframe 
+                        id="orrery-frame"
+                        style="width: 100%; height: 600px; border: none; border-radius: 12px;"
+                        src=""
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Paths -->
+        <div class="test-section">
+            <h2>📁 File Paths</h2>
+            <div class="test-item">
+                <h3>Expected Location:</h3>
+                <pre>d:\nasademo\frontend\public\NASA-Live-Orrery\index.html</pre>
+                
+                <h3>URL Path:</h3>
+                <pre>http://localhost:3000/NASA-Live-Orrery/index.html</pre>
+
+                <h3>Required Files:</h3>
+                <pre id="file-list">Checking...</pre>
+            </div>
+        </div>
+
+        <!-- Console Log -->
+        <div class="test-section">
+            <h2>📝 Test Log</h2>
+            <div id="log" class="log">
+                <div class="log-entry info">Starting tests...</div>
+            </div>
+        </div>
+
+        <!-- Alternative Access -->
+        <div class="test-section">
+            <h2>🔄 Alternative Access</h2>
+            <div class="test-item">
+                <h3>Via Discover Page:</h3>
+                <a href="/discover" class="btn">
+                    🌍 Go to Discover Page
+                </a>
+                <p style="margin-top: 10px; opacity: 0.7;">
+                    Then click the "GET STARTED" button
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStatus(elementId, success, message) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'flex';
+            const dot = element.querySelector('.status-dot');
+            const span = element.querySelector('span');
+            
+            dot.className = `status-dot ${success ? 'success' : 'error'}`;
+            span.textContent = message;
+        }
+
+        async function checkFiles() {
+            addLog('Checking if Orrery files exist...', 'info');
+            
+            const files = [
+                'index.html',
+                'app.js',
+                'nasa-api.js',
+                'solar-system.js',
+                'style.css'
+            ];
+
+            let allFound = true;
+            const results = [];
+
+            for (const file of files) {
+                try {
+                    const response = await fetch(`/NASA-Live-Orrery/${file}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        addLog(`✅ Found: ${file}`, 'success');
+                        results.push(`✅ ${file}`);
+                    } else {
+                        addLog(`❌ Missing: ${file} (${response.status})`, 'error');
+                        results.push(`❌ ${file} (${response.status})`);
+                        allFound = false;
+                    }
+                } catch (error) {
+                    addLog(`❌ Error checking ${file}: ${error.message}`, 'error');
+                    results.push(`❌ ${file} (Error)`);
+                    allFound = false;
+                }
+            }
+
+            document.getElementById('file-list').textContent = results.join('\n');
+            updateStatus('file-check', allFound, allFound ? 'All files found!' : 'Some files missing');
+
+            if (allFound) {
+                await testScriptLoading();
+            }
+        }
+
+        async function testScriptLoading() {
+            addLog('Testing script loading...', 'info');
+            
+            try {
+                const response = await fetch('/NASA-Live-Orrery/index.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    const hasScripts = html.includes('nasa-api.js') && html.includes('solar-system.js');
+                    
+                    if (hasScripts) {
+                        addLog('✅ HTML file contains required script tags', 'success');
+                        updateStatus('script-check', true, 'Scripts configured correctly');
+                    } else {
+                        addLog('⚠️ HTML may be missing script tags', 'error');
+                        updateStatus('script-check', false, 'Script tags not found');
+                    }
+                } else {
+                    addLog(`❌ Cannot load index.html (${response.status})`, 'error');
+                    updateStatus('script-check', false, 'Cannot load HTML');
+                }
+            } catch (error) {
+                addLog(`❌ Error testing scripts: ${error.message}`, 'error');
+                updateStatus('script-check', false, 'Error testing scripts');
+            }
+        }
+
+        function openInNewWindow() {
+            addLog('Opening Orrery in new window...', 'info');
+            const orreryWindow = window.open(
+                '/NASA-Live-Orrery/index.html',
+                'NASALiveOrrery',
+                'width=1400,height=900,menubar=no,toolbar=no,location=no,status=no'
+            );
+            
+            if (orreryWindow) {
+                orreryWindow.focus();
+                addLog('✅ New window opened', 'success');
+            } else {
+                addLog('❌ Failed to open window (popup blocked?)', 'error');
+            }
+        }
+
+        function showIframe() {
+            addLog('Loading Orrery in iframe...', 'info');
+            const container = document.getElementById('iframe-container');
+            const iframe = document.getElementById('orrery-frame');
+            
+            iframe.src = '/NASA-Live-Orrery/index.html';
+            container.style.display = 'block';
+            
+            iframe.onload = () => {
+                addLog('✅ Orrery loaded in iframe', 'success');
+            };
+            
+            iframe.onerror = () => {
+                addLog('❌ Failed to load Orrery in iframe', 'error');
+            };
+        }
+
+        // Run checks on page load
+        window.addEventListener('load', () => {
+            addLog('Page loaded, starting checks...', 'info');
+            setTimeout(checkFiles, 500);
+        });
+    </script>
+</body>
+</html>

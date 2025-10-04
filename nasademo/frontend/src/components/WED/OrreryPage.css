@@ -1,0 +1,46 @@
+.orrery-page {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000000;
+  position: relative;
+}
+
+.orrery-container {
+  width: 100%;
+  height: 100vh;
+  padding-top: 80px; /* Space for navigation */
+  box-sizing: border-box;
+  position: relative;
+}
+
+.orrery-iframe {
+  width: 100%;
+  height: calc(100vh - 80px);
+  border: none;
+  display: block;
+  background: #000000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .orrery-container {
+    padding-top: 70px;
+  }
+
+  .orrery-iframe {
+    height: calc(100vh - 70px);
+  }
+}
+
+@media (max-width: 480px) {
+  .orrery-container {
+    padding-top: 60px;
+  }
+
+  .orrery-iframe {
+    height: calc(100vh - 60px);
+  }
+}

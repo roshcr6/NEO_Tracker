@@ -1,0 +1,47 @@
+.asteroid-game-page {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000000;
+  position: relative;
+}
+
+.game-container {
+  width: 100%;
+  height: 100vh;
+  padding-top: 80px; /* Space for navigation bar */
+  box-sizing: border-box;
+  position: relative;
+  background: #000000;
+}
+
+.game-iframe {
+  width: 100%;
+  height: calc(100vh - 80px); /* Account for navigation bar */
+  border: none;
+  display: block;
+  background: #000000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-container {
+    padding-top: 70px;
+  }
+
+  .game-iframe {
+    height: calc(100vh - 70px);
+  }
+}
+
+@media (max-width: 480px) {
+  .game-container {
+    padding-top: 60px;
+  }
+
+  .game-iframe {
+    height: calc(100vh - 60px);
+  }
+}

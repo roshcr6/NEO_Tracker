@@ -1,0 +1,1104 @@
+/* Discover Page Styles - Matching Reference Design */
+
+.discover-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0a0a0a;
+  color: #fff;
+  overflow: hidden;
+  padding-top: 120px; /* Space for fixed navigation bar */
+  animation: pageSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Navigation Bar - Consistent with other pages */
+.discover-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 80px;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 100;
+}
+
+.discover-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.discover-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.discover-nav-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+  font-weight: 400;
+}
+
+.discover-nav-link:hover {
+  color: #fff;
+}
+
+.discover-nav-link.active {
+  color: #fff;
+  position: relative;
+}
+
+.discover-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+}
+
+/* Side Planets */
+.side-planets {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.planet-left,
+.planet-right {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  top: 40%;
+  transform: translateY(-50%);
+  animation: planet-float 6s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.planet-left {
+  left: -30px;
+  background: transparent;
+  box-shadow: none;
+  animation-delay: 0s;
+}
+
+.planet-left.earth-spline {
+  width: 500px;
+  height: 500px;
+  left: -100px;
+  top: 47%;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+  visibility: visible !important;
+  pointer-events: auto;
+  animation: earth-slide-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes earth-slide-left {
+  0% {
+    left: calc(50vw - 250px);
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+  100% {
+    left: -100px;
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}
+
+/* Container that clips the Spline viewer */
+.spline-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+  box-shadow: 0 0 80px rgba(79, 195, 247, 0.4),
+              0 0 120px rgba(79, 195, 247, 0.2);
+  animation: earth-rotate 60s linear infinite;
+}
+
+@keyframes earth-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Wrapper for the Spline component - larger to show full Earth */
+.spline-wrapper {
+  width: 800px;
+  height: 800px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* Transparent overlay to block mouse interactions */
+.spline-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: transparent;
+  pointer-events: auto !important;
+  cursor: default;
+}
+
+/* Force Spline elements to fill the wrapper */
+.spline-wrapper > div,
+.spline-wrapper canvas,
+.spline-wrapper iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.planet-fallback.earth-color {
+  background: radial-gradient(circle at 30% 30%, #4a9eff, #2563eb, #1e40af);
+  box-shadow: 0 0 60px rgba(37, 99, 235, 0.5), inset -20px -20px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.planet-right {
+  right: -230px;
+  background: transparent;
+  box-shadow: none;
+  animation: metroid-fade-in 1.5s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
+  width: 600px;
+  height: 600px;
+  top:36%;
+  transform: rotate(-25deg) translateY(-50%);
+  border-radius: 0;
+  overflow: visible;
+  opacity: 0;
+}
+
+@keyframes metroid-fade-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-25deg) translateY(-50%) translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-25deg) translateY(-50%) translateX(0);
+  }
+}
+
+.planet-right.meteor {
+  background: transparent;
+  box-shadow: none;
+  filter: none;
+}
+
+.meteor-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  filter: contrast(1.3) brightness(1.2) saturate(1.4);
+  box-shadow: none;
+  opacity: inherit;
+}
+
+.meteor-trail {
+  position: absolute;
+  width: 300px;
+  height: 150px;
+  right: 140px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, 
+    rgba(255, 200, 100, 0.3) 0%,
+    rgba(255, 150, 50, 0.2) 20%,
+    rgba(255, 100, 30, 0.1) 40%,
+    transparent 60%);
+  filter: blur(20px);
+  pointer-events: none;
+  opacity: inherit;
+}
+
+@keyframes trail-flicker {
+  0%, 100% {
+    opacity: 0.8;
+    filter: blur(15px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(12px);
+  }
+}
+
+.planet-label {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+.planet-left .planet-label {
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.planet-left.earth-spline .planet-label {
+  display: none;
+}
+
+.planet-right .planet-label {
+  left: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes planet-float {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-50%) translateX(20px);
+  }
+}
+
+/* Main Content - Fixed centered layout */
+.discover-content {
+  position: fixed;
+  top: 80px; /* Below navigation bar */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 80px); /* Account for navigation height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  opacity: 0;
+  transform: translateX(100px);
+  transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1) 1s;
+}
+
+.discover-content.slide-in-right {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.discover-hero {
+  text-align: center;
+  max-width: 900px;
+  z-index: 10;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 200px;
+}
+
+/* Planet Label Top */
+.planet-label-top {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+}
+
+/* Main Title */
+.discover-main-title {
+  font-size: 85px;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0 0 25px 0;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(79, 195, 247, 0.5);
+}
+
+/* Title Divider */
+.title-divider {
+  width: 100px;
+  height: 2px;
+  background: #4fc3f7;
+  margin: 0 auto 25px;
+  box-shadow: 0 0 10px rgba(79, 195, 247, 0.6);
+}
+
+/* Description */
+.discover-main-description {
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 35px 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 300;
+}
+
+/* Get Started Button */
+.get-started-btn {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.95);
+  color: #0a192f;
+  border: none;
+  padding: 14px 45px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+.get-started-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3);
+  background: #ffffff;
+}
+
+/* Sun Container - Centered in viewport */
+.earth-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  margin: 30px auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: rotate-sun 120s linear infinite, sun-appear 1.5s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
+  filter: drop-shadow(0 0 60px rgba(255, 180, 0, 0.8)) 
+          drop-shadow(0 0 100px rgba(255, 140, 0, 0.6))
+          drop-shadow(0 0 150px rgba(255, 100, 0, 0.4))
+          brightness(1.1);
+  overflow: hidden;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes sun-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateX(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+@keyframes rotate-sun {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.earth-glow {
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle, 
+    rgba(255, 220, 100, 0.5) 0%, 
+    rgba(255, 180, 50, 0.4) 25%, 
+    rgba(255, 140, 30, 0.3) 45%, 
+    rgba(255, 100, 0, 0.2) 65%,
+    transparent 85%);
+  border-radius: 50%;
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+.sun-core {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 60px rgba(252, 176, 69, 0.6), 
+              0 0 100px rgba(246, 142, 46, 0.4), 
+              0 0 140px rgba(232, 116, 31, 0.25),
+              inset -30px -30px 60px rgba(0, 0, 0, 0.2);
+  animation: rotate-sun-reverse 120s linear infinite, subtle-pulse 6s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+  filter: brightness(1.1) contrast(1.05) saturate(1.1);
+}
+
+/* Sun Spline Wrapper */
+.sun-spline-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(3);
+  z-index: 2;
+}
+
+.sun-spline-wrapper > div,
+.sun-spline-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Overlay to block sun mouse interaction */
+.sun-spline-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  height: 550px;
+  z-index: 20;
+  background: transparent;
+  pointer-events: auto !important;
+  cursor: default;
+  border-radius: 50%;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    filter: brightness(1) contrast(1);
+  }
+  50% {
+    filter: brightness(1.05) contrast(1.02);
+  }
+}
+
+@keyframes rotate-sun-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Scroll Down Indicator - Hidden for fixed layout */
+.scroll-down {
+  display: none;
+}
+
+/* Animated Stars Background */
+.discover-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.discover-star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .discover-main-title {
+    font-size: 85px;
+  }
+
+  .earth-container {
+    width: 450px;
+    height: 450px;
+  }
+
+  .planet-left,
+  .planet-right {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  .discover-navbar {
+    padding: 20px 30px;
+  }
+
+  .discover-nav-links {
+    gap: 20px;
+    font-size: 12px;
+  }
+
+  .discover-content {
+    padding: 100px 30px 60px;
+  }
+
+  .discover-main-title {
+    font-size: 55px;
+    letter-spacing: 4px;
+  }
+
+  .discover-main-description {
+    font-size: 14px;
+  }
+
+  .earth-container {
+    width: 300px;
+    height: 300px;
+  }
+
+  .get-started-btn {
+    width: 100%;
+    padding: 14px 40px;
+  }
+
+  .planet-left,
+  .planet-right {
+    display: none;
+  }
+}
+
+/* Navigation Bar */
+.discover-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 80px;
+  background: rgba(10, 10, 30, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1000;
+}
+
+.discover-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.discover-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.discover-nav-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+  font-weight: 400;
+}
+
+.discover-nav-link:hover {
+  color: #fff;
+}
+
+.discover-nav-link.active {
+  color: #fff;
+  position: relative;
+}
+
+.discover-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #00d4ff, #7000ff);
+}
+
+/* Main Content */
+.discover-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 120px 80px 80px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+
+.discover-content.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.discover-hero {
+  text-align: center;
+  max-width: 1400px;
+  width: 100%;
+  z-index: 10;
+  position: relative;
+}
+
+/* Badge */
+.discover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 212, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  margin-bottom: 30px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.badge-icon {
+  font-size: 20px;
+}
+
+/* Title */
+.discover-title {
+  font-size: 130px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0 0 30px 0;
+  letter-spacing: -5px;
+  text-transform: uppercase;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #00d4ff 0%, #7000ff 50%, #00d4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradient-flow 4s ease infinite;
+}
+
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Description */
+.discover-description {
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 50px 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Main Button */
+.asteroid-simulation-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  background: linear-gradient(135deg, #00d4ff 0%, #7000ff 100%);
+  color: #fff;
+  border: none;
+  padding: 22px 55px;
+  border-radius: 50px;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 60px;
+}
+
+.asteroid-simulation-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.asteroid-simulation-btn:hover::before {
+  left: 100%;
+}
+
+.asteroid-simulation-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 50px rgba(0, 212, 255, 0.6);
+}
+
+.btn-icon {
+  font-size: 26px;
+  animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.btn-arrow {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.asteroid-simulation-btn:hover .btn-arrow {
+  transform: translateX(8px);
+}
+
+/* Info Cards */
+.discover-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-bottom: 80px;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px 30px;
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+
+.info-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+}
+
+.card-icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+  animation: float 4s ease-in-out infinite;
+}
+
+.card-1 .card-icon {
+  animation-delay: 0s;
+}
+
+.card-2 .card-icon {
+  animation-delay: 0.5s;
+}
+
+.card-3 .card-icon {
+  animation-delay: 1s;
+}
+
+.info-card h3 {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #00d4ff, #7000ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.info-card p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+/* Feature Grid */
+.discover-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.feature-box {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  padding: 30px 20px;
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+
+.feature-box:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(112, 0, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(112, 0, 255, 0.2);
+}
+
+.feature-icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.feature-box h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #fff;
+}
+
+.feature-box p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* Animated Stars Background */
+.discover-stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.discover-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+/* Floating Objects */
+.floating-objects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.float-object {
+  position: absolute;
+  font-size: 35px;
+  opacity: 0.3;
+  animation: orbit-drift 20s ease-in-out infinite;
+}
+
+.object-1 {
+  top: 10%;
+  left: 8%;
+  animation-delay: 0s;
+}
+
+.object-2 {
+  top: 60%;
+  right: 12%;
+  animation-delay: 2s;
+}
+
+.object-3 {
+  bottom: 15%;
+  left: 15%;
+  animation-delay: 4s;
+}
+
+.object-4 {
+  top: 35%;
+  right: 8%;
+  animation-delay: 6s;
+}
+
+.object-5 {
+  bottom: 30%;
+  right: 20%;
+  animation-delay: 8s;
+}
+
+@keyframes orbit-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(40px, -40px) rotate(90deg);
+  }
+  50% {
+    transform: translate(0, -80px) rotate(180deg);
+  }
+  75% {
+    transform: translate(-40px, -40px) rotate(270deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .discover-title {
+    font-size: 100px;
+  }
+
+  .discover-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .discover-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .discover-navbar {
+    padding: 20px 30px;
+  }
+
+  .discover-nav-links {
+    gap: 20px;
+    font-size: 12px;
+  }
+
+  .discover-content {
+    padding: 100px 30px 60px;
+  }
+
+  .discover-title {
+    font-size: 65px;
+  }
+
+  .discover-description {
+    font-size: 16px;
+  }
+
+  .discover-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .discover-features {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .asteroid-simulation-btn {
+    width: 100%;
+    padding: 18px 40px;
+    font-size: 17px;
+  }
+}

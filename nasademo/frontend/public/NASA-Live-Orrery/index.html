@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Live Solar System Orrery</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%230B3D91'/><circle cx='50' cy='50' r='8' fill='%23FC3D21'/><ellipse cx='50' cy='50' rx='35' ry='10' fill='none' stroke='%23FC3D21' stroke-width='2'/><ellipse cx='50' cy='50' rx='10' ry='35' fill='none' stroke='%23FC3D21' stroke-width='2'/></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="nasa-logo">NASA Live Orrery</div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Initializing Solar System...</div>
+            <div id="loading-status" class="loading-status">Loading Near-Earth Asteroids...</div>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app-container">
+        <!-- Side Panel Toggle Button (Top-Right) -->
+        <button id="menu-toggle" class="menu-btn" style="position: fixed; top: 20px; right: 20px; z-index: 100000;">☰</button>
+
+        <!-- Side Panel -->
+        <div id="side-panel" class="side-panel">
+            <div class="panel-header">
+                <h2>🌌 Solar System</h2>
+                <button id="close-panel" class="close-btn">×</button>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="tab-container">
+                <button class="tab-btn active" data-tab="planets">🪐 Planets</button>
+                <button class="tab-btn" data-tab="asteroids">☄️ Asteroids</button>
+                <button class="tab-btn" data-tab="meteorshowers">🌌 Meteor Showers</button>
+                <button class="tab-btn" data-tab="info">ℹ️ Info</button>
+            </div>
+
+            <!-- Planets Tab -->
+            <div id="planets-tab" class="tab-content active">
+                <div class="planet-list">
+                    <div class="planet-item" data-planet="sun">
+                        <div class="planet-icon">☀️</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Sun</div>
+                            <div class="planet-distance">Center</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="mercury">
+                        <div class="planet-icon">☿️</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Mercury</div>
+                            <div class="planet-distance">0.39 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="venus">
+                        <div class="planet-icon">♀️</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Venus</div>
+                            <div class="planet-distance">0.72 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="earth">
+                        <div class="planet-icon">🌍</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Earth</div>
+                            <div class="planet-distance">1.00 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="mars">
+                        <div class="planet-icon">♂️</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Mars</div>
+                            <div class="planet-distance">1.52 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="jupiter">
+                        <div class="planet-icon">♃</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Jupiter</div>
+                            <div class="planet-distance">5.20 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="saturn">
+                        <div class="planet-icon">♄</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Saturn</div>
+                            <div class="planet-distance">9.58 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="uranus">
+                        <div class="planet-icon">♅</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Uranus</div>
+                            <div class="planet-distance">19.18 AU</div>
+                        </div>
+                    </div>
+                    <div class="planet-item" data-planet="neptune">
+                        <div class="planet-icon">♆</div>
+                        <div class="planet-info">
+                            <div class="planet-name">Neptune</div>
+                            <div class="planet-distance">30.07 AU</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Asteroid Belt Info -->
+                <div style="margin-top: 20px; padding: 15px; background: rgba(139, 69, 19, 0.2); border-radius: 8px; border-left: 4px solid #8B4513;">
+                    <h3 style="margin: 0 0 10px 0; color: #D2691E; font-size: 1.1rem;">🪨 Main Asteroid Belt</h3>
+                    <p style="margin: 0 0 8px 0; font-size: 0.85rem; color: #aaa;">
+                        Real asteroid belt between Mars and Jupiter (2.1-3.3 AU) from NASA data
+                    </p>
+                    <div style="font-size: 0.9rem; color: #D2691E;">
+                        ✅ 1,000 realistic asteroids automatically loaded with varied shapes
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asteroids Tab -->
+            <div id="asteroids-tab" class="tab-content">
+                <h2>Near-Earth Objects</h2>
+                <p class="tab-description">Real-time asteroid tracking from NASA • Click any asteroid to highlight its orbit in blue</p>
+                
+                <!-- Simple Toggle Filters -->
+                <div style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.9rem; color: #888;">⚡ Quick Filters (Toggle On/Off)</h4>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <button class="filter-btn active" id="toggle-red" style="background: #ff0000; color: white; border: 2px solid #ff0000;">
+                            🔴 RED (High Risk)
+                        </button>
+                        <button class="filter-btn active" id="toggle-yellow" style="background: #ffff00; color: black; border: 2px solid #ffff00;">
+                            🟡 YELLOW (Moderate)
+                        </button>
+                        <button class="filter-btn active" id="toggle-green" style="background: #00ff00; color: black; border: 2px solid #00ff00;">
+                            🟢 GREEN (Safe)
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="asteroid-list" id="asteroid-list">
+                    <div class="loading-asteroids">Loading live asteroid data...</div>
+                </div>
+            </div>
+
+            <!-- Meteor Showers Tab -->
+            <div id="meteorshowers-tab" class="tab-content">
+                <h2>🌌 Meteor Showers</h2>
+                <p class="tab-description">Annual meteor showers and their parent comets/asteroids</p>
+                
+                <div class="meteorshower-list" id="meteorshower-list">
+                    <div class="loading-meteorshowers">Loading meteor shower data...</div>
+                </div>
+            </div>
+
+            <!-- Info Tab -->
+            <div id="info-tab" class="tab-content">
+                <div id="object-info">
+                    <h3>Select an object</h3>
+                    <p>Click on any planet or asteroid to view detailed information.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main 3D Scene -->
+        <div id="scene-container">
+            <canvas id="solar-system-canvas"></canvas>
+            
+            <!-- Asteroid Data Panel - TOP RIGHT -->
+            <div class="selected-object" id="selected-object" style="display: none;">
+                <div class="object-name"></div>
+                <div class="object-details"></div>
+                <a class="know-more-link" id="know-more-link" href="#" target="_blank" style="display: none;">
+                    🔗 Know More - View Full NASA Data
+                </a>
+            </div>
+            
+            <!-- HUD Overlay -->
+            <div id="hud-overlay">
+                
+                <!-- NASA Eyes Style Bottom Time Controls -->
+                <div class="hud-bottom-center">
+                    <div class="time-controls-bar">
+                        <!-- Speed Controls Left -->
+                        <div class="speed-controls">
+                            <button id="speed-slower-btn" class="time-ctrl-btn" title="Slower">
+                                <span style="font-size: 18px;">◀◀</span>
+                            </button>
+                            <button id="speed-faster-btn" class="time-ctrl-btn" title="Faster">
+                                <span style="font-size: 18px;">▶▶</span>
+                            </button>
+                            <div class="speed-display" id="speed-display">Real-time</div>
+                        </div>
+                        
+                        <!-- Time Navigation Center -->
+                        <div class="time-navigation">
+                            <button id="time-backward-btn" class="time-ctrl-btn" title="Step Backward (1 Day)">
+                                <span style="font-size: 20px;">◀</span>
+                            </button>
+                            <button id="time-play-pause-btn" class="time-ctrl-btn time-play-btn" title="Play/Pause">
+                                <span style="font-size: 20px;">⏸</span>
+                            </button>
+                            <button id="time-forward-btn" class="time-ctrl-btn" title="Step Forward (1 Day)">
+                                <span style="font-size: 20px;">▶</span>
+                            </button>
+                            <button id="time-now-btn" class="time-ctrl-btn time-now-btn" title="Go to Current Time">
+                                <span style="font-size: 14px; font-weight: bold;">NOW</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Date Display Right -->
+                        <div class="date-display-container">
+                            <div class="date-display" id="bottom-date-display">
+                                <div class="date-line" id="date-line">Oct 4, 2025</div>
+                                <div class="time-line" id="time-line">14:00:00 UTC</div>
+                            </div>
+                            <button id="calendar-btn" class="time-ctrl-btn" title="Calendar" style="margin-left: 8px;">
+                                <span style="font-size: 16px;">📅</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div id="instructions" class="instructions">
+                <div class="instruction-item">🖱️ Left click & drag: Rotate view</div>
+                <div class="instruction-item">🖱️ Right click & drag: Pan view</div>
+                <div class="instruction-item">🎯 Mouse wheel: Zoom in/out</div>
+                <div class="instruction-item">🎯 Click objects: View info</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- AstroGuard AI Chatbot -->
+    <div class="astro-chat-button" id="astroChatButton">
+        💬
+    </div>
+
+    <div class="astro-chat-window" id="astroChatWindow">
+        <div class="astro-chat-header">
+            <h3>🌠 AstroBot AI</h3>
+            <button class="astro-close-button" id="astroCloseButton">×</button>
+        </div>
+        
+        <div class="astro-chat-messages" id="astroChatMessages">
+            <!-- Messages appear here -->
+        </div>
+        
+        <div class="astro-quick-actions">
+            <button class="astro-quick-btn" data-message="shooting stars near me">shooting stars near me</button>
+            <button class="astro-quick-btn" data-message="Any dangerous asteroids approaching Earth?">Any dangerous asteroids approaching Earth?</button>
+            <button class="astro-quick-btn" data-message="When is the next meteor shower?">When is the next meteor shower?</button>
+        </div>
+        
+        <div class="astro-input-area">
+            <input type="text" class="astro-message-input" id="astroMessageInput" placeholder="Ask about asteroids or anything...">
+            <button class="astro-send-button" id="astroSendButton">Send</button>
+        </div>
+    </div>
+
+    <div class="astro-overlay" id="astroOverlay"></div>
+
+    <style>
+        /* AstroGuard Chatbot Styles */
+        .astro-chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10000;
+            color: white;
+            font-size: 28px;
+            border: none;
+        }
+
+        .astro-chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .astro-chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 360px;
+            height: 520px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 10001;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .astro-chat-window.active {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .astro-chat-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .astro-chat-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .astro-close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .astro-close-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .astro-chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .astro-message {
+            max-width: 85%;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .astro-message.user {
+            align-self: flex-end;
+        }
+
+        .astro-message.user .astro-message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 18px 18px 4px 18px;
+        }
+
+        .astro-message.bot {
+            align-self: flex-start;
+        }
+
+        .astro-message.bot .astro-message-content {
+            background: white;
+            color: #333;
+            padding: 10px 14px;
+            border-radius: 18px 18px 18px 4px;
+            border: 1px solid #e0e0e0;
+            white-space: pre-wrap;
+        }
+
+        .astro-quick-actions {
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+            background: white;
+        }
+
+        .astro-quick-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: left;
+            transition: all 0.2s;
+            color: #475569;
+        }
+
+        .astro-quick-btn:hover {
+            background: #e2e8f0;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .astro-quick-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .astro-input-area {
+            padding: 16px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 8px;
+            background: white;
+        }
+
+        .astro-message-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .astro-message-input:focus {
+            border-color: #667eea;
+        }
+
+        .astro-send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .astro-send-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .astro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 9999;
+        }
+
+        .astro-overlay.active {
+            display: block;
+        }
+
+        .astro-chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .astro-chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .astro-chat-messages::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .astro-chat-window {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 140px);
+                bottom: 90px;
+                right: 20px;
+            }
+        }
+    </style>
+
+    <script>
+        // AstroGuard AI Chatbot Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.getElementById('astroChatButton');
+            const chatWindow = document.getElementById('astroChatWindow');
+            const overlay = document.getElementById('astroOverlay');
+            const closeButton = document.getElementById('astroCloseButton');
+            const sendButton = document.getElementById('astroSendButton');
+            const messageInput = document.getElementById('astroMessageInput');
+            const messages = document.getElementById('astroChatMessages');
+            const quickBtns = document.querySelectorAll('.astro-quick-btn');
+
+            let isOpen = false;
+
+            // Toggle chat
+            function toggleChat() {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    chatWindow.classList.add('active');
+                    overlay.classList.add('active');
+                    messageInput.focus();
+                } else {
+                    chatWindow.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            }
+
+            // Event listeners
+            chatButton.addEventListener('click', toggleChat);
+            closeButton.addEventListener('click', toggleChat);
+            overlay.addEventListener('click', toggleChat);
+
+            // Get user location and find nearby meteor showers
+            async function findNearbyMeteorShowers() {
+                const typingDiv = addMessage('📍 Requesting your location...', 'bot');
+                typingDiv.style.fontStyle = 'italic';
+                typingDiv.style.opacity = '0.7';
+
+                if (!navigator.geolocation) {
+                    typingDiv.remove();
+                    addMessage('❌ Your browser doesn\'t support location services. Please check the Meteor Showers tab for a complete list of visible showers!', 'bot');
+                    return;
+                }
+
+                try {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        });
+                    });
+
+                    const { latitude, longitude } = position.coords;
+                    
+                    // Get location name using reverse geocoding (OpenStreetMap Nominatim)
+                    let locationName = 'Unknown Location';
+                    try {
+                        const geoResponse = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`);
+                        const geoData = await geoResponse.json();
+                        
+                        // Build location name from components
+                        const city = geoData.address.city || geoData.address.town || geoData.address.village || geoData.address.municipality;
+                        const state = geoData.address.state || geoData.address.region;
+                        const country = geoData.address.country;
+                        
+                        if (city && country) {
+                            locationName = `${city}, ${country}`;
+                        } else if (state && country) {
+                            locationName = `${state}, ${country}`;
+                        } else if (country) {
+                            locationName = country;
+                        }
+                    } catch (geoError) {
+                        console.warn('Could not get location name:', geoError);
+                        locationName = `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E`;
+                    }
+                    
+                    typingDiv.remove();
+                    
+                    // Get current date and check meteor showers in next 7 days
+                    const today = new Date();
+                    
+                    // Meteor showers data (from your meteor-showers.js)
+                    const meteorShowers = [
+                        { name: 'Quadrantids', peak: 'Jan 3-4', months: [1], description: 'Blue meteors, 40-120/hr', radiant: 'Northern Hemisphere' },
+                        { name: 'Lyrids', peak: 'Apr 22-23', months: [4], description: 'Fast meteors, 10-20/hr', radiant: 'Both Hemispheres' },
+                        { name: 'Eta Aquarids', peak: 'May 5-6', months: [5], description: 'From Halley\'s Comet, 10-30/hr', radiant: 'Southern Hemisphere' },
+                        { name: 'Delta Aquarids', peak: 'Jul 28-29', months: [7], description: 'Faint meteors, 10-20/hr', radiant: 'Southern Hemisphere' },
+                        { name: 'Perseids', peak: 'Aug 12-13', months: [8], description: 'Bright fireballs, 50-100/hr', radiant: 'Northern Hemisphere' },
+                        { name: 'Draconids', peak: 'Oct 8-9', months: [10], description: 'Slow meteors, variable rate', radiant: 'Northern Hemisphere' },
+                        { name: 'Orionids', peak: 'Oct 21-22', months: [10], description: 'From Halley\'s Comet, 10-20/hr', radiant: 'Both Hemispheres' },
+                        { name: 'Taurids', peak: 'Nov 5-12', months: [11], description: 'Bright fireballs, 5-10/hr', radiant: 'Both Hemispheres' },
+                        { name: 'Leonids', peak: 'Nov 17-18', months: [11], description: 'Fast meteors, 10-15/hr', radiant: 'Both Hemispheres' },
+                        { name: 'Geminids', peak: 'Dec 13-14', months: [12], description: 'Bright & colorful, 50-120/hr', radiant: 'Both Hemispheres' }
+                    ];
+
+                    const currentMonth = today.getMonth() + 1;
+                    const visibleShowers = meteorShowers.filter(shower => shower.months.includes(currentMonth));
+
+                    let response = `📍 **Your Location**\n${locationName}\n\n`;
+
+                    if (visibleShowers.length > 0) {
+                        response += `🌠 **Active Meteor Showers This Month:**\n\n`;
+                        visibleShowers.forEach(shower => {
+                            response += `✨ ${shower.name}\n`;
+                            response += `   📅 Peak: ${shower.peak}\n`;
+                            response += `   ⭐ Rate: ${shower.description}\n`;
+                            response += `   🌍 Best viewing: ${shower.radiant}\n\n`;
+                        });
+
+                        // Viewing recommendations based on latitude
+                        response += `🔭 **Viewing Recommendations:**\n`;
+                        const hemisphere = latitude >= 0 ? 'Northern' : 'Southern';
+                        response += `   • You are in the ${hemisphere} Hemisphere\n`;
+                        
+                        if (Math.abs(latitude) < 30) {
+                            response += `   • Excellent position! Most showers visible\n`;
+                            response += `   • Best time: 2-4 AM local time\n`;
+                        } else if (Math.abs(latitude) < 60) {
+                            response += `   • Great viewing conditions!\n`;
+                            response += `   • Best time: After midnight\n`;
+                        } else {
+                            response += `   • Some showers may be low on horizon\n`;
+                            response += `   • Best time: During twilight hours\n`;
+                        }
+                        
+                        response += `   • Find dark skies away from city lights\n`;
+                        response += `   • Allow 20-30 min for eye adjustment`;
+                    } else {
+                        response += `ℹ️ **No Major Meteor Showers This Week**\n\n`;
+                        response += `Check the **Meteor Showers** tab in the sidebar for the complete annual calendar and upcoming events!`;
+                    }
+
+                    addMessage(response, 'bot');
+
+                } catch (error) {
+                    typingDiv.remove();
+                    
+                    if (error.code === 1) {
+                        addMessage('🔒 **Location Access Denied**\n\nTo receive personalized meteor shower alerts based on your location, please:\n\n1️⃣ Click the 🔒 lock icon in your browser\'s address bar\n2️⃣ Enable location permissions\n3️⃣ Refresh and try again\n\n📍 Or visit the **Meteor Showers** tab for the complete list!', 'bot');
+                    } else if (error.code === 2) {
+                        addMessage('📡 **Location Unavailable**\n\nUnable to determine your location. Please check:\n\n• Internet connection is active\n• GPS/Location services are enabled\n• Try again in a moment\n\n📍 Meanwhile, check the **Meteor Showers** tab!', 'bot');
+                    } else {
+                        addMessage('⏱️ **Request Timeout**\n\nLocation request took too long. Please try again or check the **Meteor Showers** tab for all visible showers worldwide!', 'bot');
+                    }
+                }
+            }
+
+            // Send message
+            async function sendMessage(text) {
+                if (!text.trim()) return;
+
+                // Check if asking about nearby shooting stars
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes('shooting star') && (lowerText.includes('near') || lowerText.includes('location') || lowerText.includes('where'))) {
+                    addMessage(text, 'user');
+                    messageInput.value = '';
+                    await findNearbyMeteorShowers();
+                    return;
+                }
+
+                // Add user message
+                addMessage(text, 'user');
+                messageInput.value = '';
+
+                // Add typing indicator
+                const typingDiv = addMessage('AstroBot is thinking...', 'bot');
+                typingDiv.style.fontStyle = 'italic';
+                typingDiv.style.opacity = '0.7';
+
+                try {
+                    // Create system context about the app
+                    const systemContext = `You are AstroBot AI, a friendly space assistant in NASA Live Orrery.
+
+App Features:
+- Planets Tab: 8 planets with real-time orbits
+- Asteroids Tab: 121 Near-Earth Objects with filters
+- Meteor Showers Tab: 16 meteor showers with 3D paths
+- Asteroid Belt: 1,000 asteroids between Mars and Jupiter
+- Controls: Left-drag (rotate), Right-drag (pan), Scroll (zoom)
+
+Keep responses helpful and under 100 words unless detailed explanation requested.`;
+
+                    // Call Gemini AI API with CORRECT format (header-based auth)
+                    const API_KEY = 'AIzaSyBKsVzKofP4vwwpUz3s-_Rs-mCOVM6TQx8';
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-goog-api-key': API_KEY
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: systemContext + "\n\nUser: " + text
+                                }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.7,
+                                maxOutputTokens: 300,
+                            }
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        console.error('❌ API Error Details:', data);
+                        console.error('Status:', response.status);
+                        throw new Error(`API Error: ${response.status} - ${data.error?.message || 'Unknown error'}`);
+                    }
+
+                    console.log('✅ Gemini Response:', data);
+                    
+                    // Remove typing indicator
+                    typingDiv.remove();
+                    
+                    // Extract AI response
+                    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                        const aiResponse = data.candidates[0].content.parts[0].text;
+                        addMessage(aiResponse, 'bot');
+                    } else if (data.candidates && data.candidates[0]?.finishReason === 'SAFETY') {
+                        addMessage("I can't respond to that due to safety filters. Try asking something else! 🛡️", 'bot');
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('❌ AI Error:', error);
+                    typingDiv.remove();
+                    
+                    // Fallback to keyword-based responses
+                    let response = getBotResponse(text);
+                    addMessage(response + '\n\n💡 (AI temporarily unavailable, using smart fallback)', 'bot');
+                }
+            }
+
+            // Fallback keyword-based responses (if API fails)
+            function getBotResponse(text) {
+                const lowerText = text.toLowerCase();
+                
+                if (lowerText.includes('meteor') || lowerText.includes('shooting star')) {
+                    return "Check the Meteor Showers tab above! We have 16 real meteor showers you can explore, including Perseids, Geminids, and Leonids. Click any shower to see its 3D orbital path! 🌠";
+                } else if (lowerText.includes('asteroid') && (lowerText.includes('dangerous') || lowerText.includes('hazardous'))) {
+                    return "Go to the Asteroids tab to see 121 Near-Earth Objects! You can filter for hazardous asteroids using the checkboxes. Each asteroid shows detailed orbital data and approach information. 🌍";
+                } else if (lowerText.includes('asteroid belt') || lowerText.includes('rocks')) {
+                    return "The main asteroid belt is already visible in the Planets tab! It contains 1,000 real asteroids from NASA data, positioned between Mars and Jupiter (2.1-3.3 AU). They have realistic shapes and compositions! 🪨";
+                } else if (lowerText.includes('planet')) {
+                    return "You can view all 8 planets in the Planets tab! Click any planet to see detailed information including diameter, temperature, orbital period, and more. The solar system runs in real-time or fast-forward mode! 🪐";
+                } else if (lowerText.includes('control') || lowerText.includes('how')) {
+                    return "Controls: Left-click & drag to rotate, right-click to pan, scroll to zoom. Use the tabs to switch between Planets, Asteroids, and Meteor Showers. Time controls let you speed up or pause the simulation! 🎮";
+                } else {
+                    return "I'm AstroBot AI! I can help you explore:\n\n🪐 8 Planets with real-time orbits\n🌍 121 Near-Earth Asteroids\n🪨 1,000 Main Belt Asteroids\n☄️ 16 Meteor Showers\n\nWhat would you like to know?";
+                }
+            }
+
+            // Add message to chat
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `astro-message ${sender}`;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'astro-message-content';
+                contentDiv.textContent = text;
+                
+                messageDiv.appendChild(contentDiv);
+                messages.appendChild(messageDiv);
+                messages.scrollTop = messages.scrollHeight;
+                
+                return messageDiv;
+            }
+
+            // Send button click
+            sendButton.addEventListener('click', () => {
+                sendMessage(messageInput.value);
+            });
+
+            // Enter key
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage(messageInput.value);
+                }
+            });
+
+            // Quick action buttons
+            quickBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const message = btn.dataset.message;
+                    // Special handling for location-based query
+                    if (message.toLowerCase().includes('shooting stars near me')) {
+                        addMessage(message, 'user');
+                        findNearbyMeteorShowers();
+                    } else {
+                        sendMessage(message);
+                    }
+                });
+            });
+
+            // Welcome message after delay
+            setTimeout(() => {
+                addMessage('Hello! I\'m AstroBot AI. I can help you explore the solar system, track asteroids, and learn about meteor showers! 🌠', 'bot');
+            }, 2000);
+        });
+    </script>
+    
+    <!-- Main Application -->
+    <script src="nasa-api.js?v=2.8"></script>
+    <script src="meteor-showers.js?v=2.8"></script>
+    <script src="solar-system.js?v=2.8"></script>
+    <script src="app.js?v=2.8"></script>
+</body>
+</html>

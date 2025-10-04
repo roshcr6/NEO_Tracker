@@ -1,0 +1,454 @@
+/**
+ * PREMIUM TYPOGRAPHY SYSTEM
+ * Inspired by: Porsche, Lay's, KitKat, Apple, Tesla, Vogue, Burberry
+ * Ultra-luxury font system with performance optimization
+ */
+
+/* ============================================
+   FONT IMPORT - Premium Google Fonts
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@200;300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cinzel:wght@400;500;600;700;800;900&display=swap');
+
+/* ============================================
+   CSS VARIABLES - Font System
+   ============================================ */
+
+:root {
+  /* Premium Font Families */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-accent: 'Manrope', -apple-system, sans-serif;
+  --font-luxury: 'Cormorant Garamond', Georgia, serif;
+  --font-premium: 'Cinzel', Georgia, serif;
+  
+  /* Font Weights */
+  --fw-thin: 100;
+  --fw-extralight: 200;
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+  --fw-black: 900;
+  
+  /* Font Sizes - Fluid responsive scaling */
+  --fs-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);           /* 12px - 14px */
+  --fs-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);            /* 14px - 16px */
+  --fs-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);           /* 16px - 18px */
+  --fs-md: clamp(1.125rem, 1.05rem + 0.375vw, 1.375rem);        /* 18px - 22px */
+  --fs-lg: clamp(1.25rem, 1.15rem + 0.5vw, 1.75rem);            /* 20px - 28px */
+  --fs-xl: clamp(1.5rem, 1.35rem + 0.75vw, 2.25rem);            /* 24px - 36px */
+  --fs-2xl: clamp(2rem, 1.75rem + 1.25vw, 3.5rem);              /* 32px - 56px */
+  --fs-3xl: clamp(2.5rem, 2rem + 2.5vw, 5rem);                  /* 40px - 80px */
+  --fs-4xl: clamp(3rem, 2.5rem + 3.5vw, 6.5rem);                /* 48px - 104px */
+  --fs-5xl: clamp(3.5rem, 3rem + 5vw, 8rem);                    /* 56px - 128px */
+  --fs-hero: clamp(4rem, 3.5rem + 6vw, 10rem);                  /* 64px - 160px */
+  
+  /* Letter Spacing - Premium feel */
+  --ls-tightest: -0.08em;
+  --ls-tighter: -0.05em;
+  --ls-tight: -0.025em;
+  --ls-normal: 0;
+  --ls-wide: 0.025em;
+  --ls-wider: 0.05em;
+  --ls-widest: 0.1em;
+  --ls-ultra: 0.15em;
+  
+  /* Line Height */
+  --lh-none: 1;
+  --lh-tight: 1.1;
+  --lh-snug: 1.25;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.75;
+  --lh-loose: 2;
+  
+  /* Text Transform */
+  --tt-uppercase: uppercase;
+  --tt-lowercase: lowercase;
+  --tt-capitalize: capitalize;
+}
+
+/* ============================================
+   BASE TYPOGRAPHY
+   ============================================ */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  letter-spacing: var(--ls-normal);
+  color: #ffffff;
+  
+  /* Performance */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+}
+
+/* ============================================
+   HEADINGS - Premium styles
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color: #ffffff;
+  text-rendering: geometricPrecision;
+}
+
+h1 {
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-tighter);
+  line-height: var(--lh-tight);
+}
+
+h2 {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: var(--ls-tight);
+}
+
+h3 {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+}
+
+h4 {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-normal);
+}
+
+h5 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+}
+
+h6 {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+}
+
+/* ============================================
+   DISPLAY TEXT - Ultra Premium
+   ============================================ */
+
+.display-hero {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-none);
+  letter-spacing: var(--ls-tightest);
+  font-style: italic;
+  background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.display-xl {
+  font-family: var(--font-display);
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-black);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tighter);
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-tight);
+}
+
+/* ============================================
+   LUXURY TEXT - Serif elegance
+   ============================================ */
+
+.luxury-text {
+  font-family: var(--font-luxury);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-relaxed);
+  letter-spacing: var(--ls-wide);
+  font-style: italic;
+}
+
+.premium-text {
+  font-family: var(--font-premium);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+}
+
+/* ============================================
+   ACCENT TEXT
+   ============================================ */
+
+.accent-text {
+  font-family: var(--font-accent);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide);
+}
+
+.accent-caps {
+  font-family: var(--font-accent);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  font-size: var(--fs-sm);
+}
+
+/* ============================================
+   BODY TEXT VARIATIONS
+   ============================================ */
+
+p {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.text-hero {
+  font-size: var(--fs-5xl);
+  line-height: var(--lh-tight);
+  font-weight: var(--fw-bold);
+}
+
+.text-large {
+  font-size: var(--fs-lg);
+  line-height: var(--lh-relaxed);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.text-medium {
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
+}
+
+.text-base {
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+}
+
+.text-small {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.text-xs {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-snug);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================
+   FONT WEIGHTS
+   ============================================ */
+
+.font-thin { font-weight: var(--fw-thin); }
+.font-extralight { font-weight: var(--fw-extralight); }
+.font-light { font-weight: var(--fw-light); }
+.font-regular { font-weight: var(--fw-regular); }
+.font-medium { font-weight: var(--fw-medium); }
+.font-semibold { font-weight: var(--fw-semibold); }
+.font-bold { font-weight: var(--fw-bold); }
+.font-extrabold { font-weight: var(--fw-extrabold); }
+.font-black { font-weight: var(--fw-black); }
+
+/* ============================================
+   TEXT COLORS - Premium palette
+   ============================================ */
+
+.text-white { color: #ffffff; }
+.text-light { color: rgba(255, 255, 255, 0.9); }
+.text-muted { color: rgba(255, 255, 255, 0.7); }
+.text-subtle { color: rgba(255, 255, 255, 0.5); }
+.text-faint { color: rgba(255, 255, 255, 0.3); }
+
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #f0d084 0%, #c9a45c 50%, #8b6914 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-silver {
+  background: linear-gradient(135deg, #e8e8e8 0%, #a8a8a8 50%, #666666 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   TEXT ALIGNMENT
+   ============================================ */
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* ============================================
+   TEXT TRANSFORMS
+   ============================================ */
+
+.uppercase { text-transform: uppercase; }
+.lowercase { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+.normal-case { text-transform: none; }
+
+/* ============================================
+   LETTER SPACING UTILITIES
+   ============================================ */
+
+.tracking-tightest { letter-spacing: var(--ls-tightest); }
+.tracking-tighter { letter-spacing: var(--ls-tighter); }
+.tracking-tight { letter-spacing: var(--ls-tight); }
+.tracking-normal { letter-spacing: var(--ls-normal); }
+.tracking-wide { letter-spacing: var(--ls-wide); }
+.tracking-wider { letter-spacing: var(--ls-wider); }
+.tracking-widest { letter-spacing: var(--ls-widest); }
+.tracking-ultra { letter-spacing: var(--ls-ultra); }
+
+/* ============================================
+   LINE HEIGHT UTILITIES
+   ============================================ */
+
+.leading-none { line-height: var(--lh-none); }
+.leading-tight { line-height: var(--lh-tight); }
+.leading-snug { line-height: var(--lh-snug); }
+.leading-normal { line-height: var(--lh-normal); }
+.leading-relaxed { line-height: var(--lh-relaxed); }
+.leading-loose { line-height: var(--lh-loose); }
+
+/* ============================================
+   TEXT SHADOWS - Premium depth
+   ============================================ */
+
+.text-shadow-soft {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-medium {
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.text-shadow-strong {
+  text-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-glow {
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 20px rgba(255, 255, 255, 0.2),
+    0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   SPECIAL EFFECTS
+   ============================================ */
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+.text-animate-in {
+  animation: textFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  :root {
+    /* Reduce font sizes slightly on mobile */
+    --fs-hero: clamp(3rem, 2.5rem + 4vw, 6rem);
+    --fs-5xl: clamp(2.5rem, 2rem + 3vw, 5rem);
+    --fs-4xl: clamp(2rem, 1.75rem + 2vw, 4rem);
+  }
+  
+  h1 { font-size: var(--fs-3xl); }
+  h2 { font-size: var(--fs-2xl); }
+  h3 { font-size: var(--fs-xl); }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* GPU acceleration for animated text */
+.text-animate-in,
+.text-shimmer,
+.text-gradient {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .text-animate-in {
+    animation: none;
+    opacity: 1;
+  }
+  
+  .text-shimmer {
+    animation: none;
+    background: #ffffff;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

@@ -1,0 +1,25 @@
+/**
+ * Page Transition Styles
+ */
+
+.page-transition-wrapper {
+  min-height: 100vh;
+  will-change: transform, opacity;
+}
+
+/* Smooth scrolling for all pages */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hardware acceleration */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Prevent layout shift during transitions */
+body {
+  overflow-x: hidden;
+}
