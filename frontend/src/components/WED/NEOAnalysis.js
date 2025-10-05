@@ -6,6 +6,9 @@ import axios from 'axios';
 import Navigation from './Navigation';
 import './NEOAnalysis.css';
 
+// API Configuration
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 // Fix Leaflet default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -133,7 +136,7 @@ function SimulationPage() {
     try {
       setLoadingAsteroids(true);
       // Use correct backend endpoint
-      const response = await axios.get('http://localhost:8000/api/asteroids', {
+      const response = await axios.get(`${API_URL}/api/asteroids`, {
         params: {
           hazardous_only: false // Get all asteroids, not just hazardous
         }

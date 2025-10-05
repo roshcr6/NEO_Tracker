@@ -85,9 +85,9 @@ function SimulationPage() {
 
   const fetchAsteroids = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/asteroids');
-      if (response.data && response.data.length > 0) {
-        setAsteroidList(response.data);
+      const response = await axios.get(`${API_URL}/api/asteroids`);
+      if (response.data && response.data.asteroids && response.data.asteroids.length > 0) {
+        setAsteroidList(response.data.asteroids);
       }
     } catch (error) {
       console.error('Error fetching asteroids:', error);

@@ -40,7 +40,7 @@ function CustomMeteoroid() {
 
   const handleSimulate = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/simulate-impact/', {
+      const response = await axios.post(`${API_URL}/api/simulate-impact/`, {
         diameter: meteoroid.diameter,
         velocity: meteoroid.velocity,
         angle: meteoroid.angle,
