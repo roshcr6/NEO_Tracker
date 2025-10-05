@@ -162,6 +162,8 @@
   margin-left: auto;
   margin-right: auto;
   font-weight: 300;
+  transition: all 0.3s ease;
+  min-height: 75px; /* Prevent layout shift */
 }
 
 /* Buttons Container */
@@ -176,18 +178,18 @@
   pointer-events: auto;
 }
 
-/* Get Started Button */
+/* Get Started Button - Custom Simulator */
 .impact-get-started-btn {
   display: inline-block;
   background: rgba(255, 255, 255, 0.95);
   color: #0a192f;
-  border: none;
+  border: 2px solid #fff;
   padding: 14px 45px;
   border-radius: 30px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 0;
@@ -198,12 +200,23 @@
 }
 
 .impact-get-started-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3);
-  background: #ffffff;
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.5);
 }
 
-/* Secondary Button (Impact Simulator) */
+/* When hovering Custom button, NEO button turns black */
+.impact-buttons-container:has(.impact-get-started-btn:hover) .impact-secondary-btn {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Secondary Button - NASA NEO Analysis */
 .impact-secondary-btn {
   display: inline-block;
   background: transparent;
@@ -214,7 +227,7 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 0;
@@ -226,10 +239,20 @@
 }
 
 .impact-secondary-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #ffffff;
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(255, 255, 255, 0.5);
+}
+
+/* When hovering NEO button, Custom button turns black */
+.impact-buttons-container:has(.impact-secondary-btn:hover) .impact-get-started-btn {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Badge */

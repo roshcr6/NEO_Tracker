@@ -8,6 +8,21 @@ import './ImpactPage.css';
 function ImpactPage() {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hoveredButton, setHoveredButton] = useState(null);
+
+  // Text content for each button
+  const buttonTexts = {
+    custom: {
+      line1: "Design your own asteroid scenarios with custom parameters.",
+      line2: "Control size, velocity, composition, and impact angle.",
+      line3: "Simulate devastating impacts and analyze the consequences."
+    },
+    real: {
+      line1: "Explore the devastating effects of meteoroid impacts on Earth.",
+      line2: "Analyze real NASA asteroid data and predict impact scenarios.",
+      line3: "Learn about detection, prediction, and planetary defense strategies."
+    }
+  };
 
   useEffect(() => {
     setTimeout(() => setIsLoaded(true), 1000);
@@ -63,13 +78,25 @@ function ImpactPage() {
           {/* Divider */}
           <div className="impact-title-divider"></div>
 
-          {/* Description */}
+          {/* Description - Changes based on hover */}
           <p className="impact-main-description">
-            Explore the devastating effects of meteoroid impacts on Earth.
-            <br />
-            Analyze real NASA asteroid data and predict impact scenarios.
-            <br />
-            Learn about detection, prediction, and planetary defense strategies.
+            {hoveredButton === 'real' ? (
+              <>
+                {buttonTexts.real.line1}
+                <br />
+                {buttonTexts.real.line2}
+                <br />
+                {buttonTexts.real.line3}
+              </>
+            ) : (
+              <>
+                {buttonTexts.custom.line1}
+                <br />
+                {buttonTexts.custom.line2}
+                <br />
+                {buttonTexts.custom.line3}
+              </>
+            )}
           </p>
 
           {/* Action Buttons */}
@@ -77,6 +104,8 @@ function ImpactPage() {
             <button 
               className="impact-get-started-btn"
               onClick={() => navigate('/simulate')}
+              onMouseEnter={() => setHoveredButton('custom')}
+              onMouseLeave={() => setHoveredButton(null)}
             >
               CUSTOM SIMULATOR
             </button>
@@ -84,6 +113,8 @@ function ImpactPage() {
             <button 
               className="impact-secondary-btn"
               onClick={() => navigate('/neo-analysis')}
+              onMouseEnter={() => setHoveredButton('real')}
+              onMouseLeave={() => setHoveredButton(null)}
             >
               NASA NEO ANALYSIS
             </button>
