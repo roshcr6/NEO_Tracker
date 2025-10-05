@@ -1,6 +1,22 @@
 /* Global Styles - Ultra-Optimized for 60 FPS */
 
 /* ============================================
+   SCROLLBAR HIDDEN - CLEAN UI
+   ============================================ */
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* ============================================
    PERFORMANCE OPTIMIZATIONS
    ============================================ */
 

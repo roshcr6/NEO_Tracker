@@ -1,5 +1,21 @@
 /* HomePage Styles - Premium Animations Inspired by Porsche, Lay's, KitKat, Apple */
 
+/* ============================================
+   SCROLLBAR HIDDEN - CLEAN UI
+   ============================================ */
+
+/* Firefox */
+.home-page * {
+  scrollbar-width: none;
+}
+
+/* Chrome, Edge, Safari */
+.home-page ::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 .home-page {
   position: relative;
   min-height: 100vh;

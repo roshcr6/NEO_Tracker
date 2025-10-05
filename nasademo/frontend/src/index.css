@@ -78,6 +78,22 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ============================================
+   SCROLLBAR HIDDEN - CLEAN UI
+   ============================================ */
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 body {
   margin: 0;
   font-family: var(--font-body);

@@ -33,12 +33,12 @@
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    resultDiv.textContent = '❌ ERROR:\n' + JSON.stringify(data, null, 2);
+                    resultDiv.textContent = '[ERROR] ERROR:\n' + JSON.stringify(data, null, 2);
                 } else {
-                    resultDiv.textContent = '✅ SUCCESS:\n' + JSON.stringify(data, null, 2);
+                    resultDiv.textContent = '[SUCCESS] SUCCESS:\n' + JSON.stringify(data, null, 2);
                 }
             } catch (error) {
-                resultDiv.textContent = '❌ FETCH ERROR:\n' + error.message;
+                resultDiv.textContent = '[ERROR] FETCH ERROR:\n' + error.message;
             }
         }
     </script>

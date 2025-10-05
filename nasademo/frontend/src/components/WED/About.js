@@ -4,8 +4,8 @@
  * Features: Premium text animations, word-by-word reveals, character animations
  */
 
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Navigation from './Navigation';
 import './About.css';
 
@@ -133,69 +133,42 @@ function About() {
     );
   };
 
-  // Professional SVG Icons
-  const UserIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="8" r="4"/>
-      <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-    </svg>
-  );
-
-  const CodeIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <polyline points="16 18 22 12 16 6"/>
-      <polyline points="8 6 2 12 8 18"/>
-    </svg>
-  );
-
-  const AtomIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="2" fill="currentColor"/>
-      <path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5z"/>
-      <path d="M3.8 3.8c-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5 2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5z"/>
-    </svg>
-  );
-
-  const PaletteIcon = () => (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="8" cy="10" r="1" fill="currentColor"/>
-      <circle cx="12" cy="8" r="1" fill="currentColor"/>
-      <circle cx="16" cy="10" r="1" fill="currentColor"/>
-      <circle cx="10" cy="14" r="1" fill="currentColor"/>
-      <circle cx="14" cy="14" r="1" fill="currentColor"/>
-    </svg>
-  );
-
-  // Team members data with professional icons
+  // Team members data with actual team photos
   const teamMembers = [
     {
-      name: "Dr. Sarah Chen",
-      role: "Lead Astrophysicist",
-      icon: <UserIcon />,
-      bio: "15+ years studying near-Earth objects and planetary defense systems.",
-      expertise: ["NEO Detection", "Orbital Mechanics", "Impact Modeling"]
+      name: "Sanjay Varghese",
+      role: "Lead Developer",
+      image: require('./resources/Sanjay Varghese.png'),
+      bio: "Full-stack developer specializing in real-time data visualization and API integration.",
+      expertise: ["React", "Django", "3D Graphics"]
     },
     {
-      name: "Marcus Rodriguez",
-      role: "Software Architect",
-      icon: <CodeIcon />,
-      bio: "Former NASA engineer specializing in real-time data visualization.",
-      expertise: ["Data Science", "3D Simulation", "API Integration"]
+      name: "Riyan Raz",
+      role: "Backend Developer",
+      image: require('./resources/Riyan Raz.png'),
+      bio: "Expert in backend architecture and NASA API integration systems.",
+      expertise: ["Python", "API Design", "Data Processing"]
     },
     {
-      name: "Dr. Yuki Tanaka",
-      role: "Physics Simulation Lead",
-      icon: <AtomIcon />,
-      bio: "PhD in Computational Physics, expert in impact crater modeling.",
-      expertise: ["Impact Physics", "Thermal Dynamics", "Shock Waves"]
+      name: "Roshith Robert",
+      role: "Frontend Developer",
+      image: require('./resources/Roshith Robert.png'),
+      bio: "Specialized in creating intuitive user interfaces and interactive experiences.",
+      expertise: ["React", "UI/UX", "Animation"]
     },
     {
-      name: "Emma Williams",
-      role: "UX/UI Designer",
-      icon: <PaletteIcon />,
-      bio: "Award-winning designer creating intuitive scientific interfaces.",
-      expertise: ["User Experience", "3D Graphics", "Interactive Design"]
+      name: "Shwethin Nikesh Kumar",
+      role: "Physics Simulation Developer",
+      image: require('./resources/Shwethin Nikesh Kumar.png'),
+      bio: "Expert in computational physics and impact simulation modeling.",
+      expertise: ["Physics Engine", "3D Math", "Simulation"]
+    },
+    {
+      name: "Zakiel Chungath",
+      role: "Designer & Developer",
+      image: require('./resources/Zakiel Chungath.png'),
+      bio: "Creating beautiful interfaces with seamless user experiences.",
+      expertise: ["UI Design", "Frontend", "Graphics"]
     }
   ];
 
@@ -330,23 +303,128 @@ function About() {
               <motion.div
                 key={index}
                 className="team-card"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.15 }}
-                whileHover={{ y: -15 }}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0.8,
+                  y: 60,
+                  rotateX: 15,
+                  filter: "blur(10px)"
+                }}
+                whileInView={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  y: 0,
+                  rotateX: 0,
+                  filter: "blur(0px)"
+                }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ 
+                  duration: 0.8,
+                  delay: index * 0.2,
+                  ease: [0.25, 0.4, 0.25, 1],
+                  scale: {
+                    type: "spring",
+                    damping: 20,
+                    stiffness: 100
+                  }
+                }}
+                whileHover={{ 
+                  y: -20,
+                  scale: 1.03,
+                  transition: {
+                    type: "spring",
+                    damping: 15,
+                    stiffness: 300
+                  }
+                }}
               >
-                <div className="team-card-inner">
-                  <div className="team-avatar-icon">{member.icon}</div>
-                  <h3 className="team-name">{member.name}</h3>
-                  <p className="team-role">{member.role}</p>
-                  <p className="team-bio">{member.bio}</p>
-                  <div className="team-expertise">
+                <motion.div 
+                  className="team-card-inner"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.div 
+                    className="team-avatar"
+                    initial={{ scale: 0, rotate: -180 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: index * 0.2 + 0.3,
+                      duration: 0.6,
+                      type: "spring",
+                      damping: 12,
+                      stiffness: 100
+                    }}
+                    whileHover={{ 
+                      scale: 1.15,
+                      rotate: 5,
+                      transition: { duration: 0.3 }
+                    }}
+                  >
+                    <img src={member.image} alt={member.name} className="team-avatar-img" />
+                  </motion.div>
+                  
+                  <motion.h3 
+                    className="team-name"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 + 0.4, duration: 0.5 }}
+                  >
+                    {member.name}
+                  </motion.h3>
+                  
+                  <motion.p 
+                    className="team-role"
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 + 0.5, duration: 0.5 }}
+                  >
+                    {member.role}
+                  </motion.p>
+                  
+                  <motion.p 
+                    className="team-bio"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 + 0.6, duration: 0.5 }}
+                  >
+                    {member.bio}
+                  </motion.p>
+                  
+                  <motion.div 
+                    className="team-expertise"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 + 0.7, duration: 0.5 }}
+                  >
                     {member.expertise.map((skill, idx) => (
-                      <span key={idx} className="expertise-tag">{skill}</span>
+                      <motion.span 
+                        key={idx} 
+                        className="expertise-tag"
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ 
+                          delay: index * 0.2 + 0.8 + idx * 0.1,
+                          type: "spring",
+                          damping: 15,
+                          stiffness: 200
+                        }}
+                        whileHover={{ 
+                          scale: 1.1,
+                          backgroundColor: "rgba(0, 212, 255, 0.2)",
+                          transition: { duration: 0.2 }
+                        }}
+                      >
+                        {skill}
+                      </motion.span>
                     ))}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             ))}
           </div>

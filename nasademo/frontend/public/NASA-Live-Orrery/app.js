@@ -22,24 +22,24 @@ class NASALiveOrrery {
      */
     async init() {
         try {
-            console.log('🚀 Initializing NASA Live Orrery...');
+            console.log('[INIT] Initializing NASA Live Orrery...');
             
             // Show loading screen
             this.showLoadingScreen();
             
             // Initialize UI elements
             this.initializeUI();
-            console.log('✅ UI elements initialized');
+            console.log('[SUCCESS] UI elements initialized');
             
             // Initialize solar system
-            console.log('⏳ Creating Solar System...');
+            console.log('[LOADING] Creating Solar System...');
             this.solarSystem = new LiveSolarSystem();
-            console.log('✅ Solar System created');
+            console.log('[SUCCESS] Solar System created');
             
             // Preload asteroid data and WAIT for it to complete
-            console.log('🔄 Preloading all 121 asteroid data...');
+            console.log('[REFRESH] Preloading all 121 asteroid data...');
             await this.preloadAsteroidData();
-            console.log('✅ All asteroid data loaded');
+            console.log('[SUCCESS] All asteroid data loaded');
             
             // Hide asteroids after preloading (they're hidden by default now)
             if (this.solarSystem.asteroidsLoaded) {
@@ -48,31 +48,31 @@ class NASALiveOrrery {
             }
             
             // Load asteroid belt automatically
-            console.log('🪨 Loading Main Asteroid Belt...');
+            console.log('[ROCK] Loading Main Asteroid Belt...');
             await this.solarSystem.loadAsteroidBelt(1000);
-            console.log('✅ Asteroid belt loaded and visible');
+            console.log('[SUCCESS] Asteroid belt loaded and visible');
             
             // Setup event listeners
             this.setupEventListeners();
-            console.log('✅ Event listeners setup');
+            console.log('[SUCCESS] Event listeners setup');
             
             // Start time display
             this.updateTimeDisplay();
             setInterval(() => this.updateTimeDisplay(), 1000);
-            console.log('✅ Time display started');
+            console.log('[SUCCESS] Time display started');
             
             // Wait for loading animation to finish
             await this.simulateLoading();
-            console.log('✅ Loading animation complete');
+            console.log('[SUCCESS] Loading animation complete');
             
             // Hide loading screen and show app
             this.hideLoadingScreen();
-            console.log('✅ Loading screen hidden');
+            console.log('[SUCCESS] Loading screen hidden');
             
             this.isInitialized = true;
-            console.log('🎉 NASA Live Orrery initialized successfully!');
+            console.log('[COMPLETE] NASA Live Orrery initialized successfully!');
         } catch (error) {
-            console.error('❌ ERROR during initialization:', error);
+            console.error('[ERROR] ERROR during initialization:', error);
             console.error('Stack trace:', error.stack);
             alert('Failed to initialize the application. Check the console for details.');
         }
@@ -87,27 +87,27 @@ class NASALiveOrrery {
             
             if (!this.solarSystem.asteroidsLoaded) {
                 if (statusElement) {
-                    statusElement.textContent = '🔄 Loading 121 Near-Earth Asteroids from NASA...';
+                    statusElement.textContent = '[REFRESH] Loading 121 Near-Earth Asteroids from NASA...';
                 }
-                console.log('⏳ Fetching 121 Near-Earth Asteroids from NASA API...');
+                console.log('[LOADING] Fetching 121 Near-Earth Asteroids from NASA API...');
                 
                 await this.solarSystem.loadAsteroidData();
                 
                 if (statusElement) {
-                    statusElement.textContent = '✅ All 121 asteroids loaded! Preparing launch...';
+                    statusElement.textContent = '[SUCCESS] All 121 asteroids loaded! Preparing launch...';
                 }
-                console.log('✅ Asteroid data preloaded successfully! All 121 asteroids ready.');
+                console.log('[SUCCESS] Asteroid data preloaded successfully! All 121 asteroids ready.');
                 
                 // Small delay to show the success message
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
         } catch (error) {
-            console.warn('⚠️ Failed to preload asteroid data:', error);
-            console.log('💡 Asteroids will load when Asteroids tab is clicked');
+            console.warn('[WARNING] Failed to preload asteroid data:', error);
+            console.log('[TIP] Asteroids will load when Asteroids tab is clicked');
             
             const statusElement = document.getElementById('loading-status');
             if (statusElement) {
-                statusElement.textContent = '⚠️ Asteroids will load on demand';
+                statusElement.textContent = '[WARNING] Asteroids will load on demand';
             }
         }
     }
@@ -204,7 +204,7 @@ class NASALiveOrrery {
                 if (this.solarSystem) {
                     this.solarSystem.toggleAnimation();
                     const isPlaying = this.solarSystem.isPlaying;
-                    timePlayPauseBtn.querySelector('span').textContent = isPlaying ? '⏸' : '▶';
+                    timePlayPauseBtn.querySelector('span').textContent = isPlaying ? '' : '>';
                 }
             });
         }
@@ -366,10 +366,10 @@ class NASALiveOrrery {
                 if (this.solarSystem) {
                     this.solarSystem.toggleAnimation();
                     const isPlaying = this.solarSystem.isPlaying;
-                    playPauseBtn.textContent = isPlaying ? '⏸️ Pause' : '▶️ Play';
+                    playPauseBtn.textContent = isPlaying ? ' Pause' : '> Play';
                     // Update bottom control as well
                     if (timePlayPauseBtn) {
-                        timePlayPauseBtn.querySelector('span').textContent = isPlaying ? '⏸' : '▶';
+                        timePlayPauseBtn.querySelector('span').textContent = isPlaying ? '' : '>';
                     }
                 }
             });
@@ -411,7 +411,7 @@ class NASALiveOrrery {
         
         // Apply filters when asteroids load
         window.addEventListener('asteroids-loaded', () => {
-            console.log('🎯 Asteroids loaded, applying toggle filters...');
+            console.log('[TARGET] Asteroids loaded, applying toggle filters...');
             this.applyAsteroidToggleFilters();
         });
     }
@@ -457,7 +457,7 @@ class NASALiveOrrery {
         const showYellow = document.getElementById('toggle-yellow')?.classList.contains('active') || false;
         const showGreen = document.getElementById('toggle-green')?.classList.contains('active') || false;
         
-        console.log(`🎯 Toggle Filters: RED=${showRed}, YELLOW=${showYellow}, GREEN=${showGreen}`);
+        console.log(`[TARGET] Toggle Filters: RED=${showRed}, YELLOW=${showYellow}, GREEN=${showGreen}`);
         
         let visibleCount = 0;
         let hiddenCount = 0;
@@ -532,7 +532,7 @@ class NASALiveOrrery {
             this.solarSystem.updateAsteroidUI(filteredData);
         }
         
-        console.log(`✅ Filtered: ${visibleCount} visible, ${hiddenCount} hidden`);
+        console.log(`[SUCCESS] Filtered: ${visibleCount} visible, ${hiddenCount} hidden`);
     }
 
     /**
@@ -675,13 +675,13 @@ class NASALiveOrrery {
         
         // Hide asteroids and their orbitals when closing the panel
         if (this.currentTab === 'asteroids' && this.solarSystem) {
-            console.log('🔴 Closing panel - hiding asteroid orbitals');
+            console.log(' Closing panel - hiding asteroid orbitals');
             this.solarSystem.hideAsteroids();
         }
         
         // Hide meteor showers when closing the panel
         if (this.currentTab === 'meteorshowers' && this.meteorShowerService) {
-            console.log('🌌 Closing panel - hiding meteor shower visualizations');
+            console.log('[SPACE] Closing panel - hiding meteor shower visualizations');
             this.meteorShowerService.hideAllMeteorVisualizations();
         }
     }
@@ -724,13 +724,13 @@ class NASALiveOrrery {
         
         // Load and show asteroids when Asteroids tab is clicked
         if (tabName === 'asteroids' && this.solarSystem) {
-            console.log('🔴 Showing Near-Earth Objects with orbits...');
+            console.log(' Showing Near-Earth Objects with orbits...');
             this.solarSystem.showAsteroids();
         }
         
         // Load meteor showers when Meteor Showers tab is clicked
         if (tabName === 'meteorshowers') {
-            console.log('🌌 Loading Meteor Showers...');
+            console.log('[SPACE] Loading Meteor Showers...');
             if (!this.meteorShowerService) {
                 this.meteorShowerService = new MeteorShowerService(
                     this.solarSystem.nasaAPI,
@@ -799,8 +799,8 @@ class NASALiveOrrery {
             const simDateElement = document.getElementById('simulation-date');
             if (simDateElement) {
                 const liveIndicator = isRealTime ? 
-                    '<div style="display: inline-block; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; animation: pulse 1.5s infinite; margin-right: 6px;"></div><span style="color: #00ff00; font-weight: bold;">🔴 LIVE</span>' : 
-                    '<span style="color: #ffaa00;">⏩ TIME TRAVEL</span>';
+                    '<div style="display: inline-block; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; animation: pulse 1.5s infinite; margin-right: 6px;"></div><span style="color: #00ff00; font-weight: bold;"> LIVE</span>' : 
+                    '<span style="color: #ffaa00;"> TIME TRAVEL</span>';
                     
                 simDateElement.innerHTML = `
                     <div style="margin-bottom: 8px;">${liveIndicator}</div>

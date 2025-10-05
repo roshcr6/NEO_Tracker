@@ -59,7 +59,7 @@ class LiveSolarSystem {
                 period: 0.24,
                 rotationPeriod: 58.6, // Earth days for one rotation
                 texture: null,
-                icon: '☿️'
+                icon: 'Mercury'
             },
             venus: {
                 name: 'Venus',
@@ -69,7 +69,7 @@ class LiveSolarSystem {
                 period: 0.62,
                 rotationPeriod: 243.0, // Retrograde rotation
                 texture: null,
-                icon: '♀️'
+                icon: 'Venus'
             },
             earth: {
                 name: 'Earth',
@@ -79,7 +79,7 @@ class LiveSolarSystem {
                 period: 1.0,
                 rotationPeriod: 1.0, // 24 hours = 1 Earth day
                 texture: null,
-                icon: '🌍'
+                icon: '[EARTH]'
             },
             mars: {
                 name: 'Mars',
@@ -89,7 +89,7 @@ class LiveSolarSystem {
                 period: 1.88,
                 rotationPeriod: 1.03, // 24.6 hours
                 texture: null,
-                icon: '♂️'
+                icon: 'Mars'
             },
             jupiter: {
                 name: 'Jupiter',
@@ -99,7 +99,7 @@ class LiveSolarSystem {
                 period: 11.9,
                 rotationPeriod: 0.41, // 9.9 hours - very fast!
                 texture: null,
-                icon: '♃'
+                icon: 'Jupiter'
             },
             saturn: {
                 name: 'Saturn',
@@ -109,7 +109,7 @@ class LiveSolarSystem {
                 period: 29.4,
                 rotationPeriod: 0.45, // 10.7 hours
                 texture: null,
-                icon: '♄'
+                icon: 'Saturn'
             },
             uranus: {
                 name: 'Uranus',
@@ -119,7 +119,7 @@ class LiveSolarSystem {
                 period: 84.0,
                 rotationPeriod: 0.72, // 17.2 hours
                 texture: null,
-                icon: '♅'
+                icon: 'Uranus'
             },
             neptune: {
                 name: 'Neptune',
@@ -129,7 +129,7 @@ class LiveSolarSystem {
                 period: 164.8,
                 rotationPeriod: 0.67, // 16.1 hours
                 texture: null,
-                icon: '♆'
+                icon: 'Neptune'
             }
         };
         
@@ -141,49 +141,49 @@ class LiveSolarSystem {
      */
     async init() {
         try {
-            console.log('🚀 Starting Solar System initialization...');
+            console.log('[INIT] Starting Solar System initialization...');
             
             this.createScene();
-            console.log('✅ Scene created');
+            console.log('[SUCCESS] Scene created');
             
             this.createLights();
-            console.log('✅ Lights created');
+            console.log('[SUCCESS] Lights created');
             
             this.createSun();
-            console.log('✅ Sun created');
+            console.log('[SUCCESS] Sun created');
             
             this.createPlanets();
-            console.log('✅ Planets created');
+            console.log('[SUCCESS] Planets created');
             
             // Clean up any dummy objects below Earth
             this.cleanupOrphanedObjects();
-            console.log('✅ Cleanup completed');
+            console.log('[SUCCESS] Cleanup completed');
             
             this.createStarField();
-            console.log('✅ Star field created');
+            console.log('[SUCCESS] Star field created');
             
             this.setupEventListeners();
-            console.log('✅ Event listeners setup');
+            console.log('[SUCCESS] Event listeners setup');
             
             // Load real Earth imagery from NASA EPIC
-            console.log('📡 Loading Earth imagery...');
+            console.log('[API] Loading Earth imagery...');
             await this.loadEarthImagery();
-            console.log('✅ Earth imagery loaded');
+            console.log('[SUCCESS] Earth imagery loaded');
             
             // DON'T load asteroids automatically - only when user clicks Asteroids tab
             // await this.loadAsteroidData();
             
             // Focus camera on Earth at startup
             this.focusOnEarth();
-            console.log('✅ Camera focused on Earth');
+            console.log('[SUCCESS] Camera focused on Earth');
             
             this.animate();
-            console.log('✅ Animation started');
+            console.log('[SUCCESS] Animation started');
             
-            console.log('🎉 Live Solar System initialized successfully!');
-            console.log('💡 Click "Asteroids" tab to load Near-Earth Objects from NASA');
+            console.log('[COMPLETE] Live Solar System initialized successfully!');
+            console.log('[TIP] Click "Asteroids" tab to load Near-Earth Objects from NASA');
         } catch (error) {
-            console.error('❌ ERROR during Solar System initialization:', error);
+            console.error('[ERROR] ERROR during Solar System initialization:', error);
             console.error('Stack trace:', error.stack);
             throw error;
         }
@@ -232,7 +232,7 @@ class LiveSolarSystem {
             if (this.cameraReturnTimeout) {
                 clearTimeout(this.cameraReturnTimeout);
                 this.cameraReturnTimeout = null;
-                console.log('🎮 User camera control detected - auto-return cancelled');
+                console.log('[CONTROL] User camera control detected - auto-return cancelled');
             }
         });
     }
@@ -307,7 +307,7 @@ class LiveSolarSystem {
         const glow = new THREE.Mesh(glowGeometry, glowMaterial);
         this.sun.add(glow);
         
-        console.log('☀️ Sun created with realistic texture');
+        console.log('[SUN] Sun created with realistic texture');
     }
 
     /**
@@ -448,11 +448,11 @@ class LiveSolarSystem {
                     ringMaterial.alphaMap = texture; // Use same texture for alpha channel
                     ringMaterial.transparent = true;
                     ringMaterial.needsUpdate = true;
-                    console.log(`✅ Loaded realistic ring texture for ${planetKey} with gaps and particles!`);
+                    console.log(`[SUCCESS] Loaded realistic ring texture for ${planetKey} with gaps and particles!`);
                 },
                 undefined,
                 (error) => {
-                    console.warn(`⚠️ Ring texture failed for ${planetKey}, using solid color`);
+                    console.warn(`[WARNING] Ring texture failed for ${planetKey}, using solid color`);
                 }
             );
         }
@@ -475,7 +475,7 @@ class LiveSolarSystem {
         // Add rings as child of planet so they move together
         planet.add(rings);
         
-        console.log(`✅ Created rings for ${planetKey}`);
+        console.log(`[SUCCESS] Created rings for ${planetKey}`);
     }
 
     /**
@@ -625,11 +625,11 @@ class LiveSolarSystem {
         const starTexture = textureLoader.load(
             'textures/starfield.jpg',
             () => {
-                console.log('✨ Star field texture loaded successfully');
+                console.log('[SPARKLE] Star field texture loaded successfully');
             },
             undefined,
             (error) => {
-                console.error('❌ Error loading star field texture:', error);
+                console.error('[ERROR] Error loading star field texture:', error);
             }
         );
 
@@ -651,14 +651,14 @@ class LiveSolarSystem {
         skybox.renderOrder = -1; // Render first (behind everything)
         this.scene.add(skybox);
         
-        console.log('🌌 Realistic Milky Way star field created');
+        console.log('[SPACE] Realistic Milky Way star field created');
     }
 
     /**
      * Clean up any orphaned test objects or asteroids below Earth
      */
     cleanupOrphanedObjects() {
-        console.log('🧹 Scanning for orphaned objects below Earth...');
+        console.log(' Scanning for orphaned objects below Earth...');
         const objectsToRemove = [];
         
         this.scene.children.forEach(child => {
@@ -666,7 +666,7 @@ class LiveSolarSystem {
             if (child.geometry && child.geometry.type === 'SphereGeometry' && child.position.y < -5) {
                 // Skip planets and sun
                 if (child !== this.sun && !Object.values(this.planets).includes(child)) {
-                    console.log(`🧹 Found orphaned object at y=${child.position.y.toFixed(2)}, type=${child.userData?.type || 'unknown'}`);
+                    console.log(` Found orphaned object at y=${child.position.y.toFixed(2)}, type=${child.userData?.type || 'unknown'}`);
                     objectsToRemove.push(child);
                 }
             }
@@ -679,9 +679,9 @@ class LiveSolarSystem {
         });
         
         if (objectsToRemove.length > 0) {
-            console.log(`🧹 Removed ${objectsToRemove.length} orphaned objects below Earth`);
+            console.log(` Removed ${objectsToRemove.length} orphaned objects below Earth`);
         } else {
-            console.log('✅ No orphaned objects found');
+            console.log('[SUCCESS] No orphaned objects found');
         }
     }
 
@@ -692,14 +692,14 @@ class LiveSolarSystem {
         try {
             // Don't reload if already loaded
             if (this.asteroidsLoaded) {
-                console.log('✅ Asteroids already loaded');
+                console.log('[SUCCESS] Asteroids already loaded');
                 return;
             }
             
             console.log('� Loading Near-Earth Objects from NASA NEO API...');
             const asteroidData = await this.nasaAPI.getNEOFeed();
             
-            console.log(`✅ Loaded ${asteroidData.length} Near-Earth Objects`);
+            console.log(`[SUCCESS] Loaded ${asteroidData.length} Near-Earth Objects`);
             
             // Clear any existing asteroids first
             this.clearAllAsteroids();
@@ -711,7 +711,7 @@ class LiveSolarSystem {
             // Store asteroids that successfully have orbits
             const asteroidsWithOrbits = [];
             
-            console.log('📡 Fetching REAL orbital data for each asteroid from NASA (this takes ~30-60 seconds)...');
+            console.log('[API] Fetching REAL orbital data for each asteroid from NASA (this takes ~30-60 seconds)...');
             
             for (let i = 0; i < asteroidData.length; i++) {
                 const asteroid = asteroidData[i];
@@ -737,11 +737,11 @@ class LiveSolarSystem {
                             failCount++;
                         }
                     } else {
-                        console.warn(`⚠️ ${asteroid.name}: No orbital data from NASA API, skipping`);
+                        console.warn(`[WARNING] ${asteroid.name}: No orbital data from NASA API, skipping`);
                         failCount++;
                     }
                 } catch (error) {
-                    console.error(`❌ Failed to fetch ${asteroid.name}:`, error.message);
+                    console.error(`[ERROR] Failed to fetch ${asteroid.name}:`, error.message);
                     failCount++;
                 }
             }
@@ -749,10 +749,10 @@ class LiveSolarSystem {
             // Store ONLY asteroids that have orbits in 3D scene
             this.loadedAsteroidData = asteroidsWithOrbits;
             
-            console.log(`📦 Stored ${asteroidsWithOrbits.length} asteroids with orbital data`);
+            console.log(` Stored ${asteroidsWithOrbits.length} asteroids with orbital data`);
             
             // Clean up any orphaned test objects or asteroids below Earth
-            console.log('🧹 Cleaning up orphaned objects...');
+            console.log(' Cleaning up orphaned objects...');
             const objectsToRemove = [];
             this.scene.children.forEach(child => {
                 // Remove any sphere objects positioned below the ecliptic plane (y < -5)
@@ -771,7 +771,7 @@ class LiveSolarSystem {
             });
             
             if (objectsToRemove.length > 0) {
-                console.log(`🧹 Removed ${objectsToRemove.length} orphaned objects below Earth`);
+                console.log(` Removed ${objectsToRemove.length} orphaned objects below Earth`);
             }
             
             // Update UI with asteroid list (only asteroids with orbits)
@@ -780,11 +780,11 @@ class LiveSolarSystem {
             // Mark as loaded
             this.asteroidsLoaded = true;
             
-            console.log(`\n🎉 ===== CREATION COMPLETE =====`);
-            console.log(`✅ Success: ${successCount} asteroids`);
-            console.log(`❌ Failed: ${failCount} asteroids`);
-            console.log(`📊 In scene: ${Object.keys(this.asteroids).length} asteroids`);
-            console.log(`🔴 Orbits: ${Object.keys(this.orbits).length}`);
+            console.log(`\n[COMPLETE] ===== CREATION COMPLETE =====`);
+            console.log(`[SUCCESS] Success: ${successCount} asteroids`);
+            console.log(`[ERROR] Failed: ${failCount} asteroids`);
+            console.log(`[STATS] In scene: ${Object.keys(this.asteroids).length} asteroids`);
+            console.log(` Orbits: ${Object.keys(this.orbits).length}`);
             console.log(`================================\n`);
             
             // List first 10 asteroids
@@ -797,7 +797,7 @@ class LiveSolarSystem {
             }
             
         } catch (error) {
-            console.error('❌ FATAL ERROR loading asteroids:', error);
+            console.error('[ERROR] FATAL ERROR loading asteroids:', error);
             console.error('Stack:', error.stack);
         }
     }
@@ -823,7 +823,7 @@ class LiveSolarSystem {
         this.asteroids = {};
         this.orbits = {};
         
-        console.log('🧹 Cleared all existing asteroids and orbits');
+        console.log(' Cleared all existing asteroids and orbits');
     }
     
     /**
@@ -834,11 +834,11 @@ class LiveSolarSystem {
      */
     async loadEarthImagery() {
         try {
-            console.log('🌍 Attempting to load real Earth imagery from NASA EPIC...');
+            console.log('[EARTH] Attempting to load real Earth imagery from NASA EPIC...');
             const earthImagery = await this.nasaAPI.getEarthImagery();
             
             if (earthImagery && earthImagery.url) {
-                console.log('✅ Earth imagery loaded:', earthImagery.date);
+                console.log('[SUCCESS] Earth imagery loaded:', earthImagery.date);
                 
                 // Load texture with CORS proxy if needed
                 const textureLoader = new THREE.TextureLoader();
@@ -854,24 +854,24 @@ class LiveSolarSystem {
                             this.planets.earth.material.roughness = 0.9;
                             this.planets.earth.material.metalness = 0.1;
                             this.planets.earth.material.needsUpdate = true;
-                            console.log('✅ Real Earth texture applied from NASA EPIC!');
+                            console.log('[SUCCESS] Real Earth texture applied from NASA EPIC!');
                         }
                     },
                     undefined,
                     (error) => {
-                        console.warn('⚠️ EPIC texture load failed, using fallback:', error.message);
+                        console.warn('[WARNING] EPIC texture load failed, using fallback:', error.message);
                         this.loadFallbackEarthTexture();
                     }
                 );
                 
                 this.earthImageryDate = earthImagery.date;
             } else {
-                console.log('ℹ️ No EPIC data available, using fallback Earth texture');
+                console.log('[INFO] No EPIC data available, using fallback Earth texture');
                 this.loadFallbackEarthTexture();
             }
         } catch (error) {
-            console.warn('⚠️ NASA EPIC API unavailable (503 Service Unavailable)');
-            console.log('ℹ️ Using fallback Earth texture instead');
+            console.warn('[WARNING] NASA EPIC API unavailable (503 Service Unavailable)');
+            console.log('[INFO] Using fallback Earth texture instead');
             this.loadFallbackEarthTexture();
             // Don't throw error - continue with fallback
         }
@@ -881,7 +881,7 @@ class LiveSolarSystem {
      * Load fallback Earth texture (high quality public domain)
      */
     loadFallbackEarthTexture() {
-        console.log('🌍 Loading fallback Earth texture...');
+        console.log('[EARTH] Loading fallback Earth texture...');
         
         // Try multiple fallback sources
         const earthTextures = [
@@ -901,7 +901,7 @@ class LiveSolarSystem {
     tryLoadEarthTexture(urls, index, textureLoader) {
         if (index >= urls.length) {
             // All sources failed, generate procedural Earth texture
-            console.log('🎨 All Earth textures failed, generating procedural texture');
+            console.log(' All Earth textures failed, generating procedural texture');
             this.createProceduralTexture('earth', this.planets.earth.material);
             return;
         }
@@ -917,7 +917,7 @@ class LiveSolarSystem {
                     this.planets.earth.material.map = texture;
                     this.planets.earth.material.color.setHex(0xffffff);
                     this.planets.earth.material.needsUpdate = true;
-                    console.log(`✅ Fallback Earth texture applied (source ${index + 1})`);
+                    console.log(`[SUCCESS] Fallback Earth texture applied (source ${index + 1})`);
                 }
             },
             undefined,
@@ -942,10 +942,10 @@ class LiveSolarSystem {
         }
         
         // Try to get real NASA imagery from NASA Image Library API
-        console.log(`🔍 Fetching real NASA imagery for ${planetKey}...`);
+        console.log(` Fetching real NASA imagery for ${planetKey}...`);
         this.nasaAPI.getRealPlanetTexture(planetKey).then(imageData => {
             if (imageData && imageData.url) {
-                console.log(`📸 Loading NASA image for ${planetKey}: ${imageData.title}`);
+                console.log(` Loading NASA image for ${planetKey}: ${imageData.title}`);
                 textureLoader.load(
                     imageData.url,
                     (texture) => {
@@ -953,20 +953,20 @@ class LiveSolarSystem {
                         material.map = texture;
                         material.color.setHex(0xffffff);
                         material.needsUpdate = true;
-                        console.log(`✅ Successfully loaded NASA image for ${planetKey}`);
+                        console.log(`[SUCCESS] Successfully loaded NASA image for ${planetKey}`);
                     },
                     undefined,
                     (error) => {
-                        console.warn(`📸 NASA image failed for ${planetKey}, using procedural texture`);
+                        console.warn(` NASA image failed for ${planetKey}, using procedural texture`);
                         this.createProceduralTexture(planetKey, material);
                     }
                 );
             } else {
-                console.log(`ℹ️ No NASA image found for ${planetKey}, generating procedural texture`);
+                console.log(`[INFO] No NASA image found for ${planetKey}, generating procedural texture`);
                 this.createProceduralTexture(planetKey, material);
             }
         }).catch(error => {
-            console.warn(`⚠️ Error loading NASA texture for ${planetKey}:`, error.message || error);
+            console.warn(`[WARNING] Error loading NASA texture for ${planetKey}:`, error.message || error);
             this.createProceduralTexture(planetKey, material);
         });
     }
@@ -975,7 +975,7 @@ class LiveSolarSystem {
      * Create procedural texture using canvas (always works, no CORS issues)
      */
     createProceduralTexture(planetKey, material, baseColorOverride = null) {
-        console.log(`🎨 Generating procedural texture for ${planetKey}...`);
+        console.log(` Generating procedural texture for ${planetKey}...`);
         
         // Planet colors
         const planetColors = {
@@ -1048,7 +1048,7 @@ class LiveSolarSystem {
         material.metalness = 0.1;
         material.needsUpdate = true;
         
-        console.log(`✅ Generated high-quality procedural texture for ${planetKey}`);
+        console.log(`[SUCCESS] Generated high-quality procedural texture for ${planetKey}`);
     }
 
     /**
@@ -1058,7 +1058,7 @@ class LiveSolarSystem {
         try {
             // Validate asteroid data
             if (!asteroidData || !asteroidData.id || !asteroidData.name) {
-                console.warn('⚠️ Invalid asteroid data - missing id or name, skipping');
+                console.warn('[WARNING] Invalid asteroid data - missing id or name, skipping');
                 return false;
             }
             
@@ -1068,7 +1068,7 @@ class LiveSolarSystem {
             // Determine danger level based on distance and hazard status
             const missDistanceKm = asteroidData.miss_distance_km || asteroidData.close_approach_data?.[0]?.miss_distance?.kilometers;
             if (!missDistanceKm) {
-                console.warn(`⚠️ ${asteroidData.name}: No miss distance data, skipping`);
+                console.warn(`[WARNING] ${asteroidData.name}: No miss distance data, skipping`);
                 return false;
             }
             
@@ -1139,7 +1139,7 @@ class LiveSolarSystem {
             
             // ONLY USE REAL NASA ORBITAL DATA - NO FAKE DATA!
             if (!asteroidData.orbital_data) {
-                console.warn(`⚠️ ${asteroidData.name}: No real orbital data from NASA, skipping (no fake data allowed)`);
+                console.warn(`[WARNING] ${asteroidData.name}: No real orbital data from NASA, skipping (no fake data allowed)`);
                 return false;
             }
             
@@ -1151,11 +1151,11 @@ class LiveSolarSystem {
             const omega = parseFloat(asteroidData.orbital_data.perihelion_argument) * Math.PI / 180;
             const M = parseFloat(asteroidData.orbital_data.mean_anomaly) * Math.PI / 180;
             
-            console.log(`✅ REAL NASA DATA for ${asteroidData.name}: a=${a.toFixed(3)} AU, e=${e.toFixed(3)}, i=${(i*180/Math.PI).toFixed(1)}°`);
+            console.log(`[SUCCESS] REAL NASA DATA for ${asteroidData.name}: a=${a.toFixed(3)} AU, e=${e.toFixed(3)}, i=${(i*180/Math.PI).toFixed(1)}°`);
             
             // Validate orbital elements
             if (isNaN(a) || a <= 0 || isNaN(e) || e < 0 || e >= 1) {
-                console.warn(`⚠️ ${asteroidData.name}: Invalid orbital elements, skipping`);
+                console.warn(`[WARNING] ${asteroidData.name}: Invalid orbital elements, skipping`);
                 return false;
             }
             
@@ -1210,7 +1210,7 @@ class LiveSolarSystem {
         this.asteroids[asteroidData.id] = asteroid;
         this.scene.add(asteroid);
         
-        console.log(`🪨 ${asteroidData.name}: pos=(${asteroid.position.x.toFixed(1)}, ${asteroid.position.y.toFixed(1)}, ${asteroid.position.z.toFixed(1)})`);
+        console.log(`[ROCK] ${asteroidData.name}: pos=(${asteroid.position.x.toFixed(1)}, ${asteroid.position.y.toFixed(1)}, ${asteroid.position.z.toFixed(1)})`);
         
         // Create elliptical orbit
         this.createSimpleOrbit(asteroid, asteroidData, a, e, i, Omega, omega);
@@ -1218,7 +1218,7 @@ class LiveSolarSystem {
         return true; // Success!
         
         } catch (error) {
-            console.error(`❌ Error creating asteroid ${asteroidData?.name || 'unknown'}:`, error.message);
+            console.error(`[ERROR] Error creating asteroid ${asteroidData?.name || 'unknown'}:`, error.message);
             return false; // Failed
         }
     }
@@ -1230,7 +1230,7 @@ class LiveSolarSystem {
         const orbitPoints = [];
         const segments = 180;
         
-        console.log(`🛰️ ${asteroidData.name}: Creating orbit (a=${a.toFixed(3)} AU, e=${e.toFixed(3)})`);
+        console.log(` ${asteroidData.name}: Creating orbit (a=${a.toFixed(3)} AU, e=${e.toFixed(3)})`);
         
         // Generate elliptical orbit points around the SUN
         for (let j = 0; j <= segments; j++) {
@@ -1305,7 +1305,7 @@ class LiveSolarSystem {
         asteroid.userData.orbitLine = orbit;
         this.orbits[asteroidData.id] = orbit;
         
-        console.log(`✅ Orbit created for ${asteroidData.name} (${orbitPoints.length} points)`);
+        console.log(`[SUCCESS] Orbit created for ${asteroidData.name} (${orbitPoints.length} points)`);
     }
     
     /**
@@ -1342,7 +1342,7 @@ class LiveSolarSystem {
             // Focus camera on asteroid
             this.focusOnObject(asteroid);
             
-            console.log(`✨ Highlighted asteroid: ${asteroid.name} and its orbit`);
+            console.log(`[SPARKLE] Highlighted asteroid: ${asteroid.name} and its orbit`);
         }
     }
 
@@ -1350,12 +1350,12 @@ class LiveSolarSystem {
      * Update asteroid list in UI
      */
     updateAsteroidUI(asteroids) {
-        console.log('\n🔍 ===== updateAsteroidUI CALLED =====');
-        console.log(`📥 Displaying ${asteroids ? asteroids.length : 0} asteroids`);
+        console.log('\n ===== updateAsteroidUI CALLED =====');
+        console.log(` Displaying ${asteroids ? asteroids.length : 0} asteroids`);
         
         const asteroidList = document.getElementById('asteroid-list');
         if (!asteroidList) {
-            console.error('❌ asteroid-list element not found!');
+            console.error('[ERROR] asteroid-list element not found!');
             return;
         }
         
@@ -1387,7 +1387,7 @@ class LiveSolarSystem {
             if (isPotentiallyHazardous && isVeryClose) {
                 dangerLevel = 'EXTREME'; // Match the filter system
                 dangerColor = '#ff0000';
-                dangerIcon = '🔴';
+                dangerIcon = '';
             } else if (isPotentiallyHazardous || isClose) {
                 dangerLevel = 'HIGH'; // Match the filter system
                 dangerColor = '#ff6666';
@@ -1430,13 +1430,13 @@ class LiveSolarSystem {
                     </span>
                 </div>
                 <div class="asteroid-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.85rem; margin-bottom: 4px;">
-                    <span class="asteroid-size">📏 ${asteroid.diameter_km_avg.toFixed(3)} km</span>
+                    <span class="asteroid-size"> ${asteroid.diameter_km_avg.toFixed(3)} km</span>
                     <span>${sizeCategory} Object</span>
-                    <span class="asteroid-velocity">⚡ ${asteroid.velocity_kmps.toFixed(1)} km/s</span>
-                    <span class="asteroid-distance">📍 ${(missDistance / 1000).toFixed(0)}K km</span>
+                    <span class="asteroid-velocity"> ${asteroid.velocity_kmps.toFixed(1)} km/s</span>
+                    <span class="asteroid-distance">[LOCATION] ${(missDistance / 1000).toFixed(0)}K km</span>
                 </div>
                 <div style="font-size: 0.75rem; color: #888; text-align: center; padding: 4px; background: rgba(255,255,255,0.05); border-radius: 4px;">
-                    ${isPotentiallyHazardous ? '⚠️ Potentially Hazardous' : '✅ Non-Hazardous'} • ${hasOrbit ? '🎯 Click to highlight orbit' : '⚪ No orbit data'}
+                    ${isPotentiallyHazardous ? '[WARNING] Potentially Hazardous' : '[SUCCESS] Non-Hazardous'} • ${hasOrbit ? '[TARGET] Click to highlight orbit' : ' No orbit data'}
                 </div>
             `;
             
@@ -1466,7 +1466,7 @@ class LiveSolarSystem {
             asteroidList.appendChild(asteroidDiv);
         });
         
-        console.log(`✅ Displayed ${asteroids.length} asteroids in the list`);
+        console.log(`[SUCCESS] Displayed ${asteroids.length} asteroids in the list`);
         console.log('===== updateAsteroidUI COMPLETE =====\n');
     }
 
@@ -1485,7 +1485,7 @@ class LiveSolarSystem {
             this.selectedObject = asteroid;
             this.updateSelectedObjectInfo(asteroid.userData.info);
             
-            console.log(`📍 Selected asteroid: ${asteroid.name}`);
+            console.log(`[LOCATION] Selected asteroid: ${asteroid.name}`);
         }
     }
 
@@ -1513,7 +1513,7 @@ class LiveSolarSystem {
             this.camera.lookAt(earthPosition);
             this.controls.target.copy(earthPosition);
             
-            console.log('✅ Camera focused on Earth');
+            console.log('[SUCCESS] Camera focused on Earth');
         }
     }
 
@@ -1536,7 +1536,7 @@ class LiveSolarSystem {
         // Update current focused object tracking
         this.currentFocusedObject = object;
         
-        console.log(`🎯 Focusing on: ${objectName}${isAsteroid ? ' (Asteroid)' : ''}${isSameObject ? ' (Same object)' : ' (New object)'}`);
+        console.log(`[TARGET] Focusing on: ${objectName}${isAsteroid ? ' (Asteroid)' : ''}${isSameObject ? ' (Same object)' : ' (New object)'}`);
         
         // Calculate optimal camera distance based on object type (NASA professional standards)
         let cameraDistance = 20;
@@ -1567,25 +1567,25 @@ class LiveSolarSystem {
         
         // Smooth professional camera transition
         this.animateCameraToTarget(newCameraPosition, targetPosition, () => {
-            console.log(`📸 Camera focused on: ${objectName}`);
+            console.log(` Camera focused on: ${objectName}`);
             
-            // ⭐ SMART AUTO-RETURN LOGIC ⭐
+            // [STAR] SMART AUTO-RETURN LOGIC [STAR]
             // Only set auto-return timeout if:
             // 1. Not focusing on Earth (Earth is home view)
             // 2. Not an asteroid (asteroids should stay focused)
             // 3. Not the same object (clicking same planet again shouldn't reset timer)
             if (!objectName.includes('earth') && !isAsteroid && !isSameObject) {
-                console.log('⏰ Setting auto-return timer (8 seconds) - Different planet clicked');
+                console.log(' Setting auto-return timer (8 seconds) - Different planet clicked');
                 this.cameraReturnTimeout = setTimeout(() => {
-                    console.log('🌍 Auto-returning to Earth view...');
+                    console.log('[EARTH] Auto-returning to Earth view...');
                     if (this.planets.earth) {
                         this.focusOnObject(this.planets.earth);
                     }
                 }, 8000);
             } else if (isSameObject) {
-                console.log('✨ Same object clicked - keeping current view without auto-return');
+                console.log('[SPARKLE] Same object clicked - keeping current view without auto-return');
             } else if (isAsteroid) {
-                console.log('☄️ Asteroid focused - no auto-return');
+                console.log('[ASTEROID] Asteroid focused - no auto-return');
             }
         });
     }
@@ -1757,7 +1757,7 @@ class LiveSolarSystem {
                     details: [`Clicked on ${planetKey} orbit`]
                 };
                 this.updateSelectedObjectInfo(info);
-                console.log(`🪐 Clicked on ${planetKey.toUpperCase()} orbit`);
+                console.log(`[PLANET] Clicked on ${planetKey.toUpperCase()} orbit`);
                 return;
             }
         }
@@ -1770,7 +1770,7 @@ class LiveSolarSystem {
             // Clicked on an asteroid orbit - highlight it
             const clickedOrbit = orbitIntersects[0].object;
             this.highlightOrbit(clickedOrbit);
-            console.log(`🎯 Clicked on asteroid orbit: ${clickedOrbit.userData.asteroidName}`);
+            console.log(`[TARGET] Clicked on asteroid orbit: ${clickedOrbit.userData.asteroidName}`);
             return;
         }
         
@@ -1827,7 +1827,7 @@ class LiveSolarSystem {
         orbitLine.material.opacity = 1.0;
         orbitLine.material.needsUpdate = true;
         
-        console.log(`✨ ${planetKey.toUpperCase()} orbit highlighted in BLUE`);
+        console.log(`[SPARKLE] ${planetKey.toUpperCase()} orbit highlighted in BLUE`);
         
         // Auto-restore after 8 seconds
         setTimeout(() => {
@@ -1859,7 +1859,7 @@ class LiveSolarSystem {
         orbit.material.needsUpdate = true;
         orbit.userData.isHighlighted = true;
         
-        console.log(`✨ Highlighted orbit: ${orbit.userData.asteroidName} in BLUE (camera stays in place)`);
+        console.log(`[SPARKLE] Highlighted orbit: ${orbit.userData.asteroidName} in BLUE (camera stays in place)`);
         
         // Update info display WITHOUT moving camera
         const asteroidId = orbit.userData.asteroidId;
@@ -1986,96 +1986,96 @@ class LiveSolarSystem {
                 title: 'Mercury',
                 subtitle: 'The Swift Planet',
                 details: [
-                    '📏 Diameter: 4,879 km',
-                    '🌡️ Temperature: -173°C to 427°C',
-                    '⏱️ Day: 59 Earth days',
-                    '🔄 Year: 88 Earth days',
-                    '📍 Distance: 0.39 AU from Sun',
-                    '🪨 Type: Terrestrial planet'
+                    ' Diameter: 4,879 km',
+                    ' Temperature: -173°C to 427°C',
+                    ' Day: 59 Earth days',
+                    '[REFRESH] Year: 88 Earth days',
+                    '[LOCATION] Distance: 0.39 AU from Sun',
+                    '[ROCK] Type: Terrestrial planet'
                 ]
             },
             venus: {
                 title: 'Venus',
                 subtitle: 'The Morning Star',
                 details: [
-                    '📏 Diameter: 12,104 km',
-                    '🌡️ Temperature: 462°C (hottest planet)',
-                    '⏱️ Day: 243 Earth days',
-                    '🔄 Year: 225 Earth days',
-                    '📍 Distance: 0.72 AU from Sun',
-                    '☁️ Atmosphere: 96% CO₂, thick clouds'
+                    ' Diameter: 12,104 km',
+                    ' Temperature: 462°C (hottest planet)',
+                    ' Day: 243 Earth days',
+                    '[REFRESH] Year: 225 Earth days',
+                    '[LOCATION] Distance: 0.72 AU from Sun',
+                    ' Atmosphere: 96% CO₂, thick clouds'
                 ]
             },
             earth: {
                 title: 'Earth',
                 subtitle: 'Our Home Planet',
                 details: [
-                    '📏 Diameter: 12,756 km',
-                    '🌡️ Temperature: -88°C to 58°C',
-                    '⏱️ Day: 24 hours',
-                    '🔄 Year: 365.25 days',
-                    '📍 Distance: 1.00 AU from Sun',
-                    '🌍 Only known planet with life'
+                    ' Diameter: 12,756 km',
+                    ' Temperature: -88°C to 58°C',
+                    ' Day: 24 hours',
+                    '[REFRESH] Year: 365.25 days',
+                    '[LOCATION] Distance: 1.00 AU from Sun',
+                    '[EARTH] Only known planet with life'
                 ]
             },
             mars: {
                 title: 'Mars',
                 subtitle: 'The Red Planet',
                 details: [
-                    '📏 Diameter: 6,792 km',
-                    '🌡️ Temperature: -87°C to -5°C',
-                    '⏱️ Day: 24.6 hours',
-                    '🔄 Year: 687 Earth days',
-                    '📍 Distance: 1.52 AU from Sun',
-                    '🔴 Red color from iron oxide'
+                    ' Diameter: 6,792 km',
+                    ' Temperature: -87°C to -5°C',
+                    ' Day: 24.6 hours',
+                    '[REFRESH] Year: 687 Earth days',
+                    '[LOCATION] Distance: 1.52 AU from Sun',
+                    ' Red color from iron oxide'
                 ]
             },
             jupiter: {
                 title: 'Jupiter',
                 subtitle: 'The Gas Giant',
                 details: [
-                    '📏 Diameter: 142,984 km',
-                    '🌡️ Temperature: -108°C',
-                    '⏱️ Day: 9.9 hours',
-                    '🔄 Year: 11.9 Earth years',
-                    '📍 Distance: 5.20 AU from Sun',
-                    '🌙 79+ known moons'
+                    ' Diameter: 142,984 km',
+                    ' Temperature: -108°C',
+                    ' Day: 9.9 hours',
+                    '[REFRESH] Year: 11.9 Earth years',
+                    '[LOCATION] Distance: 5.20 AU from Sun',
+                    ' 79+ known moons'
                 ]
             },
             saturn: {
                 title: 'Saturn',
                 subtitle: 'The Ringed Planet',
                 details: [
-                    '📏 Diameter: 120,536 km',
-                    '🌡️ Temperature: -139°C',
-                    '⏱️ Day: 10.7 hours',
-                    '🔄 Year: 29.4 Earth years',
-                    '📍 Distance: 9.58 AU from Sun',
-                    '💍 Spectacular ring system'
+                    ' Diameter: 120,536 km',
+                    ' Temperature: -139°C',
+                    ' Day: 10.7 hours',
+                    '[REFRESH] Year: 29.4 Earth years',
+                    '[LOCATION] Distance: 9.58 AU from Sun',
+                    ' Spectacular ring system'
                 ]
             },
             uranus: {
                 title: 'Uranus',
                 subtitle: 'The Ice Giant',
                 details: [
-                    '📏 Diameter: 51,118 km',
-                    '🌡️ Temperature: -197°C',
-                    '⏱️ Day: 17.2 hours',
-                    '🔄 Year: 84 Earth years',
-                    '📍 Distance: 19.18 AU from Sun',
-                    '🔄 Rotates on its side'
+                    ' Diameter: 51,118 km',
+                    ' Temperature: -197°C',
+                    ' Day: 17.2 hours',
+                    '[REFRESH] Year: 84 Earth years',
+                    '[LOCATION] Distance: 19.18 AU from Sun',
+                    '[REFRESH] Rotates on its side'
                 ]
             },
             neptune: {
                 title: 'Neptune',
                 subtitle: 'The Windy Planet',
                 details: [
-                    '📏 Diameter: 49,528 km',
-                    '🌡️ Temperature: -201°C',
-                    '⏱️ Day: 16.1 hours',
-                    '🔄 Year: 164.8 Earth years',
-                    '📍 Distance: 30.07 AU from Sun',
-                    '💨 Fastest winds: 2,100 km/h'
+                    ' Diameter: 49,528 km',
+                    ' Temperature: -201°C',
+                    ' Day: 16.1 hours',
+                    '[REFRESH] Year: 164.8 Earth years',
+                    '[LOCATION] Distance: 30.07 AU from Sun',
+                    ' Fastest winds: 2,100 km/h'
                 ]
             }
         };
@@ -2210,7 +2210,7 @@ class LiveSolarSystem {
         console.log('\n� ========== SHOWING ASTEROID ORBITS ==========');
         
         if (!this.asteroidsLoaded) {
-            console.log('⏳ Loading asteroid data from NASA...');
+            console.log('[LOADING] Loading asteroid data from NASA...');
             await this.loadAsteroidData();
         }
         
@@ -2231,9 +2231,9 @@ class LiveSolarSystem {
             asteroid.visible = true;
         });
         
-        console.log(`✅ Made ${visibleCount} color-coded asteroid orbits visible`);
-        console.log('🔴 RED = High Risk, 🟡 YELLOW = Moderate Risk, 🟢 GREEN = Safe');
-        console.log('💡 Click on any orbit or list item to highlight it in BLUE');
+        console.log(`[SUCCESS] Made ${visibleCount} color-coded asteroid orbits visible`);
+        console.log(' RED = High Risk, 🟡 YELLOW = Moderate Risk, 🟢 GREEN = Safe');
+        console.log('[TIP] Click on any orbit or list item to highlight it in BLUE');
         console.log('==========================================\n');
         
         // Apply initial toggle filters (all should be active by default)
@@ -2249,23 +2249,23 @@ class LiveSolarSystem {
      */
     async loadAsteroidBelt(count = 500) {
         if (this.asteroidBeltLoaded) {
-            console.log('✅ Asteroid belt already loaded');
+            console.log('[SUCCESS] Asteroid belt already loaded');
             this.showAsteroidBelt();
             return;
         }
 
-        console.log(`🪨 Loading Main Asteroid Belt with ${count} asteroids...`);
+        console.log(`[ROCK] Loading Main Asteroid Belt with ${count} asteroids...`);
         
         try {
             // Fetch real asteroid data from NASA
             const asteroidData = await this.nasaAPI.getMainBeltAsteroids(count);
             
             if (!asteroidData || asteroidData.length === 0) {
-                console.error('❌ No asteroid belt data available');
+                console.error('[ERROR] No asteroid belt data available');
                 return;
             }
 
-            console.log(`📊 Creating ${asteroidData.length} asteroid belt objects...`);
+            console.log(`[STATS] Creating ${asteroidData.length} asteroid belt objects...`);
             
             // Create visual objects for each asteroid
             asteroidData.forEach((asteroidInfo, index) => {
@@ -2277,11 +2277,11 @@ class LiveSolarSystem {
 
             this.asteroidBeltLoaded = true;
             this.asteroidBeltVisible = true;
-            console.log(`✅ Asteroid belt loaded with ${this.asteroidBelt.length} objects`);
+            console.log(`[SUCCESS] Asteroid belt loaded with ${this.asteroidBelt.length} objects`);
 
             
         } catch (error) {
-            console.error('❌ Error loading asteroid belt:', error);
+            console.error('[ERROR] Error loading asteroid belt:', error);
         }
     }
 
@@ -2405,7 +2405,7 @@ class LiveSolarSystem {
      * Create dust particles for asteroid belt realism
      */
     createAsteroidDustParticles(count = 2000) {
-        console.log(`✨ Adding ${count} dust particles to asteroid belt...`);
+        console.log(`[SPARKLE] Adding ${count} dust particles to asteroid belt...`);
         
         const particleGeometry = new THREE.BufferGeometry();
         const positions = [];
@@ -2445,7 +2445,7 @@ class LiveSolarSystem {
         this.scene.add(this.asteroidDust);
         this.asteroidBelt.push(this.asteroidDust); // Add to belt array for cleanup
         
-        console.log('✨ Dust particles added');
+        console.log('[SPARKLE] Dust particles added');
     }
 
     /**
@@ -2504,7 +2504,7 @@ class LiveSolarSystem {
      * Show asteroid belt
      */
     showAsteroidBelt() {
-        console.log('👁️ Showing asteroid belt...');
+        console.log(' Showing asteroid belt...');
         this.asteroidBelt.forEach(asteroid => {
             asteroid.visible = true;
         });
@@ -2515,7 +2515,7 @@ class LiveSolarSystem {
      * Hide asteroid belt
      */
     hideAsteroidBelt() {
-        console.log('🙈 Hiding asteroid belt...');
+        console.log(' Hiding asteroid belt...');
         this.asteroidBelt.forEach(asteroid => {
             asteroid.visible = false;
         });
@@ -2526,7 +2526,7 @@ class LiveSolarSystem {
      * Hide all asteroids and their orbits (called when switching away from Asteroids tab)
      */
     hideAsteroids() {
-        console.log('🧹 Hiding all asteroid orbits and objects...');
+        console.log(' Hiding all asteroid orbits and objects...');
         
         let hiddenCount = 0;
         
@@ -2543,7 +2543,7 @@ class LiveSolarSystem {
             asteroid.visible = false;
         });
         
-        console.log(`✅ Hidden ${hiddenCount} asteroid orbits and all asteroid objects`);
+        console.log(`[SUCCESS] Hidden ${hiddenCount} asteroid orbits and all asteroid objects`);
     }
 
     toggleLabels() {

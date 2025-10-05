@@ -14,19 +14,39 @@ body {
     user-select: none;
 }
 
-/* Loading Screen */
+/* Premium Loading Screen - Matching HomePage & Navigation Design */
 #loading-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #0b1426 0%, #1a1a2e 50%, #16213e 100%);
+    background: radial-gradient(ellipse at center, rgba(11, 61, 145, 0.15) 0%, #000000 70%);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    transition: opacity 1s ease-out;
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+
+#loading-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(252, 61, 33, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(96, 165, 250, 0.08) 0%, transparent 50%);
+    animation: ambientPulse 8s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
 }
 
 #loading-screen.hidden {
@@ -36,27 +56,103 @@ body {
 
 .loading-content {
     text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 40px;
 }
 
-.nasa-logo {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #ff6b35;
-    margin-bottom: 30px;
-    text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+.loading-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffffff 0%, #60a5fa 50%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    text-transform: uppercase;
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.3));
+    }
+    50% { 
+        filter: drop-shadow(0 0 40px rgba(96, 165, 250, 0.6));
+    }
+}
+
+.loading-subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 4px;
+    margin-bottom: 50px;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
 }
 
 .loading-spinner {
-    width: 60px;
-    height: 60px;
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    border-left: 4px solid #ff6b35;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 40px;
 }
 
-@keyframes spin {
+.spinner-orbit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-top-color: rgba(96, 165, 250, 0.8);
+    border-radius: 50%;
+    animation: spinOrbit 3s linear infinite;
+}
+
+.spinner-orbit.orbit-2 {
+    width: 75%;
+    height: 75%;
+    top: 12.5%;
+    left: 12.5%;
+    border-top-color: rgba(129, 140, 248, 0.8);
+    animation-duration: 2s;
+    animation-direction: reverse;
+}
+
+.spinner-orbit.orbit-3 {
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    left: 25%;
+    border-top-color: rgba(252, 61, 33, 0.8);
+    animation-duration: 1.5s;
+}
+
+.spinner-planet {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #60a5fa, #818cf8);
+    border-radius: 50%;
+    top: -6px;
+    left: 50%;
+    margin-left: -6px;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.8);
+}
+
+.orbit-2 .spinner-planet {
+    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    box-shadow: 0 0 15px rgba(129, 140, 248, 0.8);
+}
+
+.orbit-3 .spinner-planet {
+    background: linear-gradient(135deg, #FC3D21, #FF8C42);
+    box-shadow: 0 0 15px rgba(252, 61, 33, 0.8);
+}
+
+@keyframes spinOrbit {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
@@ -64,37 +160,85 @@ body {
 .loading-text {
     font-size: 1.2rem;
     margin-bottom: 20px;
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    letter-spacing: 1px;
+    font-family: 'Inter', sans-serif;
 }
 
 .loading-status {
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-    opacity: 0.6;
-    color: #ffa726;
-    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+    color: rgba(96, 165, 250, 0.8);
+    font-weight: 400;
+    opacity: 0.9;
+    font-family: 'Inter', sans-serif;
 }
 
 .loading-progress {
-    width: 300px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
+    width: min(500px, 85vw);
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
     overflow: hidden;
     margin: 0 auto;
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(96, 165, 250, 0.1);
+    position: relative;
 }
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #ff6b35, #ffa726);
+    background: linear-gradient(90deg, 
+        #60a5fa 0%, 
+        #818cf8 25%, 
+        #a78bfa 50%, 
+        #818cf8 75%, 
+        #60a5fa 100%
+    );
+    background-size: 200% 100%;
     width: 0%;
-    animation: progress 5s ease-out forwards;
+    animation: 
+        progressFill 5s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+        progressShimmer 2s linear infinite;
+    border-radius: 20px;
+    box-shadow: 
+        0 0 30px rgba(96, 165, 250, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
-@keyframes progress {
+.progress-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.3) 50%, 
+        transparent 100%
+    );
+    animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressFill {
     0% { width: 0%; }
-    50% { width: 60%; } /* Slower in the middle for asteroid loading */
+    30% { width: 45%; }
+    60% { width: 75%; }
     100% { width: 100%; }
+}
+
+@keyframes progressShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes progressShine {
+    0% { left: -100%; }
+    100% { left: 200%; }
 }
 
 /* Main Container */
@@ -164,11 +308,23 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1.2rem;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .menu-btn:hover {
     background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.menu-btn svg {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-btn:hover svg {
+    transform: rotate(90deg);
 }
 
 /* Side Panel */
@@ -232,17 +388,47 @@ body {
     padding: 12px 5px;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.tab-icon {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.7;
 }
 
 .tab-btn:hover {
     background: rgba(255, 255, 255, 0.05);
 }
 
+.tab-btn:hover .tab-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
 .tab-btn.active {
     color: #ff6b35;
     border-bottom-color: #ff6b35;
+}
+
+.tab-btn.active .tab-icon {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(255, 107, 53, 0.5));
+}
+
+/* Header Icons */
+.header-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 6px rgba(255, 107, 53, 0.3));
 }
 
 .tab-content {
@@ -276,16 +462,30 @@ body {
 .planet-item:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .planet-item.selected {
     background: rgba(255, 107, 53, 0.2);
     border-color: #ff6b35;
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
 }
 
 .planet-icon {
     font-size: 1.5rem;
     min-width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.planet-icon svg {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.planet-item:hover .planet-icon svg {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px currentColor);
 }
 
 .planet-info {

@@ -8,7 +8,7 @@ class NASAAPIService {
     constructor() {
         // Version identifier
         this.version = '2.0-planet-images';
-        console.log(`🚀 NASA API Service v${this.version} initialized`);
+        console.log(`[INIT] NASA API Service v${this.version} initialized`);
         
         // NASA NEO API configuration
         this.baseURL = 'https://api.nasa.gov/neo/rest/v1';
@@ -34,7 +34,7 @@ class NASAAPIService {
         
         if (timeSinceLastRequest < this.requestDelay) {
             const waitTime = this.requestDelay - timeSinceLastRequest;
-            console.log(`⏱️ Rate limiting: waiting ${waitTime}ms...`);
+            console.log(` Rate limiting: waiting ${waitTime}ms...`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
         }
         
@@ -61,7 +61,7 @@ class NASAAPIService {
             if (this.cache.has(cacheKey)) {
                 const cached = this.cache.get(cacheKey);
                 if (Date.now() - cached.timestamp < this.cacheTimeout) {
-                    console.log('✅ Using cached NEO data');
+                    console.log('[SUCCESS] Using cached NEO data');
                     return cached.data;
                 }
             }
@@ -71,32 +71,32 @@ class NASAAPIService {
             
             const url = `${this.baseURL}/feed?start_date=${startDate}&end_date=${endDate}&api_key=${this.apiKey}`;
             
-            console.log(`📡 Fetching NEO data from NASA API...`);
-            console.log(`🔗 URL: ${url.replace(this.apiKey, 'API_KEY_HIDDEN')}`);
-            console.log(`📅 Date range: ${startDate} to ${endDate}`);
+            console.log(`[API] Fetching NEO data from NASA API...`);
+            console.log(`[LINK] URL: ${url.replace(this.apiKey, 'API_KEY_HIDDEN')}`);
+            console.log(`[DATE] Date range: ${startDate} to ${endDate}`);
             
             const response = await fetch(url);
             
             if (!response.ok) {
                 if (response.status === 429) {
-                    console.warn(`⚠️ NASA API Rate limit exceeded! Switching to procedural asteroid generation...`);
-                    console.log(`💡 The app will continue working with simulated data.`);
+                    console.warn(`[WARNING] NASA API Rate limit exceeded! Switching to procedural asteroid generation...`);
+                    console.log(`[TIP] The app will continue working with simulated data.`);
                     return this.getMockAsteroidData(); // Return mock data immediately on rate limit
                 }
-                console.error(`❌ NASA API error: ${response.status} ${response.statusText}`);
+                console.error(`[ERROR] NASA API error: ${response.status} ${response.statusText}`);
                 throw new Error(`NASA API error: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
             
-            console.log('✅ NASA API response received');
-            console.log(`📊 Element count: ${data.element_count || 0}`);
-            console.log(`📊 Near Earth Objects:`, Object.keys(data.near_earth_objects || {}).length, 'days of data');
+            console.log('[SUCCESS] NASA API response received');
+            console.log(`[STATS] Element count: ${data.element_count || 0}`);
+            console.log(`[STATS] Near Earth Objects:`, Object.keys(data.near_earth_objects || {}).length, 'days of data');
             
             // Process and filter data
             const asteroids = this.processNEOFeedData(data, hazardousOnly);
             
-            console.log(`✅ Processed ${asteroids.length} asteroids from NASA NEO API`);
+            console.log(`[SUCCESS] Processed ${asteroids.length} asteroids from NASA NEO API`);
             
             // Cache the result
             this.cache.set(cacheKey, {
@@ -107,9 +107,9 @@ class NASAAPIService {
             return asteroids;
 
         } catch (error) {
-            console.error('❌ Error fetching NEO feed:', error);
+            console.error('[ERROR] Error fetching NEO feed:', error);
             console.error('Stack:', error.stack);
-            console.warn('⚠️ Falling back to mock data due to API error');
+            console.warn('[WARNING] Falling back to mock data due to API error');
             // Return mock data on error
             return this.getMockAsteroidData();
         }
@@ -138,7 +138,7 @@ class NASAAPIService {
             
             if (!response.ok) {
                 if (response.status === 429) {
-                    console.warn(`⚠️ Rate limit hit for asteroid ${asteroidId}. Skipping for now.`);
+                    console.warn(`[WARNING] Rate limit hit for asteroid ${asteroidId}. Skipping for now.`);
                     return null; // Return null instead of throwing error
                 }
                 throw new Error(`NASA API error: ${response.status} ${response.statusText}`);
@@ -168,7 +168,7 @@ class NASAAPIService {
     processNEOFeedData(data, hazardousOnly = false) {
         const asteroids = [];
         
-        console.log('📡 Processing NEO Feed Data...');
+        console.log('[API] Processing NEO Feed Data...');
         
         for (const dateKey in data.near_earth_objects) {
             const dayAsteroids = data.near_earth_objects[dateKey];
@@ -226,16 +226,16 @@ class NASAAPIService {
                 
                 // Log first 5 asteroids for debugging
                 if (asteroids.length <= 5) {
-                    console.log(`🪨 Asteroid #${asteroids.length}: ${processedAsteroid.name}`);
+                    console.log(`[ROCK] Asteroid #${asteroids.length}: ${processedAsteroid.name}`);
                     console.log(`   - Miss distance: ${(processedAsteroid.miss_distance_km / 1000).toFixed(0)} thousand km`);
-                    console.log(`   - Hazardous: ${processedAsteroid.is_potentially_hazardous ? '⚠️ YES' : '✅ NO'}`);
+                    console.log(`   - Hazardous: ${processedAsteroid.is_potentially_hazardous ? '[WARNING] YES' : '[SUCCESS] NO'}`);
                     console.log(`   - Diameter: ${processedAsteroid.diameter_km_avg.toFixed(3)} km`);
                 }
             }
         }
 
-        console.log(`\n✅ Successfully processed ${asteroids.length} asteroids from NEO feed`);
-        console.log(`📊 Breakdown:`);
+        console.log(`\n[SUCCESS] Successfully processed ${asteroids.length} asteroids from NEO feed`);
+        console.log(`[STATS] Breakdown:`);
         console.log(`   - Hazardous: ${asteroids.filter(a => a.is_potentially_hazardous).length}`);
         console.log(`   - Safe: ${asteroids.filter(a => !a.is_potentially_hazardous).length}`);
         console.log(`   - Closest: ${(Math.min(...asteroids.map(a => a.miss_distance_km)) / 1000).toFixed(0)} thousand km`);
@@ -410,23 +410,23 @@ class NASAAPIService {
             if (this.cache.has(cacheKey)) {
                 const cached = this.cache.get(cacheKey);
                 if (Date.now() - cached.timestamp < 3600000) { // 1 hour
-                    console.log('✅ Using cached EPIC Earth image');
+                    console.log('[SUCCESS] Using cached EPIC Earth image');
                     return cached.data;
                 }
             }
             
             const url = `${this.epicBaseURL}/images?api_key=${this.apiKey}`;
-            console.log('📡 Fetching Earth imagery from NASA EPIC...');
+            console.log('[API] Fetching Earth imagery from NASA EPIC...');
             
             const response = await fetch(url);
             
             if (response.status === 503) {
-                console.warn('⚠️ NASA EPIC API is temporarily unavailable (503)');
+                console.warn('[WARNING] NASA EPIC API is temporarily unavailable (503)');
                 return null; // Return null, don't throw error
             }
             
             if (!response.ok) {
-                console.warn(`⚠️ EPIC API error: ${response.status} ${response.statusText}`);
+                console.warn(`[WARNING] EPIC API error: ${response.status} ${response.statusText}`);
                 return null; // Return null, don't throw error
             }
             
@@ -445,15 +445,15 @@ class NASAAPIService {
                 
                 // Cache the result
                 this.cache.set(cacheKey, { data: result, timestamp: Date.now() });
-                console.log('✅ EPIC Earth imagery fetched successfully');
+                console.log('[SUCCESS] EPIC Earth imagery fetched successfully');
                 return result;
             }
             
-            console.log('ℹ️ No EPIC images available');
+            console.log('[INFO] No EPIC images available');
             return null;
         } catch (error) {
             // Network errors, timeout, etc - don't crash, just return null
-            console.warn('⚠️ EPIC API request failed:', error.message);
+            console.warn('[WARNING] EPIC API request failed:', error.message);
             return null;
         }
     }
@@ -678,13 +678,13 @@ class NASAAPIService {
         const orbitalDetails = [];
         if (asteroid.orbital_data) {
             if (asteroid.orbital_data.semi_major_axis) {
-                orbitalDetails.push(`🔭 Semi-major Axis: ${parseFloat(asteroid.orbital_data.semi_major_axis).toFixed(3)} AU`);
+                orbitalDetails.push(`[TELESCOPE] Semi-major Axis: ${parseFloat(asteroid.orbital_data.semi_major_axis).toFixed(3)} AU`);
             }
             if (asteroid.orbital_data.eccentricity) {
-                orbitalDetails.push(`🌀 Eccentricity: ${parseFloat(asteroid.orbital_data.eccentricity).toFixed(4)}`);
+                orbitalDetails.push(` Eccentricity: ${parseFloat(asteroid.orbital_data.eccentricity).toFixed(4)}`);
             }
             if (asteroid.orbital_data.orbital_period) {
-                orbitalDetails.push(`⏱️ Orbital Period: ${parseFloat(asteroid.orbital_data.orbital_period).toFixed(1)} days`);
+                orbitalDetails.push(` Orbital Period: ${parseFloat(asteroid.orbital_data.orbital_period).toFixed(1)} days`);
             }
         }
         
@@ -694,10 +694,10 @@ class NASAAPIService {
             asteroidId: asteroid.id,
             details: [
                 `🆔 ID: ${asteroid.id}`,
-                `📏 Size: ${sizeText}`,
-                `⚡ Velocity: ${velocityText}`,
-                `📍 Miss Distance: ${distanceText}`,
-                `📅 Close Approach: ${approachDate}`,
+                ` Size: ${sizeText}`,
+                ` Velocity: ${velocityText}`,
+                `[LOCATION] Miss Distance: ${distanceText}`,
+                `[DATE] Close Approach: ${approachDate}`,
                 ...orbitalDetails
             ]
         };
@@ -708,13 +708,13 @@ class NASAAPIService {
      */
     async getMainBeltAsteroids(count = 500) {
         try {
-            console.log(`🪨 Fetching ${count} Main Belt Asteroids from NASA SBDB...`);
+            console.log(`[ROCK] Fetching ${count} Main Belt Asteroids from NASA SBDB...`);
             
             const cacheKey = `main_belt_asteroids_${count}`;
             if (this.cache.has(cacheKey)) {
                 const cached = this.cache.get(cacheKey);
                 if (Date.now() - cached.timestamp < this.cacheTimeout * 6) {
-                    console.log('✅ Using cached Main Belt asteroid data');
+                    console.log('[SUCCESS] Using cached Main Belt asteroid data');
                     return cached.data;
                 }
             }
@@ -735,12 +735,12 @@ class NASAAPIService {
             try {
                 response = await fetch(url);
                 if (!response.ok) {
-                    console.warn(`⚠️ SBDB API returned ${response.status}, using procedural asteroids`);
+                    console.warn(`[WARNING] SBDB API returned ${response.status}, using procedural asteroids`);
                     return this.generateProceduralAsteroidBelt(count);
                 }
             } catch (fetchError) {
                 // CORS or network error - use procedural generation
-                console.warn('⚠️ SBDB API unavailable (CORS or network error), generating procedural asteroids');
+                console.warn('[WARNING] SBDB API unavailable (CORS or network error), generating procedural asteroids');
                 return this.generateProceduralAsteroidBelt(count);
             }
             
@@ -762,16 +762,16 @@ class NASAAPIService {
             }));
 
             this.cache.set(cacheKey, { data: asteroids, timestamp: Date.now() });
-            console.log(`✅ Processed ${asteroids.length} main belt asteroids`);
+            console.log(`[SUCCESS] Processed ${asteroids.length} main belt asteroids`);
             return asteroids;
         } catch (error) {
-            console.error('❌ Error fetching main belt asteroids:', error);
+            console.error('[ERROR] Error fetching main belt asteroids:', error);
             return this.generateProceduralAsteroidBelt(count);
         }
     }
 
     generateProceduralAsteroidBelt(count = 500) {
-        console.log(`🎲 Generating ${count} procedural asteroids...`);
+        console.log(` Generating ${count} procedural asteroids...`);
         const asteroids = [];
         for (let i = 0; i < count; i++) {
             asteroids.push({
@@ -787,7 +787,7 @@ class NASAAPIService {
                 isProcedural: true
             });
         }
-        console.log(`✅ Successfully generated ${asteroids.length} procedural asteroids for Main Belt`);
+        console.log(`[SUCCESS] Successfully generated ${asteroids.length} procedural asteroids for Main Belt`);
         return asteroids;
     }
 
@@ -802,7 +802,7 @@ class NASAAPIService {
             if (this.cache.has(cacheKey)) {
                 const cached = this.cache.get(cacheKey);
                 if (Date.now() - cached.timestamp < 86400000) { // 24 hours
-                    console.log(`✅ Using cached image for ${planetName}`);
+                    console.log(`[SUCCESS] Using cached image for ${planetName}`);
                     return cached.data;
                 }
             }
@@ -810,7 +810,7 @@ class NASAAPIService {
             // NASA Image and Video Library search
             const searchURL = `https://images-api.nasa.gov/search?q=${planetName}&media_type=image&keywords=planet`;
             
-            console.log(`🖼️ Searching NASA Image Library for ${planetName}...`);
+            console.log(` Searching NASA Image Library for ${planetName}...`);
             const response = await fetch(searchURL);
             
             if (!response.ok) {
@@ -836,17 +836,17 @@ class NASAAPIService {
                             
                             // Cache the result
                             this.cache.set(cacheKey, { data: result, timestamp: Date.now() });
-                            console.log(`✅ Found NASA image for ${planetName}: ${result.title}`);
+                            console.log(`[SUCCESS] Found NASA image for ${planetName}: ${result.title}`);
                             return result;
                         }
                     }
                 }
             }
 
-            console.warn(`⚠️ No suitable image found for ${planetName} in NASA library`);
+            console.warn(`[WARNING] No suitable image found for ${planetName} in NASA library`);
             return null;
         } catch (error) {
-            console.error(`❌ Error fetching NASA image for ${planetName}:`, error);
+            console.error(`[ERROR] Error fetching NASA image for ${planetName}:`, error);
             return null;
         }
     }
@@ -870,11 +870,11 @@ class NASAAPIService {
         const textureUrl = localTextureURLs[planetKey];
         
         if (!textureUrl) {
-            console.log(`⚠️ No texture URL defined for ${planetKey}`);
+            console.log(`[WARNING] No texture URL defined for ${planetKey}`);
             return null;
         }
 
-        console.log(`�️ Loading local texture for ${planetKey}...`);
+        console.log(`� Loading local texture for ${planetKey}...`);
         
         // Return local URL (no CORS issues, always works!)
         return {
