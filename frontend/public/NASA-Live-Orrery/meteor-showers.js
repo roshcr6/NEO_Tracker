@@ -349,11 +349,11 @@ class MeteorShowerService {
                     <div class="meteorshower-peak">${shower.peakDate}</div>
                 </div>
                 <div class="meteorshower-details">
-                    <div>[TELESCOPE] Parent: ${shower.parentBody}</div>
-                    <div>[DATE] Active: ${shower.activity}</div>
-                    <div> Velocity: ${shower.velocity} km/s</div>
-                    <div>[SPARKLE] ZHR: ${shower.zhr} meteors/hour</div>
-                    <div>[TARGET] Radiant: ${shower.radiant}</div>
+                    <div>🔭 Parent: ${shower.parentBody}</div>
+                    <div>📅 Active: ${shower.activity}</div>
+                    <div>⚡ Velocity: ${shower.velocity} km/s</div>
+                    <div>✨ ZHR: ${shower.zhr} meteors/hour</div>
+                    <div>🎯 Radiant: ${shower.radiant}</div>
                     <div style="margin-top: 8px; color: #aaa; font-size: 0.85rem;">${shower.description}</div>
                 </div>
             `;
@@ -372,14 +372,14 @@ class MeteorShowerService {
             listContainer.appendChild(showerDiv);
         });
 
-        console.log(`[SUCCESS] Loaded ${this.meteorShowers.length} meteor showers`);
+        console.log(`✅ Loaded ${this.meteorShowers.length} meteor showers`);
     }
 
     /**
      * Visualize a meteor shower in 3D
      */
     visualizeMeteorShower(shower) {
-        console.log(`[SPACE] Visualizing ${shower.name} meteor shower...`);
+        console.log(`🌌 Visualizing ${shower.name} meteor shower...`);
         
         // Clear previous meteor shower visualization
         this.clearMeteorVisualizations();
@@ -392,7 +392,7 @@ class MeteorShowerService {
         // Create meteor particle stream
         this.createMeteorStream(shower);
         
-        console.log(`[SUCCESS] ${shower.name} visualization complete`);
+        console.log(`✅ ${shower.name} visualization complete`);
     }
 
     /**
@@ -461,7 +461,7 @@ class MeteorShowerService {
         }
         this.meteorGroups[shower.code].orbit = orbit;
         
-        console.log(`[SUCCESS] Created orbit for ${shower.name} parent body: ${shower.parentBody}`);
+        console.log(`✅ Created orbit for ${shower.name} parent body: ${shower.parentBody}`);
     }
 
     /**
@@ -531,7 +531,7 @@ class MeteorShowerService {
         }
         this.meteorGroups[shower.code].particles = particles;
         
-        console.log(`[SUCCESS] Created ${particleCount} meteor particles for ${shower.name}`);
+        console.log(`✅ Created ${particleCount} meteor particles for ${shower.name}`);
     }
 
     /**
@@ -623,7 +623,7 @@ class MeteorShowerService {
         this.meteorGroups = {};
         this.selectedShower = null;
         
-        console.log(' Cleared all meteor shower visualizations');
+        console.log('🧹 Cleared all meteor shower visualizations');
     }
 
     /**

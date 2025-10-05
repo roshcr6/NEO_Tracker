@@ -1422,33 +1422,16 @@ class LiveSolarSystem {
             // Check if this asteroid has an orbit in the 3D scene
             const hasOrbit = this.asteroids[asteroid.id] !== undefined;
             
-            // Enhanced asteroid icon based on size and danger
-            let asteroidIcon = '☄️'; // Default comet/asteroid icon
-            if (isPotentiallyHazardous && isVeryClose) {
-                asteroidIcon = '💥'; // Explosion for extreme danger
-            } else if (isPotentiallyHazardous) {
-                asteroidIcon = '🔥'; // Fire for hazardous
-            } else if (asteroid.diameter_km_avg > 1) {
-                asteroidIcon = '🪨'; // Large rock for big asteroids
-            } else if (asteroid.diameter_km_avg > 0.1) {
-                asteroidIcon = '🌑'; // Moon for medium
-            } else {
-                asteroidIcon = '⚫'; // Small dot for tiny asteroids
-            }
-            
             asteroidDiv.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <div class="asteroid-name" style="display: flex; align-items: center; gap: 6px;">
-                        <span style="font-size: 1.3rem;">${asteroidIcon}</span>
-                        <span>${dangerIcon} ${asteroid.name.replace(/[()]/g, '')}</span>
-                    </div>
+                    <div class="asteroid-name">${dangerIcon} ${asteroid.name.replace(/[()]/g, '')}</div>
                     <span style="background: ${dangerColor}; color: ${dangerLevel === 'SAFE' ? 'black' : 'white'}; padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold;">
                         ${dangerLevel}
                     </span>
                 </div>
                 <div class="asteroid-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.85rem; margin-bottom: 4px;">
                     <span class="asteroid-size">📏 ${asteroid.diameter_km_avg.toFixed(3)} km</span>
-                    <span>🏔️ ${sizeCategory} Object</span>
+                    <span>${sizeCategory} Object</span>
                     <span class="asteroid-velocity">⚡ ${asteroid.velocity_kmps.toFixed(1)} km/s</span>
                     <span class="asteroid-distance">📍 ${(missDistance / 1000).toFixed(0)}K km</span>
                 </div>
