@@ -61,7 +61,9 @@ const LoadingScreen = () => (
   </motion.div>
 );
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_ENDPOINT = `${API_BASE_URL}/api`;
 
 function Simulator() {
   const [selectedAsteroid, setSelectedAsteroid] = useState(null);
@@ -105,7 +107,7 @@ function Simulator() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/asteroids`, {
+      const response = await axios.get(`${API_ENDPOINT}/asteroids`, {
         params: { hazardous_only: false }
       });
       
@@ -150,7 +152,7 @@ function Simulator() {
     
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/simulate-impact`, {
+      const response = await axios.post(`${API_ENDPOINT}/simulate-impact`, {
         diameter_km: selectedAsteroid.diameter,
         velocity_kmps: selectedAsteroid.velocity,
         impact_lat: impactLocation.lat,

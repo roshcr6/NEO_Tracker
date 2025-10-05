@@ -47,8 +47,8 @@ git push origin main
    Root Directory: backend
    Runtime: Python 3
    Build Command: ./build.sh
-   Start Command: gunicorn backend.wsgi:application
    ```
+   Start Command: gunicorn backend.wsgi:application
 
 ### 2.2 Set Environment Variables
 
