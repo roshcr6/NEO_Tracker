@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Retro Space Defense</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Force fullscreen */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { overflow: hidden; width: 100%; height: 100%; }
+  </style>
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
@@ -17,7 +24,10 @@
         <button id="playBtn" class="btn">Play</button>
         <button id="exitBtn" class="btn">Exit</button>
       </div>
-      <div id="menuFact" class="fact" aria-live="polite"></div>
+      <div class="did-you-know-section">
+        <p class="did-you-know-label">Did you know?</p>
+        <div id="menuFact" class="fact" aria-live="polite"></div>
+      </div>
       <p class="hint">Tip: Press M to mute. If Exit doesn't close the tab due to browser restrictions, use Ctrl+W.</p>
     </div>
   </div>

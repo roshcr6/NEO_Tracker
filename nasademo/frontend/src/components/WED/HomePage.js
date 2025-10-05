@@ -107,23 +107,38 @@ function HomePage() {
           style={{ y: y1 }}
         >
           <div className="stars-container">
-            {[...Array(100)].map((_, i) => (
-              <motion.div 
-                key={i} 
-                className="star-point"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
-                transition={{
-                  duration: 2 + Math.random() * 3,
-                  repeat: Infinity,
-                  delay: Math.random() * 3
-                }}
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                }}
-              />
-            ))}
+            {[...Array(150)].map((_, i) => {
+              // Calculate star position
+              const top = Math.random() * 100;
+              const left = Math.random() * 100;
+              
+              // Calculate distance from center (50%, 50%)
+              const distanceFromCenter = Math.sqrt(
+                Math.pow(left - 50, 2) + Math.pow(top - 50, 2)
+              );
+              
+              // Only render stars that are far enough from center (outside Earth radius)
+              const minDistance = 30; // Percentage from center
+              if (distanceFromCenter < minDistance) return null;
+              
+              return (
+                <motion.div 
+                  key={i} 
+                  className="star-point"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
+                  transition={{
+                    duration: 2 + Math.random() * 3,
+                    repeat: Infinity,
+                    delay: Math.random() * 3
+                  }}
+                  style={{
+                    top: `${top}%`,
+                    left: `${left}%`,
+                  }}
+                />
+              );
+            })}
           </div>
           <motion.div 
             className="earth-gradient"
