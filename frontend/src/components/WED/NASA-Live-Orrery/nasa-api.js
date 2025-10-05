@@ -7,22 +7,19 @@
 class NASAAPIService {
     constructor() {
         // Version identifier
-        this.version = '2.0-planet-images';
+        this.version = '3.0-backend-secure';
         console.log(`🚀 NASA API Service v${this.version} initialized`);
         
-        // NASA NEO API configuration
-        this.baseURL = 'https://api.nasa.gov/neo/rest/v1';
-        this.apiKey = 'YrhAbXPIcjuMmifLigw6lWpXE9vHLSgoUbJvGLwp'; // Updated NASA API key
+        // Backend API configuration (SECURE - API keys hidden in backend)
+        this.apiURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        this.baseURL = `${this.apiURL}/api`;
+        
         this.cache = new Map();
         this.cacheTimeout = 3600000; // 1 hour cache
         this.requestDelay = 500; // 500ms delay between requests
         this.lastRequestTime = 0; // Track last request time
         
-        // NASA EPIC (Earth) API for real Earth imagery
-        this.epicBaseURL = 'https://api.nasa.gov/EPIC/api/natural';
-        
-        // Planetary API endpoints
-        this.planetaryURL = 'https://api.nasa.gov/planetary/apod';
+        console.log(`🔒 Using secure backend API: ${this.baseURL}`);
     }
 
     /**
@@ -69,34 +66,40 @@ class NASAAPIService {
             // Add delay to avoid rate limits
             await this.rateLimit();
             
-            const url = `${this.baseURL}/feed?start_date=${startDate}&end_date=${endDate}&api_key=${this.apiKey}`;
+            // Call our secure backend API
+            const params = new URLSearchParams({
+                start_date: startDate,
+                end_date: endDate,
+                hazardous_only: hazardousOnly.toString()
+            });
             
-            console.log(`📡 Fetching NEO data from NASA API...`);
-            console.log(`🔗 URL: ${url.replace(this.apiKey, 'API_KEY_HIDDEN')}`);
+            const url = `${this.baseURL}/asteroids?${params}`;
+            
+            console.log(`� Fetching NEO data from backend API...`);
             console.log(`📅 Date range: ${startDate} to ${endDate}`);
             
             const response = await fetch(url);
             
             if (!response.ok) {
                 if (response.status === 429) {
-                    console.warn(`⚠️ NASA API Rate limit exceeded! Switching to procedural asteroid generation...`);
+                    console.warn(`⚠️ Backend API Rate limit exceeded! Switching to procedural asteroid generation...`);
                     console.log(`💡 The app will continue working with simulated data.`);
                     return this.getMockAsteroidData(); // Return mock data immediately on rate limit
                 }
-                console.error(`❌ NASA API error: ${response.status} ${response.statusText}`);
-                throw new Error(`NASA API error: ${response.status} ${response.statusText}`);
+                console.error(`❌ Backend API error: ${response.status} ${response.statusText}`);
+                throw new Error(`Backend API error: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
             
-            console.log('✅ NASA API response received');
+            console.log('✅ Backend API response received');
             console.log(`📊 Element count: ${data.element_count || 0}`);
-            console.log(`📊 Near Earth Objects:`, Object.keys(data.near_earth_objects || {}).length, 'days of data');
+            console.log(`📊 Asteroids:`, data.asteroids?.length || 0);
             
-            // Process and filter data
-            const asteroids = this.processNEOFeedData(data, hazardousOnly);
+            // Process asteroid data
+            const asteroids = data.asteroids || [];
             
-            console.log(`✅ Processed ${asteroids.length} asteroids from NASA NEO API`);
+            console.log(`✅ Processed ${asteroids.length} asteroids from Backend API`);
             
             // Cache the result
             this.cache.set(cacheKey, {
@@ -132,7 +135,8 @@ class NASAAPIService {
             // Add delay to avoid rate limits
             await this.rateLimit();
             
-            const url = `${this.baseURL}/neo/${asteroidId}?api_key=${this.apiKey}`;
+            // Call our secure backend API
+            const url = `${this.baseURL}/asteroids/${asteroidId}`;
             
             const response = await fetch(url);
             
@@ -141,20 +145,18 @@ class NASAAPIService {
                     console.warn(`⚠️ Rate limit hit for asteroid ${asteroidId}. Skipping for now.`);
                     return null; // Return null instead of throwing error
                 }
-                throw new Error(`NASA API error: ${response.status} ${response.statusText}`);
+                throw new Error(`Backend API error: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
             
-            const processedData = this.processAsteroidDetails(data);
-            
             // Cache the result
             this.cache.set(cacheKey, {
-                data: processedData,
+                data: data,
                 timestamp: Date.now()
             });
 
-            return processedData;
+            return data;
 
         } catch (error) {
             console.error('Error fetching asteroid details:', error);
@@ -415,8 +417,9 @@ class NASAAPIService {
                 }
             }
             
-            const url = `${this.epicBaseURL}/images?api_key=${this.apiKey}`;
-            console.log('📡 Fetching Earth imagery from NASA EPIC...');
+            // Call our secure backend API
+            const url = `${this.baseURL}/earth-imagery`;
+            console.log('📡 Fetching Earth imagery from backend...');
             
             const response = await fetch(url);
             
@@ -426,7 +429,7 @@ class NASAAPIService {
             }
             
             if (!response.ok) {
-                console.warn(`⚠️ EPIC API error: ${response.status} ${response.statusText}`);
+                console.warn(`⚠️ Backend API error: ${response.status} ${response.statusText}`);
                 return null; // Return null, don't throw error
             }
             
@@ -464,64 +467,71 @@ class NASAAPIService {
      */
     async getPlanetaryImagery(planetKey) {
         try {
-            // NASA Mars Rover Photos API for Mars
-            if (planetKey === 'mars') {
-                const url = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/latest_photos?api_key=${this.apiKey}`;
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch Mars imagery');
-                }
-                
-                const data = await response.json();
-                
-                if (data && data.latest_photos && data.latest_photos.length > 0) {
-                    return {
-                        url: data.latest_photos[0].img_src,
-                        date: data.latest_photos[0].earth_date,
-                        camera: data.latest_photos[0].camera.full_name
-                    };
-                }
+            // Call our secure backend API for planetary imagery
+            const url = `${this.baseURL}/planetary-imagery?planet=${planetKey}`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.warn(`⚠️ Backend API error for ${planetKey}: ${response.status}`);
+                // Fallback to static high-quality textures
+                return this.getStaticPlanetaryTexture(planetKey);
             }
             
-            // High-quality NASA texture maps for realistic planetary surfaces
-            // Using NASA's official texture repository and USGS Astrogeology
-            const planetaryImages = {
-                mercury: {
-                    url: 'https://astrogeology.usgs.gov/cache/images/f5e372a36edfa389625da6d0cc25d4f6_messenger_mdis_8_base_20m_uint16_400.jpg',
-                    mission: 'MESSENGER USGS'
-                },
-                venus: {
-                    url: 'https://astrogeology.usgs.gov/cache/images/7cf2e528822be2ffd327c8c2e83d8413_magellan_venus_base_sm.jpg',
-                    mission: 'Magellan USGS'
-                },
-                jupiter: {
-                    url: 'https://astrogeology.usgs.gov/cache/images/f8af60c4157110dc1f01e6c44dd2e5e9_jupiter_cassini.jpg',
-                    mission: 'Cassini-Juno USGS'
-                },
-                saturn: {
-                    url: 'https://astrogeology.usgs.gov/cache/images/b7cfa0c46e7f1e63e8dddb9bb4a8f0ca_saturn_cassini.jpg',
-                    mission: 'Cassini USGS'
-                },
-                uranus: {
-                    url: 'https://astrogeology.usgs.gov/cache/images/d0f8db8d6b3cef901fad0de54aa37d6f_uranus_voy2.jpg',
-                    mission: 'Voyager 2 USGS'
-                },
-                neptune: {
-                    url: 'https://astrogeology.usgs.gov/cache/images/7d6c6d5e7056e7ee8e77dce3beee3d5d_neptune_voy2.jpg',
-                    mission: 'Voyager 2 USGS'
-                }
-            };
+            const data = await response.json();
             
-            if (planetaryImages[planetKey]) {
-                return planetaryImages[planetKey];
+            if (data && data.url) {
+                return {
+                    url: data.url,
+                    date: data.date,
+                    title: data.title
+                };
             }
             
-            return null;
+            // Fallback to static textures if no data
+            return this.getStaticPlanetaryTexture(planetKey);
+            
         } catch (error) {
-            console.error(`Error fetching ${planetKey} imagery:`, error);
-            return null;
+            console.warn('⚠️ Planetary imagery request failed:', error.message);
+            return this.getStaticPlanetaryTexture(planetKey);
         }
+    }
+    
+    /**
+     * Get static high-quality planetary textures
+     */
+    getStaticPlanetaryTexture(planetKey) {
+        const planetaryImages = {
+            mercury: {
+                url: 'https://astrogeology.usgs.gov/cache/images/f5e372a36edfa389625da6d0cc25d4f6_messenger_mdis_8_base_20m_uint16_400.jpg',
+                mission: 'MESSENGER USGS'
+            },
+            venus: {
+                url: 'https://astrogeology.usgs.gov/cache/images/7cf2e528822be2ffd327c8c2e83d8413_magellan_venus_base_sm.jpg',
+                mission: 'Magellan USGS'
+            },
+            jupiter: {
+                url: 'https://astrogeology.usgs.gov/cache/images/f8af60c4157110dc1f01e6c44dd2e5e9_jupiter_cassini.jpg',
+                mission: 'Cassini-Juno USGS'
+            },
+            saturn: {
+                url: 'https://astrogeology.usgs.gov/cache/images/b7cfa0c46e7f1e63e8dddb9bb4a8f0ca_saturn_cassini.jpg',
+                mission: 'Cassini USGS'
+            },
+            uranus: {
+                url: 'https://astrogeology.usgs.gov/cache/images/d0f8db8d6b3cef901fad0de54aa37d6f_uranus_voy2.jpg',
+                mission: 'Voyager 2 USGS'
+            },
+            neptune: {
+                url: 'https://astrogeology.usgs.gov/cache/images/7d6c6d5e7056e7ee8e77dce3beee3d5d_neptune_voy2.jpg',
+                mission: 'Voyager 2 USGS'
+            }
+        };
+        
+        if (planetaryImages[planetKey]) {
+            return planetaryImages[planetKey];
+        }
+        
+        return null;
     }
     
     /**

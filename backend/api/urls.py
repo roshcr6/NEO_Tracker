@@ -11,6 +11,8 @@ urlpatterns = [
     # NASA API endpoints
     path('asteroids', views.get_asteroids, name='get_asteroids'),
     path('asteroids/<str:asteroid_id>', views.get_asteroid_detail, name='get_asteroid_detail'),
+    path('earth-imagery', views.get_earth_imagery, name='get_earth_imagery'),
+    path('planetary-imagery', views.get_planetary_imagery, name='get_planetary_imagery'),
     
     # Impact simulation endpoints
     path('simulate-impact', views.simulate_impact, name='simulate_impact'),

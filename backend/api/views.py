@@ -207,6 +207,63 @@ def calculate_impact_from_asteroid(request):
 
 
 @api_view(['GET'])
+def get_earth_imagery(request):
+    """
+    GET /api/earth-imagery
+    Get real Earth imagery from NASA EPIC API
+    """
+    try:
+        import requests
+        from django.conf import settings
+        
+        # NASA EPIC API endpoint
+        epic_url = 'https://api.nasa.gov/EPIC/api/natural'
+        params = {'api_key': settings.NASA_API_KEY}
+        
+        response = requests.get(epic_url, params=params, timeout=10)
+        response.raise_for_status()
+        
+        return Response(response.json(), status=status.HTTP_200_OK)
+        
+    except requests.exceptions.RequestException as e:
+        return Response(
+            {'error': f'Failed to fetch Earth imagery: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['GET'])
+def get_planetary_imagery(request):
+    """
+    GET /api/planetary-imagery?planet=<planet_key>
+    Get planetary imagery from NASA APOD API
+    
+    Query params:
+        - planet: Planet key (e.g., 'mars', 'jupiter', 'saturn')
+    """
+    try:
+        import requests
+        from django.conf import settings
+        
+        planet_key = request.GET.get('planet', '')
+        
+        # NASA Planetary APOD API endpoint
+        apod_url = 'https://api.nasa.gov/planetary/apod'
+        params = {'api_key': settings.NASA_API_KEY}
+        
+        response = requests.get(apod_url, params=params, timeout=10)
+        response.raise_for_status()
+        
+        return Response(response.json(), status=status.HTTP_200_OK)
+        
+    except requests.exceptions.RequestException as e:
+        return Response(
+            {'error': f'Failed to fetch planetary imagery: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['GET'])
 def health_check(request):
     """
     GET /api/health
