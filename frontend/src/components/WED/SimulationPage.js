@@ -7,6 +7,9 @@ import axios from 'axios';
 import Navigation from './Navigation';
 import './SimulationPage.css';
 
+// API Configuration
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 // Fix Leaflet default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
