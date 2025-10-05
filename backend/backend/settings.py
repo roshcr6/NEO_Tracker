@@ -125,5 +125,5 @@ REST_FRAMEWORK = {
 }
 
 # NASA API Configuration
-NASA_API_KEY = 'cXvyJSY51LQk5ElMYRGqUNotCpXn2fncclaKhnFm'
+NASA_API_KEY = '8Bzer5xzem5a4ZGqHrw4d9oR2KGdZ8f8gJeqscQC'
 NASA_API_BASE_URL = 'https://api.nasa.gov/neo/rest/v1'

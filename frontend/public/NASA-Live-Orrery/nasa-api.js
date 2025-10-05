@@ -12,7 +12,7 @@ class NASAAPIService {
         
         // NASA NEO API configuration
         this.baseURL = 'https://api.nasa.gov/neo/rest/v1';
-        this.apiKey = 'YrhAbXPIcjuMmifLigw6lWpXE9vHLSgoUbJvGLwp'; // Updated NASA API key
+        this.apiKey = '8Bzer5xzem5a4ZGqHrw4d9oR2KGdZ8f8gJeqscQC'; // Updated NASA API key
         this.cache = new Map();
         this.cacheTimeout = 3600000; // 1 hour cache
         this.requestDelay = 500; // 500ms delay between requests

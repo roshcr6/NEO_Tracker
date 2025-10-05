@@ -24,13 +24,14 @@ function LandingPage() {
       <div className={`landing-content ${isLoaded ? 'fade-in' : ''}`}>
         {/* Left Side - Text Content */}
         <div className="landing-left">
-          <h1 className="landing-title">
+          <h1 className="landing-title" data-text="NEO
+TRACKER">
             NEO
             <br />
             TRACKER
           </h1>
           <p className="landing-description">
-            Welcome to the Asteroid Impact Simulator, a captivating web application that allows you to explore the fascinating world of celestial
+            Explore real-time asteroid data with NASA API integration, simulate catastrophic impacts with advanced physics, visualize the solar system in stunning 3D, and analyze near-Earth objects with interactive tools.
           </p>
         </div>
 

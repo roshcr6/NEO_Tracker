@@ -20,8 +20,6 @@ const About = lazy(() => import('./components/WED/About'));
 const CustomMeteoroid = lazy(() => import('./components/WED/CustomMeteoroid'));
 const OrreryPage = lazy(() => import('./components/WED/OrreryPage'));
 const AsteroidSmashGame = lazy(() => import('./components/WED/AsteroidSmashGame'));
-const Orbit3D = lazy(() => import('./components/Orbit3D'));
-const MitigationUI = lazy(() => import('./components/MitigationUI'));
 
 // Premium Loading Component
 const LoadingScreen = () => (
@@ -293,10 +291,17 @@ function Simulator() {
       <main className="app-main">
         <div className="grid-container">
           <div className="grid-item orbit">
-            <Orbit3D 
-              asteroidData={selectedAsteroid} 
-              deflectionData={deflectionData}
-            />
+            <div className="placeholder-panel">
+              <h3>🌌 3D Orbit Visualization</h3>
+              <p>Asteroid orbit visualization</p>
+              {selectedAsteroid && (
+                <div className="asteroid-details">
+                  <p><strong>Name:</strong> {selectedAsteroid.name}</p>
+                  <p><strong>Diameter:</strong> {selectedAsteroid.diameter} km</p>
+                  <p><strong>Velocity:</strong> {selectedAsteroid.velocity} km/s</p>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="grid-item map">
@@ -313,10 +318,15 @@ function Simulator() {
           </div>
           
           <div className="grid-item mitigation">
-            <MitigationUI 
-              asteroidData={selectedAsteroid}
-              onDeflectionChange={handleDeflectionChange}
-            />
+            <div className="placeholder-panel">
+              <h3>🛰️ Mitigation Strategies</h3>
+              <p>Asteroid deflection simulator</p>
+              {selectedAsteroid && (
+                <div className="mitigation-info">
+                  <p>Select deflection method to alter trajectory</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         

@@ -7,7 +7,16 @@
 import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Navigation from './Navigation';
+import DecryptedText from './DecryptedText';
+import TextType from './TextType';
 import './About.css';
+
+// Import team member images
+import zakielImage from './resources/Zakiel Chungath.png';
+import roshithImage from './resources/Roshith Robert.png';
+import sanjayImage from './resources/Sanjay Varghese.png';
+import riyanImage from './resources/Riyan Raz.png';
+import shwethinImage from './resources/Shwethin Nikesh Kumar.png';
 
 function About() {
   const containerRef = useRef(null);
@@ -134,50 +143,40 @@ function About() {
   };
 
   // Team members data with actual team photos
-  const teamMembers = [
-    {
-      name: "Sanjay Varghese",
-      role: "Lead Developer",
-      image: require('./resources/Sanjay Varghese.png'),
-      bio: "Full-stack developer specializing in real-time data visualization and API integration.",
-      expertise: ["React", "Django", "3D Graphics"]
-    },
-    {
-      name: "Riyan Raz",
-      role: "Backend Developer",
-      image: require('./resources/Riyan Raz.png'),
-      bio: "Expert in backend architecture and NASA API integration systems.",
-      expertise: ["Python", "API Design", "Data Processing"]
+  const teamMembers = [{
+      name: "Zakiel Chungath",
+      role: "Team Lead ",
+      image: zakielImage,
+      bio: "3D Rendering Virtual data To Real World and NASA API integration ",
+      expertise: ["3D Modeling", "Team Management", "Rendering Models"]
     },
     {
       name: "Roshith Robert",
-      role: "Frontend Developer",
-      image: require('./resources/Roshith Robert.png'),
+      role: "Physics Simulation and API Retrieval ",
+      image: roshithImage,
+      bio: "Specized in 3D physics and Logics in 3D Simulation ,Running Physics Engine in Optimized Manner",
+      expertise: ["Simulation", "API Rendering", "Physics Engine"]
+    },{
+      name: "Sanjay Varghese",
+      role: "Backend Developer",
+      image: sanjayImage,
       bio: "Specialized in creating intuitive user interfaces and interactive experiences.",
-      expertise: ["React", "UI/UX", "Animation"]
+      expertise: ["UI/UX", "Django", "React"]
+    },{
+      name: "Riyan Raz",
+      role: "Overall Developer",
+      image: riyanImage,
+      bio: "Expert in backend architecture , Mini Chatbox using API for webpages and NASA API integration systems.",
+      expertise: ["Chatbot System", "Resource Management", "Data Processing"]
     },
     {
       name: "Shwethin Nikesh Kumar",
-      role: "Physics Simulation Developer",
-      image: require('./resources/Shwethin Nikesh Kumar.png'),
-      bio: "Expert in computational physics and impact simulation modeling.",
-      expertise: ["Physics Engine", "3D Math", "Simulation"]
-    },
-    {
-      name: "Zakiel Chungath",
-      role: "Designer & Developer",
-      image: require('./resources/Zakiel Chungath.png'),
-      bio: "Creating beautiful interfaces with seamless user experiences.",
-      expertise: ["UI Design", "Frontend", "Graphics"]
+      role: "Game Developer & PPT Management",
+      image: shwethinImage,
+      bio: "Specialized in Mini Games used in webpages and professional presentations .",
+      expertise: ["GameDev", "Asset Management", "Presentation"]
     }
-  ];
-
-  // Statistics
-  const stats = [
-    { number: "30,000+", label: "NEOs Tracked", suffix: "" },
-    { number: "1M+", label: "Simulations Run", suffix: "" },
-    { number: "99.9%", label: "Accuracy Rate", suffix: "" },
-    { number: "150+", label: "Countries Reached", suffix: "" }
+    
   ];
 
   // Logo Loop Animation Component
@@ -193,30 +192,27 @@ function About() {
 
     return (
       <div className="logo-loop-container">
-        <motion.div
-          className="logo-loop-track"
-          animate={{
-            x: [0, -1680],
-          }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 25,
-              ease: "linear",
-            },
-          }}
-        >
-          {/* Render logos twice for seamless loop */}
-          {[...logos, ...logos, ...logos].map((logo, index) => (
-            <div key={index} className="logo-loop-item">
-              <div className="logo-loop-card">
-                <div className="logo-loop-name">{logo.name}</div>
-                <div className="logo-loop-category">{logo.category}</div>
-              </div>
-            </div>
-          ))}
-        </motion.div>
+        <div className="logo-loop-track-wrapper">
+          <div className="logo-loop-track">
+            {/* Render logos three times for seamless loop */}
+            {[...logos, ...logos, ...logos].map((logo, index) => (
+              <motion.div 
+                key={`${logo.name}-${index}`} 
+                className="logo-loop-item"
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -5,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <div className="logo-loop-card">
+                  <div className="logo-loop-name">{logo.name}</div>
+                  <div className="logo-loop-category">{logo.category}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
@@ -243,32 +239,18 @@ function About() {
           </motion.div>
 
           <h1 className="about-hero-title">
-            <AnimatedText text="Protecting Earth" delay={0.6} />
+            <TextType text="Protecting Earth" typingSpeed={80} delay={600} />
             <br />
             <span className="gradient-text">
-              <AnimatedText text="One Simulation at a Time" delay={0.9} />
+              <TextType text="One Simulation at a Time" typingSpeed={80} delay={2000} />
             </span>
           </h1>
 
           <AnimatedText 
-            text="We're building the most advanced asteroid impact simulator to help humanity understand and prepare for near-Earth object threats."
+            text="We're building the most advanced asteroid impact simulators to study and analyze near-Earth object threats using various satellite data for educational and research purposes."
             className="about-hero-description"
             delay={1.2}
           />
-
-          <motion.div
-            className="hero-stats-grid"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.8 }}
-          >
-            {stats.map((stat, index) => (
-              <div key={index} className="hero-stat-card">
-                <div className="stat-number">{stat.number}</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
         {/* Animated background */}
@@ -444,7 +426,7 @@ function About() {
               <AnimatedText text="Powered by Innovation" />
             </h2>
             <AnimatedText 
-              text="Built with cutting-edge technologies for maximum performance"
+              text="Built with the latest API to detect and neutralize the fastest-emerging outer space threats "
               className="section-subtitle"
               delay={0.3}
             />
@@ -471,7 +453,7 @@ function About() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 0.4 }}
               >
                 <AnimatedCharacters text="Why We Built This" />
               </motion.h2>
@@ -486,13 +468,13 @@ function About() {
               <AnimatedText
                 text="NASA now tracks over 30,000 near-Earth objects, but understanding their potential impact requires complex physics calculations that remain inaccessible to most."
                 className="story-paragraph-pro"
-                delay={0.4}
+                delay={0.3}
               />
               
               <AnimatedText
                 text="NEO Tracker bridges this gap. By combining real NASA data with scientifically accurate simulations, we enable everyone to understand asteroid threats and their consequences."
                 className="story-paragraph-pro"
-                delay={0.6}
+                delay={0.4}
               />
               
               <motion.p 
@@ -509,39 +491,41 @@ function About() {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="about-cta">
+      {/* Earth from Space Section */}
+      <section className="earth-from-space">
         <motion.div
-          className="cta-content"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          className="earth-container"
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1.2 }}
         >
-          <h2 className="cta-title">Ready to Explore?</h2>
-          <p className="cta-description">
-            Start simulating asteroid impacts and discover the science of planetary defense
-          </p>
-          <div className="cta-buttons">
-            <motion.button
-              className="cta-button primary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.href = '/impact'}
-            >
-              Launch Simulator
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </motion.button>
-            <motion.button
-              className="cta-button secondary"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.href = '/discover'}
-            >
-              Explore NEOs
-            </motion.button>
+          <div className="earth-image-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" 
+              alt="Earth from space with lunar surface in foreground"
+              className="earth-image"
+            />
+            <div className="earth-overlay">
+              <motion.h2 
+                className="earth-title"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                Protecting Our Blue Planet
+              </motion.h2>
+              <motion.p 
+                className="earth-description"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                Every simulation brings us closer to neutralizing all emerging outer space threats
+              </motion.p>
+            </div>
           </div>
         </motion.div>
       </section>
