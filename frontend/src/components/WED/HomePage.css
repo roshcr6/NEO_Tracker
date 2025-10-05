@@ -45,7 +45,7 @@ html {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: #000000;
+  background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0512 50%, #000000 100%);
   overflow: hidden;
   will-change: transform;
 }
@@ -54,7 +54,6 @@ html {
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 1;
 }
 
 .star-point {
@@ -73,24 +72,17 @@ html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80vmin;
-  height: 80vmin;
-  max-width: 700px;
-  max-height: 700px;
-  background: radial-gradient(circle at 35% 35%, 
-    rgba(96, 165, 250, 0.4) 0%,
-    rgba(59, 130, 246, 0.3) 20%,
-    rgba(139, 92, 246, 0.2) 40%,
-    rgba(0, 0, 0, 0.8) 70%,
-    transparent 100%
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(96, 165, 250, 0.15) 0%,
+    rgba(139, 92, 246, 0.1) 25%,
+    rgba(236, 72, 153, 0.05) 50%,
+    transparent 70%
   );
   border-radius: 50%;
   will-change: transform;
-  box-shadow: 
-    0 0 100px rgba(59, 130, 246, 0.3),
-    0 0 200px rgba(139, 92, 246, 0.2),
-    inset 0 0 80px rgba(0, 0, 0, 0.9);
-  z-index: 2;
+  filter: blur(2px);
 }
 
 @keyframes twinkle {
@@ -107,41 +99,14 @@ html {
 /* Spline 3D Background */
 .spline-background {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100vmin;
-  height: 100vmin;
-  max-width: 900px;
-  max-height: 900px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 0;
   cursor: grab;
   will-change: transform;
   transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 
-    0 0 100px rgba(59, 130, 246, 0.3),
-    0 0 200px rgba(139, 92, 246, 0.2),
-    inset 0 0 100px rgba(0, 0, 0, 0.5);
-  background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
-}
-
-.spline-background::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.8) 70%, #000000 100%);
-  z-index: 1;
-  pointer-events: none;
-  border-radius: 50%;
-}
-
-.spline-background spline-viewer {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 50%;
-  overflow: hidden;
 }
 
 .spline-background iframe {
@@ -149,8 +114,6 @@ html {
   height: 100% !important;
   pointer-events: auto !important;
   cursor: grab;
-  border-radius: 50%;
-  transform: scale(1.1);
 }
 
 .spline-background:active {
@@ -166,9 +129,8 @@ html {
   height: 100%;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(0, 0, 0, 0.2) 0%,
-    rgba(0, 0, 0, 0.7) 60%,
-    rgba(0, 0, 0, 0.9) 100%
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.6) 100%
   );
   z-index: 1;
   pointer-events: none;
