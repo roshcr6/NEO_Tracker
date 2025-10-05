@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: asteroid-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn backend.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: NASA_API_KEY
+        value: 8Bzer5xzem5a4ZGqHrw4d9oR2KGdZ8f8gJeqscQC
+      - key: PYTHON_VERSION
+        value: 3.11.5

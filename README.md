@@ -133,6 +133,55 @@ npm start
 
 Frontend will run on: `http://localhost:3000`
 
+## 🌐 Deployment (FREE!)
+
+Ready to deploy your app to the world? We've created comprehensive guides:
+
+### 📚 Deployment Guides
+
+1. **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete step-by-step deployment guide
+   - Deploy backend on Render (free)
+   - Deploy frontend on Vercel (free)
+   - Environment variables setup
+   - CORS configuration
+   - Troubleshooting tips
+
+2. **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** - Quick 10-minute deployment checklist
+   - Pre-deployment checks
+   - Step-by-step tasks
+   - Testing procedures
+
+3. **[ENV_VARIABLES.md](./ENV_VARIABLES.md)** - Environment variables reference
+   - All required variables
+   - How to generate SECRET_KEY
+   - Security best practices
+
+4. **[ALTERNATIVE_HOSTING.md](./ALTERNATIVE_HOSTING.md)** - Other free hosting options
+   - Netlify + Railway
+   - GitHub Pages + PythonAnywhere
+   - Cloudflare Pages + Fly.io
+   - Comparison table
+
+### 🚀 Quick Deploy
+
+**Recommended:** Vercel (Frontend) + Render (Backend)
+- **Total Cost:** $0 (FREE!)
+- **Setup Time:** ~10 minutes
+- **No Credit Card Required**
+
+```bash
+# 1. Push to GitHub
+git add .
+git commit -m "Ready for deployment"
+git push origin main
+
+# 2. Deploy frontend: vercel.com
+# 3. Deploy backend: render.com
+# 4. Done! 🎉
+```
+
+See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.
+
 ## 📂 Project Structure
 
 ```
