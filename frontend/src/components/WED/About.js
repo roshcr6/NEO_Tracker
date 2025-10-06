@@ -1,9 +1,3 @@
-/**
- * Premium About Page
- * World-Class Design Inspired by: Apple, Porsche, Tesla, Stripe, Linear, ReactBits
- * Features: Premium text animations, word-by-word reveals, character animations
- */
-
 import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Navigation from './Navigation';
@@ -11,7 +5,6 @@ import DecryptedText from './DecryptedText';
 import TextType from './TextType';
 import './About.css';
 
-// Import team member images
 import zakielImage from './resources/Zakiel Chungath.png';
 import roshithImage from './resources/Roshith Robert.png';
 import sanjayImage from './resources/Sanjay Varghese.png';
@@ -26,12 +19,10 @@ function About() {
     offset: ["start start", "end end"]
   });
 
-  // Parallax effects
   const heroY = useTransform(scrollYProgress, [0, 0.3], [0, 200]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.8]);
 
-  // ReactBits-style text animation function
   const AnimatedText = ({ text, className, delay = 0 }) => {
     const words = text.split(' ');
     
@@ -147,34 +138,34 @@ function About() {
       name: "Zakiel Chungath",
       role: "Team Lead ",
       image: zakielImage,
-      bio: "3D Rendering Virtual data To Real World and NASA API integration ",
-      expertise: ["3D Modeling", "Team Management", "Rendering Models"]
+      bio: "Bridging the Virtual and real-world through cutting-edge 3D rendering and seamless NASA_API_FIX integration passionate about turning data into dynamic virtual experiences. ",
+      expertise: ["3D Modeling", "Team Management", "Real-Time Rendering"]
     },
     {
       name: "Roshith Robert",
       role: "Physics Simulation and API Retrieval ",
       image: roshithImage,
-      bio: "Specized in 3D physics and Logics in 3D Simulation ,Running Physics Engine in Optimized Manner",
-      expertise: ["Simulation", "API Rendering", "Physics Engine"]
+      bio: "Specialized in developing 3D physics simulations and optimizing the logic system for realistic rendering and physics engine integration.",
+      expertise: ["Simulation Design", "API Integration", "Physics Engine Development"]
     },{
       name: "Sanjay Varghese",
       role: "Backend Developer",
       image: sanjayImage,
-      bio: "Specialized in creating intuitive user interfaces and interactive experiences.",
+      bio: "Focused on building scalable back-end systems and designing intuitive, high-performance user interfaces for seamless interactive experiences.",
       expertise: ["UI/UX", "Django", "React"]
     },{
       name: "Riyan Raz",
       role: "Overall Developer",
       image: riyanImage,
-      bio: "Expert in backend architecture , Mini Chatbox using API for webpages and NASA API integration systems.",
-      expertise: ["Chatbot System", "Resource Management", "Data Processing"]
+      bio: "Expert in back-end architecture and database management. Specialized in NASA API integration and efficient data processing for web applications.",
+      expertise: ["Chatbot & system integration.", "Resource Management", "Data Processing"]
     },
     {
       name: "Shwethin Nikesh Kumar",
       role: "Game Developer & PPT Management",
       image: shwethinImage,
-      bio: "Specialized in Mini Games used in webpages and professional presentations .",
-      expertise: ["GameDev", "Asset Management", "Presentation"]
+      bio: "Specialized in gamifying web pages and creating interactive professional presentations that engage and inspire audiences.",
+      expertise: ["Game Development", "Asset Management", "Presentation Design"]
     }
     
   ];
