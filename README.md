@@ -1,4 +1,4 @@
-# 🌠 Asteroid Impact Simulator
+# NEO Tracker ,Asteroid Impact Simulator — NASA Space Apps 2025 Project
 
 A full-stack web application that visualizes near-Earth asteroid orbits, simulates impact scenarios, and explores mitigation strategies. Built for Hackathon 2025.
 
