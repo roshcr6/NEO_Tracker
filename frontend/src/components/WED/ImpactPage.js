@@ -72,7 +72,7 @@ function ImpactPage() {
           <h1 className="impact-main-title">
             IMPACT OF
             <br />
-            METROIDS
+            METEOROIDS
           </h1>
 
           {/* Divider */}

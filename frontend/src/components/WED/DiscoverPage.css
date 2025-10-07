@@ -315,14 +315,15 @@
 /* Main Content - Fixed centered layout */
 .discover-content {
   position: fixed;
-  top: 80px; /* Below navigation bar */
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 80px); /* Account for navigation height */
+  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 0;
+  align-items: flex-start; /* Start from top, not center */
+  padding-top: 100px; /* Space for navbar + comfortable spacing */
+  padding-bottom: 40px;
   opacity: 0;
   transform: translateX(100px);
   transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1) 1s;
@@ -341,7 +342,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 200px;
+  margin-top: 0;
 }
 
 /* Planet Label Top */
@@ -697,17 +698,7 @@
   background: linear-gradient(90deg, #00d4ff, #7000ff);
 }
 
-/* Main Content */
-.discover-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 120px 80px 80px;
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 1s ease;
-}
+/* Main Content - Duplicate rule removed, using the fixed layout above */
 
 .discover-content.fade-in {
   opacity: 1;
