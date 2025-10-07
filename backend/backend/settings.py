@@ -140,6 +140,12 @@ CORS_ALLOWED_ORIGINS = [
 if FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
+# Add support for Vercel preview deployments (multiple possible domains)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://nasafinalll-.*\.vercel\.app$",  # Matches any Vercel deployment URL
+    r"^https://.*\.roshith-roberts-projects\.vercel\.app$",  # Matches your Vercel project URLs
+]
+
 # SECURITY: Never allow all origins
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
