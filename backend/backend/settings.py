@@ -127,6 +127,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS settings for React frontend
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
 
+# Clean FRONTEND_URL by removing trailing slash if present
+FRONTEND_URL = FRONTEND_URL.rstrip('/')
+
 # Development origins (always included)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
