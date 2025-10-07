@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA API Test - Complete</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #0a0e27;
+            color: #fff;
+        }
+        h1 { color: #00d4ff; text-align: center; }
+        h2 { color: #00bfff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; }
+        
+        .section {
+            background: #1a1f3a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #00d4ff;
+        }
+        
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #0a0e27;
+            border-left: 4px solid #00d4ff;
+        }
+        .success { border-left-color: #4CAF50; }
+        .error { border-left-color: #f44336; }
+        .warning { border-left-color: #ffaa00; }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00a8cc;
+        }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        
+        .asteroid-card {
+            background: #0d1120;
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .asteroid-card h4 {
+            color: #00d4ff;
+            margin: 0 0 10px 0;
+        }
+        .hazardous {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .safe {
+            color: #4CAF50;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: #0d1120;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #00d4ff;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .stat-label {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .loading {
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 NASA API Complete Test Suite</h1>
+    <p style="text-align: center; color: #aaa;">Comprehensive testing of NASA NEO API with asteroid visualization</p>
+
+    <div class="section">
+        <h2>📊 API Status</h2>
+        <div id="apiStatus">
+            <p>🔄 <span class="loading">Initializing...</span></p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Quick Tests</h2>
+        <button onclick="testConnection()">� Test API Connection</button>
+        <button onclick="testAsteroidFeed()">☄️ Fetch Asteroid Feed</button>
+        <button onclick="testAsteroidDetails()">🔍 Test Asteroid Details</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+        <button onclick="location.reload(true)">🔄 Refresh Page</button>
+    </div>
+
+    <div id="statsSection" class="section" style="display:none;">
+        <h2>📈 Statistics</h2>
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <div id="asteroidsSection" class="section" style="display:none;">
+        <h2>☄️ Available Asteroids</h2>
+        <div id="asteroidsList"></div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Test Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <script src="nasa-api.js"></script>
+    <script>
+        const resultsDiv = document.getElementById('results');
+        const apiStatusDiv = document.getElementById('apiStatus');
+        const statsDiv = document.getElementById('stats');
+        const asteroidsList = document.getElementById('asteroidsList');
+        let nasaAPI;
+
+        function addResult(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            resultsDiv.appendChild(div);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+            addResult('🗑️ Results cleared', 'success');
+        }
+
+        function updateStats(data) {
+            const statsSection = document.getElementById('statsSection');
+            statsSection.style.display = 'block';
+            
+            const totalAsteroids = data.length;
+            const hazardous = data.filter(a => a.is_potentially_hazardous_asteroid).length;
+            const safe = totalAsteroids - hazardous;
+            
+            statsDiv.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-number">${totalAsteroids}</div>
+                    <div class="stat-label">Total Asteroids</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color: #ff4444;">${hazardous}</div>
+                    <div class="stat-label">⚠️ Potentially Hazardous</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color: #4CAF50;">${safe}</div>
+                    <div class="stat-label">✅ Safe</div>
+                </div>
+            `;
+        }
+
+        function displayAsteroids(asteroids) {
+            const asteroidsSection = document.getElementById('asteroidsSection');
+            asteroidsSection.style.display = 'block';
+            
+            asteroidsList.innerHTML = '';
+            
+            if (asteroids.length === 0) {
+                asteroidsList.innerHTML = '<p>No asteroids found. Check the console for errors.</p>';
+                return;
+            }
+            
+            // Limit display to first 20 for performance
+            const displayLimit = Math.min(20, asteroids.length);
+            
+            asteroids.slice(0, displayLimit).forEach((asteroid, index) => {
+                const card = document.createElement('div');
+                card.className = 'asteroid-card';
+                
+                const hazardousClass = asteroid.is_potentially_hazardous_asteroid ? 'hazardous' : 'safe';
+                const hazardousIcon = asteroid.is_potentially_hazardous_asteroid ? '⚠️' : '✅';
+                
+                card.innerHTML = `
+                    <h4>${index + 1}. ${asteroid.name}</h4>
+                    <p><strong>ID:</strong> ${asteroid.id}</p>
+                    <p><strong>Hazardous:</strong> <span class="${hazardousClass}">${hazardousIcon} ${asteroid.is_potentially_hazardous_asteroid ? 'YES' : 'No'}</span></p>
+                    ${asteroid.close_approach_data && asteroid.close_approach_data[0] ? `
+                        <p><strong>Next Approach:</strong> ${asteroid.close_approach_data[0].close_approach_date}</p>
+                        <p><strong>Velocity:</strong> ${Math.round(asteroid.close_approach_data[0].relative_velocity.kilometers_per_hour)} km/h</p>
+                        <p><strong>Miss Distance:</strong> ${Math.round(asteroid.close_approach_data[0].miss_distance.kilometers)} km</p>
+                    ` : ''}
+                    ${asteroid.estimated_diameter ? `
+                        <p><strong>Est. Diameter:</strong> ${asteroid.estimated_diameter.kilometers.estimated_diameter_min.toFixed(2)} - ${asteroid.estimated_diameter.kilometers.estimated_diameter_max.toFixed(2)} km</p>
+                    ` : ''}
+                `;
+                
+                asteroidsList.appendChild(card);
+            });
+            
+            if (asteroids.length > displayLimit) {
+                const moreInfo = document.createElement('p');
+                moreInfo.style.textAlign = 'center';
+                moreInfo.style.color = '#aaa';
+                moreInfo.innerHTML = `<em>Showing ${displayLimit} of ${asteroids.length} total asteroids</em>`;
+                asteroidsList.appendChild(moreInfo);
+            }
+        }
+
+        async function testConnection() {
+            addResult('🔍 Testing NASA API connection...', 'success');
+            
+            try {
+                if (!nasaAPI) {
+                    nasaAPI = new NASAAPIService();
+                    addResult('✅ NASAAPIService initialized', 'success');
+                }
+                
+                // Test with a simple date range
+                const today = new Date();
+                const startDate = today.toISOString().split('T')[0];
+                
+                addResult(`📅 Testing API with date: ${startDate}`, 'success');
+                addResult('⏳ Please wait...', 'success');
+                
+                const response = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${startDate}&end_date=${startDate}&api_key=${nasaAPI.apiKey}`);
+                
+                if (response.status === 429) {
+                    addResult('❌ <strong>RATE LIMITED!</strong> Too many requests to NASA API. Wait an hour before trying again.', 'error');
+                    addResult('💡 The rate limit is 1,000 requests per hour per IP address.', 'warning');
+                    apiStatusDiv.innerHTML = '<p style="color: #ff4444;">❌ Rate Limited (429)</p>';
+                    return false;
+                }
+                
+                if (!response.ok) {
+                    addResult(`❌ API Error: ${response.status} - ${response.statusText}`, 'error');
+                    apiStatusDiv.innerHTML = `<p style="color: #ff4444;">❌ Error ${response.status}</p>`;
+                    return false;
+                }
+                
+                const data = await response.json();
+                addResult(`✅ <strong>SUCCESS!</strong> API is working perfectly!`, 'success');
+                addResult(`📊 API returned ${data.element_count} asteroids`, 'success');
+                apiStatusDiv.innerHTML = '<p style="color: #4CAF50;">✅ Connected & Working</p>';
+                return true;
+                
+            } catch (error) {
+                addResult(`❌ <strong>ERROR:</strong> ${error.message}`, 'error');
+                apiStatusDiv.innerHTML = '<p style="color: #ff4444;">❌ Connection Failed</p>';
+                return false;
+            }
+        }
+
+        async function testAsteroidFeed() {
+            addResult('🔄 Fetching asteroid feed from NASA...', 'success');
+            
+            try {
+                if (!nasaAPI) {
+                    nasaAPI = new NASAAPIService();
+                }
+                
+                const asteroids = await nasaAPI.getNEOFeed();
+                
+                if (!asteroids || asteroids.length === 0) {
+                    addResult('⚠️ No asteroids returned (might be rate limited or using fallback)', 'warning');
+                    return;
+                }
+                
+                addResult(`✅ <strong>SUCCESS!</strong> Fetched ${asteroids.length} asteroids`, 'success');
+                
+                updateStats(asteroids);
+                displayAsteroids(asteroids);
+                
+                addResult(`📊 Check the statistics and asteroid list above!`, 'success');
+                
+            } catch (error) {
+                addResult(`❌ <strong>ERROR:</strong> ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        async function testAsteroidDetails() {
+            addResult('🔍 Testing asteroid details fetch...', 'success');
+            
+            try {
+                if (!nasaAPI) {
+                    nasaAPI = new NASAAPIService();
+                }
+                
+                // Use a known asteroid ID
+                const testId = '3542519'; // 2010 PK9
+                addResult(`📡 Fetching details for asteroid ID: ${testId}`, 'success');
+                
+                const details = await nasaAPI.getAsteroidDetails(testId);
+                
+                if (!details) {
+                    addResult('⚠️ No details returned (might be rate limited)', 'warning');
+                    return;
+                }
+                
+                addResult(`✅ <strong>SUCCESS!</strong> Got detailed orbital data`, 'success');
+                addResult(`<pre>${JSON.stringify(details, null, 2).substring(0, 500)}...</pre>`, 'success');
+                
+            } catch (error) {
+                addResult(`❌ <strong>ERROR:</strong> ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // Auto-initialize on load
+        window.addEventListener('load', async () => {
+            addResult('🚀 Page loaded successfully', 'success');
+            addResult('💡 Click the buttons above to test different API functions', 'success');
+            
+            try {
+                nasaAPI = new NASAAPIService();
+                addResult('✅ NASA API Service initialized', 'success');
+                apiStatusDiv.innerHTML = '<p style="color: #4CAF50;">✅ Ready to test</p>';
+            } catch (error) {
+                addResult(`❌ Failed to initialize: ${error.message}`, 'error');
+                apiStatusDiv.innerHTML = '<p style="color: #ff4444;">❌ Initialization Failed</p>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -13,6 +13,10 @@ services:
       - key: DEBUG
         value: False
       - key: NASA_API_KEY
-        value: 8Bzer5xzem5a4ZGqHrw4d9oR2KGdZ8f8gJeqscQC
+        sync: false  # ⚠️ SET THIS MANUALLY IN RENDER DASHBOARD - NEVER COMMIT API KEYS!
       - key: PYTHON_VERSION
         value: 3.11.5
+      - key: ALLOWED_HOSTS
+        value: .onrender.com,localhost,127.0.0.1
+      - key: FRONTEND_URL
+        value: http://localhost:3000  # Update with your frontend domain after deployment

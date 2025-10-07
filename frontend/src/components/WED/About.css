@@ -978,12 +978,20 @@
   justify-content: center;
   padding: 0;
   overflow: hidden;
+  background: #000000 !important;
 }
 
-.earth-container {
+.earth-from-space .earth-container {
   width: 100%;
   height: 100vh;
   position: relative;
+  filter: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.earth-from-space .earth-glow {
+  display: none !important;
 }
 
 .earth-image-wrapper {
@@ -991,6 +999,8 @@
   height: 100%;
   position: relative;
   overflow: hidden;
+  filter: none !important;
+  box-shadow: none !important;
 }
 
 .earth-image {
@@ -998,12 +1008,14 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: brightness(0.7);
+  filter: brightness(0.7) !important;
   transition: all 0.8s ease;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .earth-image:hover {
-  filter: brightness(0.8);
+  filter: brightness(0.8) !important;
   transform: scale(1.05);
 }
 

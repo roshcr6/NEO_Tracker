@@ -412,7 +412,7 @@
 }
 
 /* Sun Container - Centered in viewport */
-.earth-container {
+.discover-page .earth-container {
   position: relative;
   width: 600px;
   height: 600px;
@@ -451,7 +451,7 @@
   }
 }
 
-.earth-glow {
+.discover-page .earth-glow {
   position: absolute;
   width: 140%;
   height: 140%;

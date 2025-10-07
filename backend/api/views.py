@@ -1,12 +1,13 @@
 """
 API Views for Asteroid Impact Simulator
-Integrates NASA API and Physics Engine
+Integrates NASA API, Physics Engine, and Casualty Calculator
 """
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .nasa_api import nasa_api
 from .physics import physics_engine
+from .casualty_calculator import casualty_calculator
 
 
 @api_view(['GET'])
@@ -91,6 +92,20 @@ def simulate_impact(request):
             impact_angle=impact_angle,
             density=float(density) if density else None
         )
+        
+        # Calculate casualties using accurate geocoding
+        blast_radius = result['blast_zones']['total_destruction_radius_km']
+        energy_megatons = result['energy']['energy_megatons_tnt']
+        
+        casualties = casualty_calculator.calculate_casualties(
+            impact_lat=impact_lat,
+            impact_lon=impact_lon,
+            blast_radius_km=blast_radius,
+            energy_megatons=energy_megatons
+        )
+        
+        # Add casualties to result
+        result['casualties'] = casualties
         
         return Response(result, status=status.HTTP_200_OK)
         
@@ -189,6 +204,20 @@ def calculate_impact_from_asteroid(request):
             impact_lon=impact_lon,
             impact_angle=impact_angle
         )
+        
+        # Calculate casualties using accurate geocoding
+        blast_radius = result['blast_zones']['total_destruction_radius_km']
+        energy_megatons = result['energy']['energy_megatons_tnt']
+        
+        casualties = casualty_calculator.calculate_casualties(
+            impact_lat=impact_lat,
+            impact_lon=impact_lon,
+            blast_radius_km=blast_radius,
+            energy_megatons=energy_megatons
+        )
+        
+        # Add casualties to result
+        result['casualties'] = casualties
         
         # Add asteroid metadata
         result['asteroid_info'] = {

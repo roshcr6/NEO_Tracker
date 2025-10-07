@@ -15,8 +15,10 @@ urlpatterns = [
     path('planetary-imagery', views.get_planetary_imagery, name='get_planetary_imagery'),
     
     # Impact simulation endpoints
-    path('simulate-impact', views.simulate_impact, name='simulate_impact'),
-    path('impact-from-asteroid', views.calculate_impact_from_asteroid, name='impact_from_asteroid'),
+    path('simulate-impact/', views.simulate_impact, name='simulate_impact'),
+    path('simulate-impact', views.simulate_impact, name='simulate_impact_no_slash'),
+    path('impact-from-asteroid/', views.calculate_impact_from_asteroid, name='impact_from_asteroid'),
+    path('impact-from-asteroid', views.calculate_impact_from_asteroid, name='impact_from_asteroid_no_slash'),
     
     # Deflection simulation
     path('simulate-deflection', views.simulate_deflection, name='simulate_deflection'),

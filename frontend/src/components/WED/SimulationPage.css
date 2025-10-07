@@ -881,6 +881,32 @@
   opacity: 0.8;
 }
 
+.impact-location-badge {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.15));
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3498db;
+  letter-spacing: 0.02em;
+  animation: fadeInSlide 0.5s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fadeInScale {
   from {
     opacity: 0;

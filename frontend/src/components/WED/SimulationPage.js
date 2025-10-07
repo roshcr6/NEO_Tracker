@@ -162,9 +162,6 @@ function SimulationPage() {
     setLoading(true);
     setIsLocked(true); // Lock the location immediately
     
-    // Calculate effects
-    const effects = calculateImpactEffects();
-    
     // Zoom to impact location for dramatic effect
     if (mapRef.current) {
       mapRef.current.flyTo(impactLocation, 8, {
@@ -178,13 +175,105 @@ function SimulationPage() {
       setImpactAnimating(true);
     }, 1500);
 
-    // Show results after animation
-    setTimeout(() => {
-      setResults(effects);
-      setShowResults(true);
+    try {
+      // Convert units for backend API
+      const ft_to_km = 0.0003048; // feet to km
+      const mph_to_kmps = 0.00044704; // mph to km/s
+      
+      // Call backend API with accurate geocoding casualty calculator
+      console.log('API URL:', API_URL);
+      console.log('Calling API with data:', {
+        diameter_km: asteroidData.diameter * ft_to_km,
+        velocity_kmps: asteroidData.speed * mph_to_kmps,
+        impact_lat: impactLocation.lat,
+        impact_lon: impactLocation.lng,
+        impact_angle: asteroidData.angle,
+        density: densityMap[asteroidData.type]
+      });
+      
+      const response = await axios.post(`${API_URL}/api/simulate-impact/`, {
+        diameter_km: asteroidData.diameter * ft_to_km,
+        velocity_kmps: asteroidData.speed * mph_to_kmps,
+        impact_lat: impactLocation.lat,
+        impact_lon: impactLocation.lng,
+        impact_angle: asteroidData.angle,
+        density: densityMap[asteroidData.type]
+      });
+      
+      console.log('Backend response:', response.data);
+
+      const backendResults = response.data;
+      
+      console.log('Backend response structure check:', {
+        hasAsteroid: !!backendResults.asteroid,
+        hasEnergy: !!backendResults.energy,
+        hasCrater: !!backendResults.crater,
+        hasBlastZones: !!backendResults.blast_zones,
+        hasSeismicEffects: !!backendResults.seismic_effects,
+        hasCasualties: !!backendResults.casualties
+      });
+      
+      // Log detailed field values
+      console.log('=== DETAILED FIELD CHECK ===');
+      console.log('asteroid.mass_kg:', backendResults.asteroid?.mass_kg);
+      console.log('energy.energy_megatons_tnt:', backendResults.energy?.energy_megatons_tnt);
+      console.log('crater.crater_diameter_m:', backendResults.crater?.crater_diameter_m);
+      console.log('crater.crater_depth_m:', backendResults.crater?.crater_depth_m);
+      console.log('blast_zones.fireball_radius_km:', backendResults.blast_zones?.fireball_radius_km);
+      console.log('blast_zones.total_destruction_radius_km:', backendResults.blast_zones?.total_destruction_radius_km);
+      console.log('seismic_effects.richter_magnitude:', backendResults.seismic_effects?.richter_magnitude);
+      console.log('casualties.estimated_deaths:', backendResults.casualties?.estimated_deaths);
+      console.log('casualties.estimated_injuries:', backendResults.casualties?.estimated_injuries);
+      console.log('=== END FIELD CHECK ===');
+      
+      // Validate response structure
+      if (!backendResults.asteroid || !backendResults.energy || !backendResults.crater || 
+          !backendResults.blast_zones || !backendResults.seismic_effects || !backendResults.casualties) {
+        console.error('Missing fields! Response:', backendResults);
+        throw new Error('Incomplete response from backend. Missing required fields.');
+      }
+      
+      // Format results for UI - match backend response structure
+      const effects = {
+        mass_kg: backendResults.asteroid.mass_kg,
+        energy_megatons: backendResults.energy.energy_megatons_tnt.toFixed(1),
+        crater_miles: (backendResults.crater.crater_diameter_m / 1609.344).toFixed(2),
+        crater_meters: backendResults.crater.crater_diameter_m.toFixed(0),
+        crater_depth_meters: backendResults.crater.crater_depth_m.toFixed(0),
+        fireball_km: backendResults.blast_zones.fireball_radius_km.toFixed(2),
+        shockwave_km: backendResults.blast_zones.total_destruction_radius_km.toFixed(2),
+        seismic_magnitude: backendResults.seismic_effects.richter_magnitude.toFixed(1),
+        
+        // Accurate casualty data from geocoding API
+        location_name: backendResults.casualties.location_name,
+        location_type: backendResults.casualties.location_type,
+        vaporized: backendResults.casualties.estimated_deaths?.toLocaleString() || '0',
+        severe_injuries: backendResults.casualties.estimated_injuries?.toLocaleString() || '0',
+        total_casualties: ((backendResults.casualties.estimated_deaths || 0) + (backendResults.casualties.estimated_injuries || 0)).toLocaleString(),
+        
+        thermal_radius_km: (backendResults.blast_zones.fireball_radius_km * 1.5).toFixed(2),
+        overpressure_radius_km: (backendResults.blast_zones.total_destruction_radius_km * 1.2).toFixed(2),
+        asteroid_size_m: (asteroidData.diameter * 0.3048).toFixed(1),
+        asteroid_size_ft: asteroidData.diameter.toLocaleString()
+      };
+
+      // Show results after animation
+      setTimeout(() => {
+        setResults(effects);
+        setShowResults(true);
+        setLoading(false);
+        setImpactAnimating(false);
+      }, 1500);
+    } catch (error) {
+      console.error('Error simulating impact:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      console.error('Error status:', error.response?.status);
+      const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
+      alert(`Error calculating impact: ${errorMsg}\n\nPlease ensure:\n1. Backend server is running at ${API_URL}\n2. CORS is enabled\n3. Check browser console for details`);
       setLoading(false);
+      setIsLocked(false);
       setImpactAnimating(false);
-    }, 3000);
+    }
   };
 
   const handleReset = () => {
@@ -397,6 +486,14 @@ function SimulationPage() {
                 <span className="headline-unit">MILE WIDE CRATER</span>
               </h2>
               <p className="impact-summary">Complete impact analysis and affected zones</p>
+              {results.location_name && (
+                <div className="impact-location-badge">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{marginRight: '8px'}}>
+                    <path d="M8 2C5.79 2 4 3.79 4 6c0 3.25 4 8 4 8s4-4.75 4-8c0-2.21-1.79-4-4-4zm0 5.5c-.83 0-1.5-.67-1.5-1.5S7.17 4.5 8 4.5 9.5 5.17 9.5 6 8.83 7.5 8 7.5z" fill="currentColor"/>
+                  </svg>
+                  Impact Location: {results.location_name}
+                </div>
+              )}
             </div>
 
             <div className="results-list">
