@@ -5,12 +5,16 @@ Integrates NASA API, Physics Engine, and Casualty Calculator
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+# from django_ratelimit.decorators import ratelimit  # Disabled for local dev
+from django.views.decorators.cache import cache_page
 from .nasa_api import nasa_api
 from .physics import physics_engine
 from .casualty_calculator import casualty_calculator
 
 
 @api_view(['GET'])
+# @ratelimit(key='ip', rate='100/h', method='GET')  # Disabled
+@cache_page(60 * 5)  # Cache for 5 minutes
 def get_asteroids(request):
     """
     GET /api/asteroids
@@ -38,6 +42,8 @@ def get_asteroids(request):
 
 
 @api_view(['GET'])
+# @ratelimit(key='ip', rate='200/h', method='GET')  # Disabled
+@cache_page(60 * 10)  # Cache for 10 minutes
 def get_asteroid_detail(request, asteroid_id):
     """
     GET /api/asteroids/<id>
@@ -52,6 +58,7 @@ def get_asteroid_detail(request, asteroid_id):
 
 
 @api_view(['POST'])
+# @ratelimit(key='ip', rate='50/h', method='POST')  # Disabled
 def simulate_impact(request):
     """
     POST /api/simulate-impact

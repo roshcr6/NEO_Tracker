@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    # 'django_ratelimit',  # Disabled for local development
     'api',
 ]
 
@@ -68,11 +69,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# Database
+# Database Configuration
+# Uses SQLite for development, PostgreSQL for production
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
+        'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
+        'USER': config('DB_USER', default=''),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default=''),
+        'PORT': config('DB_PORT', default=''),
     }
 }
 
@@ -120,18 +126,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings for React frontend
 FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
+
+# Development origins (always included)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    FRONTEND_URL,
 ]
 
-# Allow all origins in development, restrict in production
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
+# Add production frontend URL if different from defaults
+if FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
+# SECURITY: Never allow all origins
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 # REST Framework settings
@@ -148,6 +155,17 @@ REST_FRAMEWORK = {
 NASA_API_KEY = config('NASA_API_KEY', default='8Bzer5xzem5a4ZGqHrw4d9oR2KGdZ8f8gJeqscQC')
 NASA_API_BASE_URL = 'https://api.nasa.gov/neo/rest/v1'
 
+# Cache Configuration (for rate limiting and response caching)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # Simple cache for development
+    }
+}
+
+# Rate Limiting Configuration - Disabled for local development
+# RATELIMIT_ENABLE = config('RATELIMIT_ENABLE', default=False, cast=bool)
+# RATELIMIT_USE_CACHE = 'default'
+
 # Security Settings for Production
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
@@ -156,6 +174,12 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+    
+    # HTTP Strict Transport Security (HSTS)
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_REFERRER_POLICY = 'same-origin'
     
     # HTTPS/Proxy Headers (for Render.com and other hosting platforms)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

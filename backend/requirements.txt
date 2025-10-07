@@ -21,6 +21,9 @@ python-decouple>=3.8
 # Whitenoise for static files
 whitenoise>=6.6.0
 
+# PostgreSQL Database Adapter (optional - only needed for PostgreSQL)
+psycopg2-binary>=2.9.9
+
 # Python Standard Library (included with Python)
 # - math (for physics calculations)
 # - datetime (for date handling)
