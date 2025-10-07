@@ -9,6 +9,9 @@ import axios from 'axios';
 import './App.css';
 import './styles/premium-typography.css';
 
+// Import Universal Chatbot
+import UniversalChatbot from './components/UniversalChatbot';
+
 // Lazy load components for better performance
 const LandingPage = lazy(() => import('./components/WED/LandingPage'));
 const HomePage = lazy(() => import('./components/WED/HomePage'));
@@ -545,6 +548,12 @@ function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AnimatedRoutes />
+      
+      {/* Universal Chatbot - Available on all pages */}
+      <UniversalChatbot 
+        position="bottom-right"
+        theme="default"
+      />
     </Router>
   );
 }

@@ -1,0 +1,449 @@
+/* Universal AstroBot AI Chatbot Styles */
+
+.astro-chat-button {
+  position: fixed !important;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  cursor: pointer;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  border: none;
+  z-index: 9999999 !important; /* Higher than navigation (999999) */
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+  /* Debug styles to ensure visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: all !important;
+}
+
+.astro-chat-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+}
+
+.astro-chat-button.active {
+  transform: rotate(180deg);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+/* Position variants */
+.astro-chat-button.bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+
+.astro-chat-button.bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+.astro-chat-button.top-right {
+  top: 80px;
+  right: 20px;
+}
+
+.astro-chat-button.top-left {
+  top: 80px;
+  left: 20px;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(102, 126, 234, 0.8);
+  }
+  100% {
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  }
+}
+
+/* Chat Window */
+.astro-chat-window {
+  position: fixed;
+  width: 350px;
+  height: 500px;
+  background: rgba(26, 32, 53, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 10000000 !important;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease-out;
+}
+
+.astro-chat-window.bottom-right {
+  bottom: 90px;
+  right: 20px;
+}
+
+.astro-chat-window.bottom-left {
+  bottom: 90px;
+  left: 20px;
+}
+
+.astro-chat-window.top-right {
+  top: 150px;
+  right: 20px;
+}
+
+.astro-chat-window.top-left {
+  top: 150px;
+  left: 20px;
+}
+
+/* Light theme */
+.astro-chat-window.light {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Chat Header */
+.astro-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px 16px 0 0;
+  color: white;
+}
+
+.astro-chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.astro-close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.astro-close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Messages Area */
+.astro-chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.astro-message {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.astro-message.user {
+  align-items: flex-end;
+}
+
+.astro-message.bot {
+  align-items: flex-start;
+}
+
+.message-content {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  word-wrap: break-word;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.astro-message.user .message-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.astro-message.bot .message-content {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-bottom-left-radius: 4px;
+}
+
+.astro-chat-window.light .astro-message.bot .message-content {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.message-time {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+  padding: 0 8px;
+}
+
+.astro-chat-window.light .message-time {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Typing Indicator */
+.astro-message.typing .message-content {
+  padding: 16px;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: #667eea;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Quick Actions */
+.astro-quick-actions {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.astro-chat-window.light .astro-quick-actions {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.astro-quick-btn {
+  background: rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  color: #667eea;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.astro-quick-btn:hover {
+  background: rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Input Area */
+.astro-input-area {
+  display: flex;
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 8px;
+}
+
+.astro-chat-window.light .astro-input-area {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.astro-message-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.astro-chat-window.light .astro-message-input {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.astro-message-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.astro-chat-window.light .astro-message-input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.astro-message-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.astro-send-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.astro-send-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Overlay */
+.astro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 9999998 !important;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scrollbar */
+.astro-chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.astro-chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.astro-chat-messages::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .astro-chat-window {
+    width: calc(100vw - 40px);
+    height: calc(100vh - 140px);
+    bottom: 90px;
+    right: 20px;
+    left: 20px;
+  }
+
+  .astro-chat-window.bottom-left,
+  .astro-chat-window.bottom-right,
+  .astro-chat-window.top-left,
+  .astro-chat-window.top-right {
+    left: 20px;
+    right: 20px;
+  }
+
+  .astro-quick-actions {
+    flex-direction: column;
+  }
+
+  .astro-quick-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .astro-chat-button {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  .astro-chat-window {
+    width: calc(100vw - 20px);
+    height: calc(100vh - 100px);
+    bottom: 70px;
+    left: 10px;
+    right: 10px;
+  }
+}
+
+/* Theme variants */
+.astro-chat-window.dark {
+  background: rgba(26, 32, 53, 0.95);
+  color: #e2e8f0;
+}
+
+.astro-chat-window.light {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+}
+
+/* Animation for message appearance */
+.astro-message {
+  animation: messageSlide 0.3s ease-out;
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
