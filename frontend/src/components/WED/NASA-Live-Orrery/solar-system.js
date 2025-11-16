@@ -688,15 +688,62 @@ class LiveSolarSystem {
     /**
      * Load real asteroid data from NASA API
      */
-    async loadAsteroidData() {
+    async loadAsteroidData(progressCallback = null) {
         try {
             // Don't reload if already loaded
             if (this.asteroidsLoaded) {
-                console.log('✅ Asteroids already loaded');
+                console.log('Asteroids already loaded');
                 return;
             }
             
-            console.log('� Loading Near-Earth Objects from NASA NEO API...');
+            // Try to check localStorage cache first (optional)
+            try {
+                const cachedData = localStorage.getItem('solarSystem_asteroidData');
+                const cacheTimestamp = localStorage.getItem('solarSystem_cacheTimestamp');
+                const ONE_DAY = 24 * 60 * 60 * 1000; // Cache valid for 1 day
+                
+                if (cachedData && cacheTimestamp) {
+                    const cacheAge = Date.now() - parseInt(cacheTimestamp);
+                    if (cacheAge < ONE_DAY) {
+                        console.log('Loading asteroid data from localStorage cache');
+                        const cached = JSON.parse(cachedData);
+                        
+                        // Update progress callback if provided
+                        if (progressCallback) {
+                            progressCallback({
+                                current: cached.length,
+                                total: cached.length,
+                                estimatedTimeLeft: 0,
+                                asteroidName: 'Loading from cache...'
+                            });
+                        }
+                        
+                        // Recreate asteroids from cached data
+                        this.clearAllAsteroids();
+                        cached.forEach((asteroidData, index) => {
+                            this.createAsteroid(asteroidData, index);
+                        });
+                        
+                        this.loadedAsteroidData = cached;
+                        this.updateAsteroidUI(cached);
+                        this.asteroidsLoaded = true;
+                        
+                        console.log(`Loaded ${cached.length} asteroids from cache`);
+                        return;
+                    } else {
+                        console.log('Cache expired, fetching fresh data...');
+                        try {
+                            localStorage.removeItem('solarSystem_asteroidData');
+                            localStorage.removeItem('solarSystem_cacheTimestamp');
+                        } catch (e) { /* ignore */ }
+                    }
+                }
+            } catch (e) {
+                // localStorage unavailable or corrupted - just continue with fetching
+                console.log('localStorage unavailable, fetching from API...');
+            }
+            
+            console.log('Loading Near-Earth Objects from NASA NEO API...');
             const asteroidData = await this.nasaAPI.getNEOFeed();
             
             console.log(`✅ Loaded ${asteroidData.length} Near-Earth Objects`);
@@ -711,48 +758,100 @@ class LiveSolarSystem {
             // Store asteroids that successfully have orbits
             const asteroidsWithOrbits = [];
             
-            console.log('📡 Fetching REAL orbital data for each asteroid from NASA (this takes ~30-60 seconds)...');
+            console.log('📡 Fetching REAL orbital data for each asteroid from NASA (parallel batching for speed)...');
             
-            for (let i = 0; i < asteroidData.length; i++) {
-                const asteroid = asteroidData[i];
+            // Track timing for ETA calculation
+            const startTime = Date.now();
+            const totalAsteroids = asteroidData.length;
+            const BATCH_SIZE = 10; // Fetch 10 asteroids in parallel
+            
+            // Function to fetch single asteroid with error handling
+            const fetchAsteroidDetail = async (asteroid, index) => {
                 try {
-                    console.log(`[${i+1}/${asteroidData.length}] Fetching REAL data for ${asteroid.name}...`);
-                    
-                    // Fetch detailed data with orbital_data from NASA
                     const detailedData = await this.nasaAPI.getAsteroidDetails(asteroid.id);
                     
                     if (detailedData && detailedData.orbital_data) {
-                        // Merge close approach data with REAL orbital data
                         const mergedData = {
                             ...asteroid,
                             orbital_data: detailedData.orbital_data
                         };
                         
-                        const created = this.createAsteroid(mergedData, i);
+                        const created = this.createAsteroid(mergedData, index);
                         if (created) {
-                            successCount++;
-                            // Store this asteroid since it has an orbit in 3D scene
-                            asteroidsWithOrbits.push(mergedData);
+                            return { success: true, data: mergedData };
                         } else {
-                            failCount++;
+                            return { success: false, data: null };
                         }
                     } else {
                         console.warn(`⚠️ ${asteroid.name}: No orbital data from NASA API, skipping`);
-                        failCount++;
+                        return { success: false, data: null };
                     }
                 } catch (error) {
                     console.error(`❌ Failed to fetch ${asteroid.name}:`, error.message);
-                    failCount++;
+                    return { success: false, data: null };
                 }
+            };
+            
+            // Process asteroids in parallel batches
+            for (let i = 0; i < asteroidData.length; i += BATCH_SIZE) {
+                const batch = asteroidData.slice(i, Math.min(i + BATCH_SIZE, asteroidData.length));
+                const currentCount = Math.min(i + BATCH_SIZE, asteroidData.length);
+                
+                // Calculate progress and ETA
+                const elapsedTime = (Date.now() - startTime) / 1000;
+                const avgTimePerAsteroid = currentCount > 0 ? elapsedTime / currentCount : 0;
+                const remainingAsteroids = totalAsteroids - currentCount;
+                const estimatedTimeLeft = Math.ceil(avgTimePerAsteroid * remainingAsteroids);
+                
+                // Call progress callback if provided
+                if (progressCallback) {
+                    progressCallback({
+                        current: currentCount,
+                        total: totalAsteroids,
+                        estimatedTimeLeft: estimatedTimeLeft,
+                        asteroidName: `Batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} asteroids)`
+                    });
+                }
+                
+                console.log(`[${currentCount}/${totalAsteroids}] Fetching batch of ${batch.length} asteroids in parallel...`);
+                
+                // Fetch entire batch in parallel
+                const batchResults = await Promise.all(
+                    batch.map((asteroid, idx) => fetchAsteroidDetail(asteroid, i + idx))
+                );
+                
+                // Process results
+                batchResults.forEach(result => {
+                    if (result.success) {
+                        successCount++;
+                        asteroidsWithOrbits.push(result.data);
+                    } else {
+                        failCount++;
+                    }
+                });
             }
             
             // Store ONLY asteroids that have orbits in 3D scene
             this.loadedAsteroidData = asteroidsWithOrbits;
             
-            console.log(`📦 Stored ${asteroidsWithOrbits.length} asteroids with orbital data`);
+            console.log(`Stored ${asteroidsWithOrbits.length} asteroids with orbital data`);
+            
+            // Try to save to localStorage for future sessions (optional - continues if fails)
+            try {
+                localStorage.setItem('solarSystem_asteroidData', JSON.stringify(asteroidsWithOrbits));
+                localStorage.setItem('solarSystem_cacheTimestamp', Date.now().toString());
+                console.log('Asteroid data cached in localStorage');
+            } catch (e) {
+                // localStorage failed (quota exceeded) - just continue without caching
+                console.log('localStorage unavailable, using in-memory caching only');
+                try {
+                    localStorage.removeItem('solarSystem_asteroidData');
+                    localStorage.removeItem('solarSystem_cacheTimestamp');
+                } catch (e2) { /* ignore */ }
+            }
             
             // Clean up any orphaned test objects or asteroids below Earth
-            console.log('🧹 Cleaning up orphaned objects...');
+            console.log('Cleaning up orphaned objects...');
             const objectsToRemove = [];
             this.scene.children.forEach(child => {
                 // Remove any sphere objects positioned below the ecliptic plane (y < -5)

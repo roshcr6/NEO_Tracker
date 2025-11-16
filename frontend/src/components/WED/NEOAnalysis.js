@@ -68,6 +68,7 @@ function SimulationPage() {
   const [loadingAsteroids, setLoadingAsteroids] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredAsteroids, setFilteredAsteroids] = useState([]);
+  const [asteroidsLoadedOnce, setAsteroidsLoadedOnce] = useState(false); // Track if data was loaded
   const mapRef = useRef(null);
 
   const densityMap = {
@@ -81,9 +82,45 @@ function SimulationPage() {
     setTimeout(() => setIsLoaded(true), 100);
   }, []);
 
-  // Fetch NASA asteroids
+  // Fetch NASA asteroids only ONCE - try localStorage cache first (optional)
   useEffect(() => {
-    fetchAsteroids();
+    // Try to check localStorage cache (if it fails, just fetch normally)
+    try {
+      const cachedData = localStorage.getItem('neoAnalysis_asteroidData');
+      const cacheTimestamp = localStorage.getItem('neoAnalysis_cacheTimestamp');
+      const ONE_DAY = 24 * 60 * 60 * 1000; // Cache valid for 1 day
+      
+      if (cachedData && cacheTimestamp) {
+        const cacheAge = Date.now() - parseInt(cacheTimestamp);
+        if (cacheAge < ONE_DAY) {
+          // Use cached data
+          console.log('Loading asteroid data from localStorage cache');
+          const cached = JSON.parse(cachedData);
+          setAsteroidList(cached);
+          setFilteredAsteroids(cached);
+          setSelectedAsteroid(cached[0]);
+          setAsteroidsLoadedOnce(true);
+          setLoadingAsteroids(false);
+          return;
+        } else {
+          console.log('Cache expired, fetching fresh data...');
+          try {
+            localStorage.removeItem('neoAnalysis_asteroidData');
+            localStorage.removeItem('neoAnalysis_cacheTimestamp');
+          } catch (e) { /* ignore */ }
+        }
+      }
+    } catch (e) {
+      // localStorage unavailable - just continue with fetching
+      console.log('localStorage unavailable, fetching from API...');
+    }
+    
+    // No cache or localStorage failed - fetch from API
+    if (!asteroidsLoadedOnce) {
+      console.log('First time loading - fetching NASA asteroid data...');
+      setLoadingAsteroids(true);
+      fetchAsteroids();
+    }
   }, []);
 
   // Filter asteroids based on search query
@@ -135,32 +172,157 @@ function SimulationPage() {
   const fetchAsteroids = async () => {
     try {
       setLoadingAsteroids(true);
-      // Use correct backend endpoint
-      const response = await axios.get(`${API_URL}/api/asteroids`, {
-        params: {
-          hazardous_only: false // Get all asteroids, not just hazardous
-        }
+      
+      // Add progress text to loading container
+      const loadingContainer = document.querySelector('.asteroid-loading');
+      let progressElement = null;
+      
+      if (loadingContainer) {
+        // Create progress text element
+        progressElement = document.createElement('div');
+        progressElement.className = 'loading-progress-text';
+        progressElement.style.cssText = 'margin-top: 10px; font-size: 14px; color: #000; text-align: center; line-height: 1.6;';
+        loadingContainer.appendChild(progressElement);
+      }
+      
+      // STEP 1: Get initial list of asteroids (fresh data, no cache)
+      console.log('🌍 Fetching latest Near-Earth Object data from NASA...');
+      const initialResponse = await axios.get(`${API_URL}/api/asteroids`, {
+        params: { 
+          hazardous_only: false,
+          _t: Date.now() // Cache buster to force fresh data
+        },
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        timeout: 60000 // 60 second timeout - reasonable for NASA API
       });
       
-      console.log('NASA API Response:', response.data);
-      
-      // Parse response correctly - backend returns { element_count, asteroids: [] }
-      if (response.data && response.data.asteroids && response.data.asteroids.length > 0) {
-        const asteroidData = response.data.asteroids;
-        setAsteroidList(asteroidData);
-        setFilteredAsteroids(asteroidData);
-        setSelectedAsteroid(asteroidData[0]); // Select first asteroid by default
-        console.log('✅ Loaded', asteroidData.length, 'asteroids');
-        console.log('First asteroid:', asteroidData[0]);
-      } else {
+      if (!initialResponse.data || !initialResponse.data.asteroids || initialResponse.data.asteroids.length === 0) {
         console.warn('⚠️ No asteroids found in response');
+        if (progressElement) {
+          progressElement.innerHTML = `<div style="color: #ff6b6b;">No asteroids found</div>`;
+        }
+        setLoadingAsteroids(false);
+        return;
       }
+      
+      const asteroidList = initialResponse.data.asteroids;
+      const totalAsteroids = asteroidList.length;
+      console.log(`📊 Found ${totalAsteroids} Near-Earth Objects. Fetching detailed orbital data...`);
+      
+      // STEP 2: Fetch detailed data with PARALLEL BATCHING for speed
+      const detailedAsteroids = [];
+      const startTime = Date.now();
+      const BATCH_SIZE = 10; // Fetch 10 asteroids in parallel at once
+      
+      // Function to fetch single asteroid with error handling
+      const fetchAsteroidDetail = async (asteroid, index) => {
+        try {
+          const detailResponse = await axios.get(`${API_URL}/api/asteroids/${asteroid.id}`, {
+            timeout: 15000, // 15 second timeout per asteroid
+            headers: {
+              'Cache-Control': 'no-cache'
+            }
+          });
+          
+          if (detailResponse.data && detailResponse.data.orbital_data) {
+            return {
+              ...asteroid,
+              orbital_data: detailResponse.data.orbital_data,
+              diameter_min_km: detailResponse.data.estimated_diameter?.kilometers?.estimated_diameter_min || asteroid.diameter_min_km || 0.1,
+              diameter_max_km: detailResponse.data.estimated_diameter?.kilometers?.estimated_diameter_max || asteroid.diameter_max_km || 1,
+              diameter_km: detailResponse.data.estimated_diameter?.kilometers?.estimated_diameter_max || asteroid.diameter_km || 0.5,
+              velocity_kmps: asteroid.velocity_kmps || detailResponse.data.close_approach_data?.[0]?.relative_velocity?.kilometers_per_second || 20,
+              is_potentially_hazardous: detailResponse.data.is_potentially_hazardous_asteroid || asteroid.is_potentially_hazardous || false
+            };
+          } else {
+            console.warn(`⚠️ No detailed orbital data for ${asteroid.name}, using basic data`);
+            return asteroid;
+          }
+        } catch (error) {
+          console.error(`❌ Failed to fetch ${asteroid.name}:`, error.message);
+          return asteroid;
+        }
+      };
+      
+      // Process asteroids in parallel batches
+      for (let i = 0; i < asteroidList.length; i += BATCH_SIZE) {
+        const batch = asteroidList.slice(i, Math.min(i + BATCH_SIZE, asteroidList.length));
+        const currentCount = Math.min(i + BATCH_SIZE, asteroidList.length);
+        
+        // Calculate progress and ETA
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        const avgTimePerAsteroid = currentCount > 0 ? elapsedTime / currentCount : 0;
+        const remainingAsteroids = totalAsteroids - currentCount;
+        const estimatedTimeLeft = Math.ceil(avgTimePerAsteroid * remainingAsteroids);
+        
+        // Update progress UI
+        if (progressElement && loadingContainer && loadingContainer.contains(progressElement)) {
+          progressElement.innerHTML = `
+            <div style="font-size: 14px; margin-bottom: 8px; font-weight: 500; color: #000;">Loading asteroid ${currentCount} of ${totalAsteroids}...</div>
+            <div style="color: #000; margin-bottom: 5px;">Estimated time left: ${estimatedTimeLeft} seconds</div>
+          `;
+        }
+        
+        console.log(`[${currentCount}/${totalAsteroids}] Fetching batch of ${batch.length} asteroids in parallel...`);
+        
+        // Fetch entire batch in parallel with Promise.all
+        const batchResults = await Promise.all(
+          batch.map((asteroid, idx) => fetchAsteroidDetail(asteroid, i + idx))
+        );
+        
+        // Add batch results to main array
+        detailedAsteroids.push(...batchResults);
+      }
+      
+      console.log(`✅ Successfully loaded ${detailedAsteroids.length} asteroids with complete NASA data`);
+      
+      // Remove progress element before showing asteroid
+      if (progressElement && loadingContainer && loadingContainer.contains(progressElement)) {
+        progressElement.remove();
+      }
+      
+      // Update state with all detailed asteroids
+      setAsteroidList(detailedAsteroids);
+      setFilteredAsteroids(detailedAsteroids);
+      setSelectedAsteroid(detailedAsteroids[0]); // Select first asteroid by default
       setLoadingAsteroids(false);
+      setAsteroidsLoadedOnce(true); // Mark as loaded so we don't fetch again
+      
+      // Try to save to localStorage for future sessions (optional - continues if fails)
+      try {
+        localStorage.setItem('neoAnalysis_asteroidData', JSON.stringify(detailedAsteroids));
+        localStorage.setItem('neoAnalysis_cacheTimestamp', Date.now().toString());
+        console.log('Asteroid data cached in localStorage');
+      } catch (e) {
+        // localStorage failed (quota exceeded) - just continue without caching
+        console.log('localStorage unavailable, using in-memory caching only');
+        try {
+          localStorage.removeItem('neoAnalysis_asteroidData');
+          localStorage.removeItem('neoAnalysis_cacheTimestamp');
+        } catch (e2) { /* ignore */ }
+      }
+      
     } catch (error) {
       console.error('❌ Error fetching asteroids:', error);
       console.error('Error details:', error.response?.data || error.message);
+      
+      const loadingContainer = document.querySelector('.asteroid-loading');
+      const progressElement = loadingContainer?.querySelector('.loading-progress-text');
+      if (progressElement) {
+        const errorMsg = error.code === 'ECONNABORTED' 
+          ? 'Connection timeout - Start backend server'
+          : error.response?.status === 429
+          ? 'Rate limit exceeded - Please wait'
+          : error.message;
+        progressElement.innerHTML = `<div style="color: #000;">${errorMsg}</div>`;
+      }
+      
+      // Ensure loading state is always cleared to prevent infinite loading
       setLoadingAsteroids(false);
-      // Set loading to false even on error so UI doesn't hang
     }
   };
 
@@ -487,7 +649,6 @@ function SimulationPage() {
                 {loadingAsteroids ? (
                   <div className="asteroid-loading">
                     <div className="loading-spinner"></div>
-                    <span className="asteroid-label">Loading NASA Data...</span>
                   </div>
                 ) : selectedAsteroid ? (
                   <>
@@ -503,7 +664,6 @@ function SimulationPage() {
                       <div className="asteroid-glow"></div>
                     </div>
                     <span className="asteroid-label">{selectedAsteroid.name}</span>
-                    <span className="asteroid-counter">{currentAsteroidIndex + 1} of {filteredAsteroids.length > 0 ? filteredAsteroids.length : asteroidList.length}</span>
                   </>
                 ) : (
                   <span className="asteroid-label">No Data</span>

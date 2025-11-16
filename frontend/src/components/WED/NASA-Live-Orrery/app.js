@@ -87,27 +87,42 @@ class NASALiveOrrery {
             
             if (!this.solarSystem.asteroidsLoaded) {
                 if (statusElement) {
-                    statusElement.textContent = '🔄 Loading 121 Near-Earth Asteroids from NASA...';
+                    statusElement.innerHTML = 'Initializing Near-Earth Asteroid data from NASA...';
                 }
-                console.log('⏳ Fetching 121 Near-Earth Asteroids from NASA API...');
+                console.log('Fetching Near-Earth Asteroids from NASA API...');
                 
-                await this.solarSystem.loadAsteroidData();
+                // Define progress callback to update loading screen in real-time
+                const progressCallback = (progress) => {
+                    if (statusElement) {
+                        const progressText = `Loading asteroid ${progress.current} of ${progress.total}...`;
+                        const etaText = `Estimated time left: ${progress.estimatedTimeLeft} seconds`;
+                        const asteroidNameText = `Fetching: ${progress.asteroidName}`;
+                        
+                        statusElement.innerHTML = `
+                            <div style="font-size: 18px; margin-bottom: 10px;">${progressText}</div>
+                            <div style="font-size: 16px; color: #00ccff; margin-bottom: 8px;">${etaText}</div>
+                            <div style="font-size: 14px; color: #aaaaaa;">${asteroidNameText}</div>
+                        `;
+                    }
+                };
+                
+                await this.solarSystem.loadAsteroidData(progressCallback);
                 
                 if (statusElement) {
-                    statusElement.textContent = '✅ All 121 asteroids loaded! Preparing launch...';
+                    statusElement.innerHTML = 'All asteroids loaded! Preparing launch...';
                 }
-                console.log('✅ Asteroid data preloaded successfully! All 121 asteroids ready.');
+                console.log('✅ Asteroid data preloaded successfully! All asteroids ready.');
                 
                 // Small delay to show the success message
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
         } catch (error) {
-            console.warn('⚠️ Failed to preload asteroid data:', error);
-            console.log('💡 Asteroids will load when Asteroids tab is clicked');
+            console.warn('Failed to preload asteroid data:', error);
+            console.log('Asteroids will load when Asteroids tab is clicked');
             
             const statusElement = document.getElementById('loading-status');
             if (statusElement) {
-                statusElement.textContent = '⚠️ Asteroids will load on demand';
+                statusElement.innerHTML = 'Asteroids will load on demand';
             }
         }
     }

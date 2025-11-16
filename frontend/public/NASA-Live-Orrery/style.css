@@ -171,8 +171,14 @@ body {
     margin-bottom: 30px;
     color: rgba(96, 165, 250, 0.8);
     font-weight: 400;
-    opacity: 0.9;
     font-family: 'Inter', sans-serif;
+    font-style: normal;
+    line-height: 1.6;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .loading-progress {

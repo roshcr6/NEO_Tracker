@@ -44,12 +44,21 @@ if not exist ".venv\Scripts\pip.exe" (
     python -m venv .venv
 )
 
-echo Installing/Updating Python dependencies...
-.venv\Scripts\pip.exe install --upgrade pip >nul 2>&1
-.venv\Scripts\pip.exe install -r backend\requirements.txt
-if errorlevel 1 (
-    echo WARNING: Some Python packages may have failed to install.
-    echo Continuing anyway...
+REM Check if Python dependencies are already installed
+set "DEPS_INSTALLED=1"
+.venv\Scripts\python.exe -c "import django; import rest_framework; import corsheaders; import requests" >nul 2>&1
+if errorlevel 1 set "DEPS_INSTALLED=0"
+
+if "%DEPS_INSTALLED%"=="0" (
+    echo Installing Python dependencies...
+    .venv\Scripts\pip.exe install --upgrade pip >nul 2>&1
+    .venv\Scripts\pip.exe install -r backend\requirements.txt
+    if errorlevel 1 (
+        echo WARNING: Some Python packages may have failed to install.
+        echo Continuing anyway...
+    )
+) else (
+    echo Python dependencies already installed.
 )
 
 echo [3/6] Setting up Node.js dependencies...
@@ -101,6 +110,10 @@ echo:
 echo   Frontend:  http://localhost:3000
 echo   Backend:   http://localhost:8000/api
 echo   Orrery:    http://localhost:8000/orrery
+echo:
+echo   NOTE: Frontend and Backend run on different ports
+echo         This is by design for proper API separation
+echo         CORS is configured to allow communication
 echo:
 echo   Security Features:
 echo   - Rate limiting enabled
