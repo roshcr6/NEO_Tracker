@@ -307,54 +307,27 @@ Keep responses helpful and under 100 words unless detailed explanation requested
         title="AstroBot AI - Your Space Assistant"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-          {/* Outer orbit ring */}
-          <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="1.5" opacity="0.3" fill="none"/>
+          {/* Message bubble base - darker blue */}
+          <path d="M8 14 C8 10 10 8 14 8 L34 8 C38 8 40 10 40 14 L40 28 C40 32 38 34 34 34 L20 34 L12 40 L12 34 C8 34 8 32 8 28 Z" 
+                fill="#2c5aa0" opacity="0.95"/>
           
-          {/* Planet/Brain hybrid center */}
-          <circle cx="24" cy="24" r="10" fill="currentColor" opacity="0.2"/>
+          {/* AI Brain circuit pattern inside bubble - light white shade */}
+          <circle cx="18" cy="20" r="2.5" fill="white" opacity="0.85"/>
+          <circle cx="30" cy="20" r="2.5" fill="white" opacity="0.85"/>
+          <circle cx="24" cy="26" r="2.5" fill="white" opacity="0.85"/>
           
-          {/* Neural network nodes */}
-          <circle cx="24" cy="14" r="2" fill="currentColor"/>
-          <circle cx="32" cy="20" r="2" fill="currentColor"/>
-          <circle cx="32" cy="28" r="2" fill="currentColor"/>
-          <circle cx="24" cy="34" r="2" fill="currentColor"/>
-          <circle cx="16" cy="28" r="2" fill="currentColor"/>
-          <circle cx="16" cy="20" r="2" fill="currentColor"/>
+          {/* Neural connections - light white */}
+          <path d="M18 20 L24 26 M30 20 L24 26" 
+                stroke="white" strokeWidth="1.5" opacity="0.7" strokeLinecap="round"/>
           
-          {/* Connection lines (neural pathways) */}
-          <path d="M24 14 L32 20 M32 20 L32 28 M32 28 L24 34 M24 34 L16 28 M16 28 L16 20 M16 20 L24 14" 
-                stroke="currentColor" strokeWidth="1" opacity="0.4" fill="none"/>
+          {/* AI sparkles/stars - darker accent */}
+          <path d="M12 12 L13 14 L11 14 Z M36 12 L37 14 L35 14 Z M38 24 L39 26 L37 26 Z" 
+                fill="#3a7bc8" opacity="0.85"/>
           
-          {/* Center AI core */}
-          <circle cx="24" cy="24" r="4" fill="currentColor"/>
-          
-          {/* Orbital satellites (representing data/communication) */}
-          <circle cx="24" cy="4" r="1.5" fill="currentColor" opacity="0.6">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 24 24"
-              to="360 24 24"
-              dur="8s"
-              repeatCount="indefinite"/>
-          </circle>
-          <circle cx="44" cy="24" r="1.5" fill="currentColor" opacity="0.6">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="120 24 24"
-              to="480 24 24"
-              dur="8s"
-              repeatCount="indefinite"/>
-          </circle>
-          <circle cx="24" cy="44" r="1.5" fill="currentColor" opacity="0.6">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="240 24 24"
-              to="600 24 24"
-              dur="8s"
-              repeatCount="indefinite"/>
+          {/* Animated pulse ring - darker */}
+          <circle cx="24" cy="21" r="12" stroke="#3a7bc8" strokeWidth="1.5" fill="none" opacity="0.5">
+            <animate attributeName="r" values="12;14;12" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.5;0.15;0.5" dur="2s" repeatCount="indefinite"/>
           </circle>
         </svg>
       </button>
