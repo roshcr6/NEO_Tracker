@@ -11,6 +11,7 @@ const UniversalChatbot = ({
   theme = 'default'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef(null);
@@ -28,8 +29,8 @@ const UniversalChatbot = ({
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
-        addMessage('Hello! I\'m AstroBot AI. I can help you explore the solar system, track asteroids, and learn about meteor showers! 🌠', 'bot');
-      }, 2000);
+        addMessage('Hello! I\'m AstroBot AI. I can help you explore the solar system, track asteroids, and learn about meteor showers.', 'bot');
+      }, 500);
     }
   }, [isOpen]);
 
@@ -47,12 +48,12 @@ const UniversalChatbot = ({
 
   // Get user location and find nearby meteor showers (ORIGINAL FUNCTION)
   const findNearbyMeteorShowers = async () => {
-    const typingMessage = addMessage('📍 Requesting your location...', 'bot');
+    const typingMessage = addMessage('Requesting your location...', 'bot');
     
     if (!navigator.geolocation) {
       // Remove typing message and show error
       setMessages(prev => prev.filter(msg => msg.id !== typingMessage.id));
-      addMessage('❌ Your browser doesn\'t support location services. Please check the Meteor Showers tab for a complete list of visible showers!', 'bot');
+      addMessage('Your browser doesn\'t support location services. Please check the Meteor Showers tab for a complete list of visible showers.', 'bot');
       return;
     }
 
@@ -113,19 +114,19 @@ const UniversalChatbot = ({
 
       const visibleShowers = meteorShowers.filter(shower => shower.months.includes(currentMonth));
 
-      let response = `📍 **Your Location**\n${locationName}\n\n`;
+      let response = `YOUR LOCATION\n${locationName}\n\n`;
 
       if (visibleShowers.length > 0) {
-        response += `🌠 **Active Meteor Showers This Month:**\n\n`;
+        response += `ACTIVE METEOR SHOWERS THIS MONTH:\n\n`;
         visibleShowers.forEach(shower => {
-          response += `✨ ${shower.name}\n`;
-          response += `   📅 Peak: ${shower.peak}\n`;
-          response += `   ⭐ Rate: ${shower.description}\n`;
-          response += `   🌍 Best viewing: ${shower.radiant}\n\n`;
+          response += `${shower.name}\n`;
+          response += `   Peak: ${shower.peak}\n`;
+          response += `   Rate: ${shower.description}\n`;
+          response += `   Best viewing: ${shower.radiant}\n\n`;
         });
 
         // Viewing recommendations based on latitude
-        response += `🔭 **Viewing Recommendations:**\n`;
+        response += `VIEWING RECOMMENDATIONS:\n`;
         const hemisphere = latitude >= 0 ? 'Northern' : 'Southern';
         response += `   • You are in the ${hemisphere} Hemisphere\n`;
         
@@ -143,8 +144,8 @@ const UniversalChatbot = ({
         response += `   • Find dark skies away from city lights\n`;
         response += `   • Allow 20-30 min for eye adjustment`;
       } else {
-        response += `ℹ️ **No Major Meteor Showers This Week**\n\n`;
-        response += `Check the **Meteor Showers** tab for the complete annual calendar!`;
+        response += `NO MAJOR METEOR SHOWERS THIS WEEK\n\n`;
+        response += `Check the Meteor Showers tab for the complete annual calendar.`;
       }
 
       addMessage(response, 'bot');
@@ -154,11 +155,11 @@ const UniversalChatbot = ({
       setMessages(prev => prev.filter(msg => msg.id !== typingMessage.id));
       
       if (error.code === 1) {
-        addMessage('🔒 **Location Access Denied**\n\nTo receive personalized meteor shower alerts:\n\n1️⃣ Click the 🔒 lock icon in your browser\n2️⃣ Enable location permissions\n3️⃣ Refresh and try again\n\n📍 Or check the **Meteor Showers** tab!', 'bot');
+        addMessage('LOCATION ACCESS DENIED\n\nTo receive personalized meteor shower alerts:\n\n1. Click the lock icon in your browser\n2. Enable location permissions\n3. Refresh and try again\n\nOr check the Meteor Showers tab.', 'bot');
       } else if (error.code === 2) {
-        addMessage('📡 **Location Unavailable**\n\nUnable to determine your location. Please check:\n\n• Internet connection\n• GPS/Location services enabled\n• Try again in a moment\n\n📍 Meanwhile, check the **Meteor Showers** tab!', 'bot');
+        addMessage('LOCATION UNAVAILABLE\n\nUnable to determine your location. Please check:\n\n• Internet connection\n• GPS/Location services enabled\n• Try again in a moment\n\nMeanwhile, check the Meteor Showers tab.', 'bot');
       } else {
-        addMessage('⏱️ **Request Timeout**\n\nLocation request took too long. Please try again or check the **Meteor Showers** tab for all visible showers worldwide!', 'bot');
+        addMessage('REQUEST TIMEOUT\n\nLocation request took too long. Please try again or check the Meteor Showers tab for all visible showers worldwide.', 'bot');
       }
     }
   };
@@ -234,7 +235,7 @@ Keep responses helpful and under 100 words unless detailed explanation requested
         const aiResponse = data.candidates[0].content.parts[0].text;
         addMessage(aiResponse, 'bot');
       } else if (data.candidates && data.candidates[0]?.finishReason === 'SAFETY') {
-        addMessage("I can't respond to that due to safety filters. Try asking something else! 🛡️", 'bot');
+        addMessage("I can't respond to that due to safety filters. Try asking something else.", 'bot');
       } else {
         throw new Error('Invalid response format');
       }
@@ -245,7 +246,7 @@ Keep responses helpful and under 100 words unless detailed explanation requested
       
       // Fallback to keyword-based responses (ORIGINAL FALLBACK)
       const response = getBotResponse(text);
-      addMessage(response + '\n\n💡 (AI temporarily unavailable, using smart fallback)', 'bot');
+      addMessage(response + '\n\n(AI temporarily unavailable, using smart fallback)', 'bot');
     }
   };
 
@@ -254,17 +255,17 @@ Keep responses helpful and under 100 words unless detailed explanation requested
     const lowerText = text.toLowerCase();
     
     if (lowerText.includes('meteor') || lowerText.includes('shooting star')) {
-      return "Check the Meteor Showers tab above! We have 16 real meteor showers you can explore, including Perseids, Geminids, and Leonids. Click any shower to see its 3D orbital path! 🌠";
+      return "Check the Meteor Showers tab above! We have 16 real meteor showers you can explore, including Perseids, Geminids, and Leonids. Click any shower to see its 3D orbital path.";
     } else if (lowerText.includes('asteroid') && (lowerText.includes('dangerous') || lowerText.includes('hazardous'))) {
-      return "Go to the Asteroids tab to see 121 Near-Earth Objects! You can filter for hazardous asteroids using the checkboxes. Each asteroid shows detailed orbital data and approach information. 🌍";
+      return "Go to the Asteroids tab to see 121 Near-Earth Objects. You can filter for hazardous asteroids using the checkboxes. Each asteroid shows detailed orbital data and approach information.";
     } else if (lowerText.includes('asteroid belt') || lowerText.includes('rocks')) {
-      return "The main asteroid belt is already visible in the Planets tab! It contains 1,000 real asteroids from NASA data, positioned between Mars and Jupiter (2.1-3.3 AU). They have realistic shapes and compositions! 🪨";
+      return "The main asteroid belt is already visible in the Planets tab. It contains 1,000 real asteroids from NASA data, positioned between Mars and Jupiter (2.1-3.3 AU). They have realistic shapes and compositions.";
     } else if (lowerText.includes('planet')) {
-      return "You can view all 8 planets in the Planets tab! Click any planet to see detailed information including diameter, temperature, orbital period, and more. The solar system runs in real-time or fast-forward mode! 🪐";
+      return "You can view all 8 planets in the Planets tab. Click any planet to see detailed information including diameter, temperature, orbital period, and more. The solar system runs in real-time or fast-forward mode.";
     } else if (lowerText.includes('control') || lowerText.includes('how')) {
-      return "Controls: Left-click & drag to rotate, right-click to pan, scroll to zoom. Use the tabs to switch between Planets, Asteroids, and Meteor Showers. Time controls let you speed up or pause the simulation! 🎮";
+      return "Controls: Left-click & drag to rotate, right-click to pan, scroll to zoom. Use the tabs to switch between Planets, Asteroids, and Meteor Showers. Time controls let you speed up or pause the simulation.";
     } else {
-      return "I'm AstroBot AI! I can help you explore:\n\n🪐 8 Planets with real-time orbits\n🌍 121 Near-Earth Asteroids\n🪨 1,000 Main Belt Asteroids\n☄️ 16 Meteor Showers\n\nWhat would you like to know?";
+      return "I'm AstroBot AI! I can help you explore:\n\n• 8 Planets with real-time orbits\n• 121 Near-Earth Asteroids\n• 1,000 Main Belt Asteroids\n• 16 Meteor Showers\n\nWhat would you like to know?";
     }
   };
 
@@ -305,72 +306,136 @@ Keep responses helpful and under 100 words unless detailed explanation requested
         onClick={() => setIsOpen(!isOpen)}
         title="AstroBot AI - Your Space Assistant"
       >
-        💬
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+          {/* Outer orbit ring */}
+          <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="1.5" opacity="0.3" fill="none"/>
+          
+          {/* Planet/Brain hybrid center */}
+          <circle cx="24" cy="24" r="10" fill="currentColor" opacity="0.2"/>
+          
+          {/* Neural network nodes */}
+          <circle cx="24" cy="14" r="2" fill="currentColor"/>
+          <circle cx="32" cy="20" r="2" fill="currentColor"/>
+          <circle cx="32" cy="28" r="2" fill="currentColor"/>
+          <circle cx="24" cy="34" r="2" fill="currentColor"/>
+          <circle cx="16" cy="28" r="2" fill="currentColor"/>
+          <circle cx="16" cy="20" r="2" fill="currentColor"/>
+          
+          {/* Connection lines (neural pathways) */}
+          <path d="M24 14 L32 20 M32 20 L32 28 M32 28 L24 34 M24 34 L16 28 M16 28 L16 20 M16 20 L24 14" 
+                stroke="currentColor" strokeWidth="1" opacity="0.4" fill="none"/>
+          
+          {/* Center AI core */}
+          <circle cx="24" cy="24" r="4" fill="currentColor"/>
+          
+          {/* Orbital satellites (representing data/communication) */}
+          <circle cx="24" cy="4" r="1.5" fill="currentColor" opacity="0.6">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 24 24"
+              to="360 24 24"
+              dur="8s"
+              repeatCount="indefinite"/>
+          </circle>
+          <circle cx="44" cy="24" r="1.5" fill="currentColor" opacity="0.6">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="120 24 24"
+              to="480 24 24"
+              dur="8s"
+              repeatCount="indefinite"/>
+          </circle>
+          <circle cx="24" cy="44" r="1.5" fill="currentColor" opacity="0.6">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="240 24 24"
+              to="600 24 24"
+              dur="8s"
+              repeatCount="indefinite"/>
+          </circle>
+        </svg>
       </button>
 
       {/* Chat Window */}
       {isOpen && (
         <>
           <div className="astro-overlay" onClick={() => setIsOpen(false)} />
-          <div className={`astro-chat-window ${position} ${theme}`} onClick={(e) => e.stopPropagation()}>
+          <div className={`astro-chat-window ${position} ${theme} ${isMinimized ? 'minimized' : ''}`} onClick={(e) => e.stopPropagation()}>
             <div className="astro-chat-header">
-              <h3>🌠 AstroBot AI</h3>
-              <button 
-                className="astro-close-button"
-                onClick={() => setIsOpen(false)}
-              >
-                ×
-              </button>
+              <h3>AstroBot AI</h3>
+              <div className="astro-header-actions">
+                <button 
+                  className="astro-minimize-button"
+                  onClick={() => setIsMinimized(!isMinimized)}
+                  title={isMinimized ? "Expand" : "Minimize"}
+                >
+                  {isMinimized ? '□' : '−'}
+                </button>
+                <button 
+                  className="astro-close-button"
+                  onClick={() => setIsOpen(false)}
+                  title="Close"
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
-            <div className="astro-chat-messages">
-              {messages.map((message) => (
-                <div key={message.id} className={`astro-message ${message.sender}`}>
-                  <div className="astro-message-content">
-                    {message.text}
-                  </div>
+            {!isMinimized && (
+              <>
+                <div className="astro-chat-messages">
+                  {messages.map((message) => (
+                    <div key={message.id} className={`astro-message ${message.sender}`}>
+                      <div className="astro-message-content">
+                        {message.text}
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
                 </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
 
-            <div className="astro-quick-actions">
-              <button 
-                className="astro-quick-btn"
-                onClick={() => handleQuickAction('shooting stars near me')}
-              >
-                shooting stars near me
-              </button>
-              <button 
-                className="astro-quick-btn"
-                onClick={() => handleQuickAction('Any dangerous asteroids approaching Earth?')}
-              >
-                Any dangerous asteroids approaching Earth?
-              </button>
-              <button 
-                className="astro-quick-btn"
-                onClick={() => handleQuickAction('When is the next meteor shower?')}
-              >
-                When is the next meteor shower?
-              </button>
-            </div>
+                <div className="astro-quick-actions">
+                  <button 
+                    className="astro-quick-btn"
+                    onClick={() => handleQuickAction('shooting stars near me')}
+                  >
+                    Shooting stars near me
+                  </button>
+                  <button 
+                    className="astro-quick-btn"
+                    onClick={() => handleQuickAction('Any dangerous asteroids approaching Earth?')}
+                  >
+                    Dangerous asteroids approaching Earth?
+                  </button>
+                  <button 
+                    className="astro-quick-btn"
+                    onClick={() => handleQuickAction('When is the next meteor shower?')}
+                  >
+                    When is the next meteor shower?
+                  </button>
+                </div>
 
-            <div className="astro-input-area">
-              <input
-                type="text"
-                className="astro-message-input"
-                placeholder="Ask about asteroids or anything..."
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={handleKeyPress}
-              />
-              <button 
-                className="astro-send-button"
-                onClick={sendMessage}
-              >
-                Send
-              </button>
-            </div>
+                <div className="astro-input-area">
+                  <input
+                    type="text"
+                    className="astro-message-input"
+                    placeholder="Ask about space, asteroids, or anything..."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                  />
+                  <button 
+                    className="astro-send-button"
+                    onClick={sendMessage}
+                  >
+                    Send
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
