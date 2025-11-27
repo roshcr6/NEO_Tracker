@@ -170,18 +170,33 @@ let spawnInterval = 700; // ms
 let lastTime = performance.now();
 let score = 0;
 let hearts = 3;
+let highScore = 0;
 let gameOver = false;
+let gameStarted = false; // Track if game has been started by pressing Play
+let isInvincible = false; // Track invincibility state
+let invincibilityTimer = 0;
+const INVINCIBILITY_DURATION = 5000; // 5 seconds
 let earthSeed = 0; // deterministic seed for earth noise
 let earthThreshold = 0.3; // computed threshold so that ~30% becomes land
 
-// Canvas-based, independent game-over fact rotation
+// Canvas-based, independent game-over fact rotation with fade animation
 let gameOverFactIndex = 0;
 let gameOverFactNextChange = 0;
+let gameOverFactOpacity = 0;
+let gameOverFactFadingIn = true;
+const FACT_FADE_SPEED = 0.03; // Fade speed per frame
+
 function startCanvasGameOverFacts(){
   gameOverFactIndex = Math.floor(Math.random() * FUN_FACTS.length);
   gameOverFactNextChange = performance.now() + 5000 + Math.floor(Math.random()*2000);
+  gameOverFactOpacity = 0;
+  gameOverFactFadingIn = true;
 }
-function stopCanvasGameOverFacts(){ gameOverFactNextChange = 0; }
+function stopCanvasGameOverFacts(){ 
+  gameOverFactNextChange = 0; 
+  gameOverFactOpacity = 0;
+  gameOverFactFadingIn = true;
+}
 // Earth height kept proportional to the logical height
 const EARTH_HEIGHT = Math.max(10, Math.round(LOGICAL_HEIGHT * 0.09)); // ~9% of height (~16 for 180px)
 
@@ -200,6 +215,9 @@ function init(){
   score = 0;
   hearts = 3;
   gameOver = false;
+  gameStarted = false; // Don't mark as started until Play button is pressed
+  isInvincible = false;
+  invincibilityTimer = 0;
   spawnTimer = 0;
   initStars();
   // try loading optional PNG assets (no error if missing)
@@ -271,12 +289,12 @@ function spawnAsteroid(){
   const r = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
   const x = r + Math.random() * (LOGICAL_WIDTH - r*2);
   // keep speeds similar but give a slight size-based variation
-  const speed = Math.max(8, 14 + Math.random()*30 - (r * 0.6)); // larger asteroids slightly slower
+  const speed = Math.max(8, 12 + Math.random()*24 - (r * 0.6)); // Balanced speed (8-36)
   asteroids.push({x,y: -r, r, speed, angle: Math.random()*Math.PI*2, rotSpeed: (Math.random()-0.5)*1.2});
 }
 
 function update(dt){
-  if(gameOver) return;
+  if(gameOver || !gameStarted) return;
 
   // Player movement (A/D keys)
   if(keys['a']) player.x -= player.speed * dt;
@@ -303,17 +321,22 @@ function update(dt){
     a.y += a.speed * dt;
     a.angle += a.rotSpeed * dt;
 
-    // Check collision with earth
+    // Check collision with earth (only when game has started and player is not invincible)
     if(a.y + a.r >= LOGICAL_HEIGHT - EARTH_HEIGHT){
-      // hit earth
-      hearts--;
+      // hit earth (only register if game started and not invincible)
+      if (gameStarted && !isInvincible) {
+        hearts--;
+      }
       // explosion particles
       createExplosion(a.x, LOGICAL_HEIGHT - EARTH_HEIGHT, Math.min(12, Math.floor(a.r*4)), '#ff8b6b');
       try{ SFX.playExplosion(); }catch(e){}
       asteroids.splice(i,1);
-      if(hearts <= 0){
+      if(hearts <= 0 && gameStarted){
+        // GAME OVER - show timed quiz button
         gameOver = true;
-        try{ showGameOverFact(); }catch(e){}
+        saveHighScore(score);
+        stopCanvasGameOverFacts(); // Stop any previous rotation
+        showGameOverWithQuiz();
       }
       continue;
     }
@@ -342,17 +365,28 @@ function update(dt){
     p.vy += p.g * dt;
   }
 
-  // Spawn logic
-  spawnTimer -= dt*1000;
-  if(spawnTimer <= 0){
-    spawnAsteroid();
-    spawnTimer = 400 + Math.random()*900;
+  // Spawn logic (only when game is started)
+  if (gameStarted) {
+    spawnTimer -= dt*1000;
+    if(spawnTimer <= 0){
+      spawnAsteroid();
+      spawnTimer = 600 + Math.random()*1000; // Balanced spawn rate (600-1600ms)
+    }
   }
 
   // Stars twinkle
   for(let s of stars){
     s.tw -= dt*1000;
     if(s.tw <= 0){ s.tw = 500 + Math.random()*1000; s.s = Math.random()*1.6+0.4; }
+  }
+  
+  // Update invincibility timer
+  if (isInvincible) {
+    invincibilityTimer += dt * 1000;
+    if (invincibilityTimer >= INVINCIBILITY_DURATION) {
+      isInvincible = false;
+      invincibilityTimer = 0;
+    }
   }
 }
 
@@ -445,12 +479,19 @@ function draw(){
   }
   // Score
   drawText(`SCORE ${score}`, LOGICAL_WIDTH - 6, 10, '#9ef3ff', 6, 'right');
+  
+  // Invincibility indicator
+  if (isInvincible && gameStarted) {
+    const timeLeft = Math.ceil((INVINCIBILITY_DURATION - invincibilityTimer) / 1000);
+    drawText(`INVINCIBLE: ${timeLeft}s`, LOGICAL_WIDTH / 2, 10, '#5ef2ff', 5, 'center');
+  }
 
-  // Instructions small: move under the hearts (top-left)
-  drawText('A/D: Move  SPACE: Shoot', 4, 18, '#bfefff', 5, 'left');
+  // Instructions: show controls with icons description
+  drawText('Move: ARROW KEYS / A & D', 4, 18, '#bfefff', 5, 'left');
+  drawText('Shoot: SPACE / LEFT CLICK', 4, 24, '#bfefff', 5, 'left');
 
-  // Game Over overlay
-  if(gameOver){
+  // Game Over overlay - only show when quiz popup is not active
+  if(gameOver && !gameOverScreenActive){
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(px(10), px(80), px(LOGICAL_WIDTH-20), px(80));
     // Layout: compute even vertical spacing (40-60 CSS px) converted to logical coords
@@ -471,14 +512,28 @@ function draw(){
     const restartSize = 4; // small
     const factLineHeight = 1.1;
 
-    // prepare fact lines and ensure rotation timing
+    // prepare fact lines and ensure rotation timing with fade animation
     let factLines = 0;
     if(gameOverFactNextChange > 0){
       const now = performance.now();
       if(now >= gameOverFactNextChange){
-        gameOverFactIndex = (gameOverFactIndex + 1) % FUN_FACTS.length;
-        gameOverFactNextChange = now + 5000 + Math.floor(Math.random()*2000);
+        // Fade out current fact
+        if(gameOverFactOpacity > 0){
+          gameOverFactFadingIn = false;
+          gameOverFactOpacity = Math.max(0, gameOverFactOpacity - FACT_FADE_SPEED * 2);
+        } else {
+          // Change to next fact and start fading in
+          gameOverFactIndex = (gameOverFactIndex + 1) % FUN_FACTS.length;
+          gameOverFactNextChange = now + 5000 + Math.floor(Math.random()*2000);
+          gameOverFactFadingIn = true;
+        }
+      } else {
+        // Fade in current fact
+        if(gameOverFactFadingIn && gameOverFactOpacity < 1){
+          gameOverFactOpacity = Math.min(1, gameOverFactOpacity + FACT_FADE_SPEED);
+        }
       }
+      
       const factText = FUN_FACTS[gameOverFactIndex];
       // measure wrapped lines but don't draw yet; drawWrappedText returns the line count
       // we'll draw in sequence after computing layout
@@ -500,30 +555,43 @@ function draw(){
 
     // draw elements in order with even spacing
     let cursorY = startY;
-    drawText('GAME OVER', LOGICAL_WIDTH/2, cursorY + titleH/2, '#ffd166', titleSize, 'center');
+    drawText('ASTEROID SMASH', LOGICAL_WIDTH/2, cursorY + titleH/2, '#ffd166', titleSize, 'center');
     cursorY += titleH + spacingLogical;
 
-    drawText(`FINAL: ${score}`, LOGICAL_WIDTH/2, cursorY + finalH/2, '#ffd166', finalSize, 'center');
+    const isNewHighScore = score >= highScore && score > 0;
+    const scoreText = isNewHighScore ? `NEW HIGH SCORE: ${score}!` : `FINAL SCORE: ${score}`;
+    drawText(scoreText, LOGICAL_WIDTH/2, cursorY + finalH/2, isNewHighScore ? '#5ef2ff' : '#ffd166', finalSize, 'center');
     cursorY += finalH + spacingLogical;
 
     // now draw the "Did you know?" label and fact block (may be multiple lines)
     if(gameOverFactNextChange > 0){
-      // Draw "Did you know?" label
+      // Draw "Did you know?" label (always visible)
       drawText('Did you know?', LOGICAL_WIDTH/2, cursorY + didYouKnowH/2, '#5ef2ff', didYouKnowSize, 'center');
       cursorY += didYouKnowH + Math.max(2, Math.floor(spacingLogical * 0.3)); // Small gap between label and fact
       
-      // Draw the fact text
+      // Draw the fact text with fade animation
       const factText = FUN_FACTS[gameOverFactIndex];
+      ctx.save();
+      ctx.globalAlpha = gameOverFactOpacity;
       // drawWrappedText expects y as top-of-first-line; use cursorY
       drawWrappedText(factText, LOGICAL_WIDTH/2, cursorY, LOGICAL_WIDTH - 40, '#ffd166', factSize, 'center', factLineHeight);
+      ctx.restore();
     }
     cursorY += factH + spacingLogical;
 
-    drawText('PRESS R TO RESTART', LOGICAL_WIDTH/2, cursorY + restartH/2, '#9ef3ff', restartSize, 'center');
+    drawText('PRESS R TO RESTART | E FOR MENU', LOGICAL_WIDTH/2, cursorY + restartH/2, '#5ef2ff', restartSize, 'center');
   }
 }
 
 function drawShip(cx, cy){
+  // Apply blinking effect during invincibility
+  if (isInvincible) {
+    const blinkRate = Math.floor(Date.now() / 100) % 2;
+    if (blinkRate === 0) {
+      ctx.globalAlpha = 0.3;
+    }
+  }
+  
   // larger attachment-style ship (red/white), scaled visually
   const scale = 2.5; // visual scale factor (larger for wider logical resolution)
   // if an external ship image is provided, draw it centered; prefer image assets
@@ -532,6 +600,7 @@ function drawShip(cx, cy){
     const w = img.width / PIXEL_SCALE;
     const h = img.height / PIXEL_SCALE;
     ctx.drawImage(img, px(Math.round(cx - w/2)), px(Math.round(cy - h/2)), px(w), px(h));
+    ctx.globalAlpha = 1.0; // Reset alpha
     return;
   }
   const pattern = [
@@ -549,6 +618,7 @@ function drawShip(cx, cy){
     const size = Math.max(1, Math.round(scale));
     drawPixelRect(sx, sy, size, size, p.c);
   }
+  ctx.globalAlpha = 1.0; // Reset alpha
 }
 
 function drawThruster(cx, cy){
@@ -740,13 +810,53 @@ window.addEventListener('keydown', (e)=>{
     try{ SFX.toggleMute(); }catch(e){}
   }
   if(k === 'r'){
-    if(gameOver) init();
+    if(gameOver) {
+      saveHighScore(score);
+      closeQuiz();
+      stopCanvasGameOverFacts(); // Stop fact rotation when restarting
+      init();
+      gameStarted = true; // Make sure game starts after restart
+    }
   }
+  if(k === 'e'){
+    if(gameOver) {
+      saveHighScore(score);
+      closeQuiz();
+      stopCanvasGameOverFacts(); // Stop fact rotation
+      init();
+      gameStarted = false; // Don't start game, just show menu
+      // Show the menu
+      const menu = document.getElementById('menuOverlay');
+      if(menu) {
+        menu.style.display = 'flex';
+        startFactRotation('menuFact'); // Restart menu fact rotation
+      }
+    }
+  }
+  // Support arrow keys for movement
+  if(k === 'arrowleft') keys['a'] = true;
+  if(k === 'arrowright') keys['d'] = true;
+  
   keys[k] = true;
   // prevent default for space to avoid page scrolling
   if(k === ' ') e.preventDefault();
 });
-window.addEventListener('keyup', (e)=>{ const k = (e.key || '').toString().toLowerCase(); keys[k] = false; });
+window.addEventListener('keyup', (e)=>{ 
+  const k = (e.key || '').toString().toLowerCase();
+  if(k === 'arrowleft') keys['a'] = false;
+  if(k === 'arrowright') keys['d'] = false;
+  keys[k] = false;
+});
+
+// Mouse click to shoot
+canvas.addEventListener('click', (e) => {
+  if (!gameStarted || gameOver) return;
+  try { SFX.init(); SFX.resume(); } catch(e) {}
+  if (player.shootCooldown <= 0) {
+    shoot();
+    player.shootCooldown = 180;
+  }
+});
 
 // Start
 init();
@@ -761,6 +871,7 @@ window.addEventListener('load', ()=>{
     // hide menu and (re)start game
     if(menu) menu.style.display = 'none';
     init();
+    gameStarted = true; // Set to true AFTER init() to properly start the game
     // resume audio if needed
     try{ SFX.init(); SFX.resume(); }catch(e){}
   });
@@ -816,8 +927,323 @@ function startFactRotation(containerId){
 }
 function stopFactRotation(){ if(factTimer) clearInterval(factTimer); factTimer = null; }
 
+// --- Space Quiz Questions for Kids ---
+const QUIZ_QUESTIONS = [
+  {
+    question: "What is the largest planet in our solar system?",
+    answers: ["Jupiter", "Saturn", "Earth", "Mars"],
+    correct: 0
+  },
+  {
+    question: "How many planets are in our solar system?",
+    answers: ["7", "8", "9", "10"],
+    correct: 1
+  },
+  {
+    question: "What is the closest star to Earth?",
+    answers: ["Alpha Centauri", "Sirius", "The Sun", "Polaris"],
+    correct: 2
+  },
+  {
+    question: "Which planet is known as the 'Red Planet'?",
+    answers: ["Venus", "Mars", "Jupiter", "Mercury"],
+    correct: 1
+  },
+  {
+    question: "What is the name of Earth's natural satellite?",
+    answers: ["Luna (The Moon)", "Titan", "Europa", "Phobos"],
+    correct: 0
+  },
+  {
+    question: "Which planet has the most moons?",
+    answers: ["Jupiter", "Saturn", "Mars", "Neptune"],
+    correct: 1
+  },
+  {
+    question: "What is the hottest planet in our solar system?",
+    answers: ["Mercury", "Venus", "Mars", "Jupiter"],
+    correct: 1
+  },
+  {
+    question: "What do we call a group of stars that form a pattern?",
+    answers: ["Galaxy", "Constellation", "Nebula", "Comet"],
+    correct: 1
+  },
+  {
+    question: "How long does it take Earth to orbit the Sun?",
+    answers: ["24 hours", "30 days", "365 days", "12 months exactly"],
+    correct: 2
+  },
+  {
+    question: "What is a shooting star actually?",
+    answers: ["A falling star", "A meteor", "A comet", "A satellite"],
+    correct: 1
+  },
+  {
+    question: "Which planet is famous for its beautiful rings?",
+    answers: ["Jupiter", "Uranus", "Saturn", "Neptune"],
+    correct: 2
+  },
+  {
+    question: "What is the galaxy that contains our solar system?",
+    answers: ["Andromeda", "Milky Way", "Whirlpool", "Sombrero"],
+    correct: 1
+  },
+  {
+    question: "What is the smallest planet in our solar system?",
+    answers: ["Mars", "Mercury", "Venus", "Pluto"],
+    correct: 1
+  },
+  {
+    question: "What causes the seasons on Earth?",
+    answers: ["Distance from Sun", "Earth's tilt", "Solar flares", "Moon phases"],
+    correct: 1
+  },
+  {
+    question: "What is the name of the first human to walk on the Moon?",
+    answers: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"],
+    correct: 1
+  },
+  {
+    question: "Which planet spins on its side?",
+    answers: ["Saturn", "Neptune", "Uranus", "Jupiter"],
+    correct: 2
+  },
+  {
+    question: "What do we call the path a planet takes around the Sun?",
+    answers: ["Rotation", "Orbit", "Revolution", "Axis"],
+    correct: 1
+  },
+  {
+    question: "What is the Great Red Spot on Jupiter?",
+    answers: ["A crater", "A giant storm", "A mountain", "A volcano"],
+    correct: 1
+  },
+  {
+    question: "How many Earth days does it take the Moon to orbit Earth?",
+    answers: ["7 days", "14 days", "27-28 days", "30 days"],
+    correct: 2
+  },
+  {
+    question: "What is the center of our solar system?",
+    answers: ["Earth", "Jupiter", "The Sun", "The Moon"],
+    correct: 2
+  }
+];
+
+// --- High Score Management ---
+function loadHighScore() {
+  try {
+    const saved = localStorage.getItem('asteroidSmashHighScore');
+    if (saved) {
+      highScore = parseInt(saved, 10) || 0;
+    }
+  } catch (e) {
+    console.warn('Could not load high score:', e);
+  }
+  updateHighScoreDisplay();
+}
+
+function saveHighScore(newScore) {
+  if (newScore > highScore) {
+    highScore = newScore;
+    try {
+      localStorage.setItem('asteroidSmashHighScore', highScore.toString());
+    } catch (e) {
+      console.warn('Could not save high score:', e);
+    }
+    updateHighScoreDisplay();
+  }
+}
+
+function updateHighScoreDisplay() {
+  const highScoreEl = document.getElementById('highScoreText');
+  if (highScoreEl) {
+    highScoreEl.textContent = `High Score: ${highScore}`;
+  }
+}
+
+// --- Quiz System ---
+let quizActive = false;
+let currentQuizQuestion = null;
+let quizCountdown = 5; // 5 seconds to press the button
+let quizCountdownInterval = null;
+let gameOverScreenActive = false;
+
+function showGameOverWithQuiz() {
+  gameOverScreenActive = true;
+  quizCountdown = 5;
+  
+  const overlay = document.getElementById('quizOverlay');
+  const gameOverTitle = document.getElementById('gameOverTitle');
+  const quizTimer = document.getElementById('quizTimer');
+  const quizTimerBtn = document.getElementById('quizTimerBtn');
+  const quizTitle = document.getElementById('quizTitle');
+  const quizSubtitle = document.getElementById('quizSubtitle');
+  const questionEl = document.getElementById('quizQuestion');
+  const answersEl = document.getElementById('quizAnswers');
+  const feedbackEl = document.getElementById('quizFeedback');
+  
+  if (!overlay || !gameOverTitle || !quizTimer || !quizTimerBtn) return;
+  
+  // Show game over screen
+  overlay.style.display = 'flex';
+  gameOverTitle.style.display = 'block';
+  quizTimer.style.display = 'block';
+  questionEl.style.display = 'none';
+  answersEl.style.display = 'none';
+  feedbackEl.style.display = 'none';
+  
+  // Update timer button
+  quizTimerBtn.textContent = `Answer Quiz for Extra Life (${quizCountdown}s)`;
+  quizTimerBtn.disabled = false;
+  quizTimerBtn.className = 'quiz-timer-btn';
+  
+  // Clear any previous countdown
+  if (quizCountdownInterval) {
+    clearInterval(quizCountdownInterval);
+  }
+  
+  // Start countdown
+  quizCountdownInterval = setInterval(() => {
+    quizCountdown--;
+    if (quizCountdown <= 0) {
+      clearInterval(quizCountdownInterval);
+      gameOverScreenActive = false; // Allow canvas game over to show
+      // Hide the overlay after 5 seconds
+      overlay.style.display = 'none';
+      // Start the canvas game over facts rotation
+      startCanvasGameOverFacts();
+    } else {
+      quizTimerBtn.textContent = `Answer Quiz for Extra Life (${quizCountdown}s)`;
+    }
+  }, 1000);
+  
+  // Button click handler
+  quizTimerBtn.onclick = () => {
+    if (quizCountdown > 0) {
+      clearInterval(quizCountdownInterval);
+      showQuiz();
+    }
+  };
+}
+
+function showQuiz() {
+  if (quizActive) return;
+  quizActive = true;
+  gameOverScreenActive = false;
+  
+  // Pick a random question
+  currentQuizQuestion = QUIZ_QUESTIONS[Math.floor(Math.random() * QUIZ_QUESTIONS.length)];
+  
+  const overlay = document.getElementById('quizOverlay');
+  const gameOverTitle = document.getElementById('gameOverTitle');
+  const quizTimer = document.getElementById('quizTimer');
+  const quizTitle = document.getElementById('quizTitle');
+  const quizSubtitle = document.getElementById('quizSubtitle');
+  const questionEl = document.getElementById('quizQuestion');
+  const answersEl = document.getElementById('quizAnswers');
+  const feedbackEl = document.getElementById('quizFeedback');
+  
+  if (!overlay || !questionEl || !answersEl || !feedbackEl) return;
+  
+  // Hide game over screen, show quiz
+  gameOverTitle.style.display = 'none';
+  quizTimer.style.display = 'none';
+  questionEl.style.display = 'block';
+  answersEl.style.display = 'flex';
+  feedbackEl.style.display = 'block';
+  
+  // Set question
+  questionEl.textContent = currentQuizQuestion.question;
+  
+  // Clear previous answers and feedback
+  answersEl.innerHTML = '';
+  feedbackEl.textContent = '';
+  feedbackEl.className = 'quiz-feedback';
+  
+  // Create answer buttons
+  currentQuizQuestion.answers.forEach((answer, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-answer-btn';
+    btn.textContent = `${String.fromCharCode(65 + index)}. ${answer}`;
+    btn.onclick = () => handleQuizAnswer(index, btn);
+    answersEl.appendChild(btn);
+  });
+}
+
+function handleQuizAnswer(selectedIndex, button) {
+  const answersEl = document.getElementById('quizAnswers');
+  const feedbackEl = document.getElementById('quizFeedback');
+  const allButtons = answersEl.querySelectorAll('.quiz-answer-btn');
+  
+  // Disable all buttons
+  allButtons.forEach(btn => btn.disabled = true);
+  
+  const isCorrect = selectedIndex === currentQuizQuestion.correct;
+  
+  if (isCorrect) {
+    // Correct answer!
+    button.classList.add('correct');
+    const encouragements = [
+      'Excellent! You earned an extra heart!',
+      'Nice work! +1 Heart!',
+      'Great job! Extra life earned!',
+      'Well done! You got it right!',
+      'Awesome! +1 Heart!'
+    ];
+    const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
+    feedbackEl.textContent = randomEncouragement;
+    feedbackEl.className = 'quiz-feedback correct-feedback';
+    
+    // Give player an extra heart and invincibility
+    hearts = Math.min(hearts + 1, 5); // Cap at 5 hearts max
+    isInvincible = true;
+    invincibilityTimer = 0;
+    gameOver = false;
+    
+    // Close quiz after 2 seconds and resume game
+    setTimeout(() => {
+      closeQuiz();
+    }, 2000);
+    
+  } else {
+    // Wrong answer
+    button.classList.add('incorrect');
+    allButtons[currentQuizQuestion.correct].classList.add('correct');
+    feedbackEl.textContent = `Not quite! The correct answer was: ${currentQuizQuestion.answers[currentQuizQuestion.correct]}`;
+    feedbackEl.className = 'quiz-feedback incorrect-feedback';
+    
+    // Save high score
+    saveHighScore(score);
+    
+    // Close quiz after 2 seconds and show canvas game over screen with facts
+    setTimeout(() => {
+      closeQuiz();
+      gameOverScreenActive = false; // Show canvas game over
+      startCanvasGameOverFacts(); // Start fact rotation
+    }, 2000);
+  }
+}
+
+function closeQuiz() {
+  quizActive = false;
+  gameOverScreenActive = false;
+  if (quizCountdownInterval) {
+    clearInterval(quizCountdownInterval);
+    quizCountdownInterval = null;
+  }
+  const overlay = document.getElementById('quizOverlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+}
+
 // Start rotating facts on the menu when the page loads
 window.addEventListener('load', ()=>{
+  // Load high score
+  loadHighScore();
+  
   startFactRotation('menuFact');
   // start the canvas-based game-over fact rotation now that FUN_FACTS exists
   startCanvasGameOverFacts();
