@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Navigation from './Navigation';
-import DecryptedText from './DecryptedText';
 import TextType from './TextType';
+import { FaLinkedin, FaInstagram, FaEnvelope } from 'react-icons/fa';
 import './About.css';
 
 import zakielImage from './resources/Zakiel Chungath.png';
@@ -139,33 +139,58 @@ function About() {
       role: "Team Lead ",
       image: zakielImage,
       bio: "Bridging the Virtual and real-world through cutting-edge 3D rendering and seamless NASA_API_FIX integration passionate about turning data into dynamic virtual experiences. ",
-      expertise: ["3D Modeling", "Team Management", "Real-Time Rendering"]
+      expertise: ["3D Modeling", "Team Management", "Real-Time Rendering"],
+      social: {
+        instagram: "https://www.instagram.com/_.z_.a._k._?igsh=dTI0cHZ1aGtta3Br",
+        linkedin: "https://www.linkedin.com/in/zakiel-chungath/",
+        email: "zakiel5500@gmail.com"
+      }
     },
     {
       name: "Roshith Robert",
       role: "Physics Simulation and API Retrieval ",
       image: roshithImage,
       bio: "Specialized in developing 3D physics simulations and optimizing the logic system for realistic rendering and physics engine integration.",
-      expertise: ["Simulation Design", "API Integration", "Physics Engine Development"]
+      expertise: ["Simulation Design", "API Integration", "Physics Engine Development"],
+      social: {
+        instagram: "https://www.instagram.com/rosh_cr6",
+        linkedin: "https://www.linkedin.com/in/roshith-robert/",
+        email: "roshithrobert7@gmail.com"
+      }
     },{
       name: "Sanjay Varghese",
       role: "Backend Developer",
       image: sanjayImage,
       bio: "Focused on building scalable back-end systems and designing intuitive, high-performance user interfaces for seamless interactive experiences.",
-      expertise: ["UI/UX", "Django", "React"]
+      expertise: ["UI/UX", "Django", "React"],
+      social: {
+        instagram: "https://www.instagram.com/sanjay.varghese06/",
+        linkedin: "https://www.linkedin.com/in/sanjayyyyyyy/",
+        email: "sanjay.njaliath@gmail.com"
+      }
     },{
       name: "Riyan Raz",
       role: "Overall Developer",
       image: riyanImage,
       bio: "Expert in back-end architecture and database management. Specialized in NASA API integration and efficient data processing for web applications.",
-      expertise: ["Chatbot & system integration.", "Resource Management", "Data Processing"]
+      expertise: ["Chatbot & system integration.", "Resource Management", "Data Processing"],
+      social: {
+        instagram: "https://www.instagram.com/rr_59000/",
+        linkedin: "https://www.linkedin.com/in/riyan-raz/",
+        email: "riyan.raz.4899@gmail.com"
+      }
     },
     {
       name: "Shwethin Nikesh Kumar",
       role: "Game Developer & PPT Management",
       image: shwethinImage,
       bio: "Specialized in gamifying web pages and creating interactive professional presentations that engage and inspire audiences.",
-      expertise: ["Game Development", "Asset Management", "Presentation Design"]
+      expertise: ["Game Development", "Asset Management", "Presentation Design"],
+      social: {
+        instagram: "https://www.instagram.com/shwwethin/",
+        linkedin: "https://www.linkedin.com/in/shwethin-nikesh-kumar/",
+        email: "shwethin675@gmail.com"
+      }
     }
     
   ];
@@ -396,6 +421,55 @@ function About() {
                         {skill}
                       </motion.span>
                     ))}
+                  </motion.div>
+                  
+                  {/* Social Media Links */}
+                  <motion.div 
+                    className="team-social-links"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.2 + 0.9, duration: 0.5 }}
+                  >
+                    {member.social.linkedin && (
+                      <motion.a
+                        href={member.social.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-icon linkedin"
+                        whileHover={{ scale: 1.2, y: -3 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <FaLinkedin />
+                      </motion.a>
+                    )}
+                    {member.social.instagram && (
+                      <motion.a
+                        href={member.social.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-icon instagram"
+                        whileHover={{ scale: 1.2, y: -3 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <FaInstagram />
+                      </motion.a>
+                    )}
+                    {member.social.email && (
+                      <motion.a
+                        href={`https://mail.google.com/mail/?view=cm&fs=1&to=${member.social.email}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-icon email"
+                        whileHover={{ scale: 1.2, y: -3 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <FaEnvelope />
+                      </motion.a>
+                    )}
                   </motion.div>
                 </motion.div>
               </motion.div>

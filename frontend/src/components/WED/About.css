@@ -356,6 +356,8 @@
   position: relative;
   z-index: 1;
   transition: transform 0.3s ease;
+  padding-bottom: 80px;
+  min-height: 450px;
 }
 
 .team-avatar,
@@ -486,6 +488,115 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
   border-color: rgba(0, 212, 255, 0.6);
+}
+
+/* ============================================
+   SOCIAL MEDIA LINKS
+   ============================================ */
+
+.team-social-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 212, 255, 0.1);
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.social-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.social-icon.linkedin {
+  background: rgba(0, 119, 181, 0.1);
+  color: #0077b5;
+  border-color: rgba(0, 119, 181, 0.3);
+}
+
+.social-icon.linkedin::before {
+  background: linear-gradient(135deg, rgba(0, 119, 181, 0.3), rgba(0, 119, 181, 0.5));
+}
+
+.social-icon.linkedin:hover {
+  background: rgba(0, 119, 181, 0.2);
+  border-color: #0077b5;
+  box-shadow: 0 0 20px rgba(0, 119, 181, 0.5);
+}
+
+.social-icon.linkedin:hover::before {
+  opacity: 1;
+}
+
+.social-icon.instagram {
+  background: rgba(225, 48, 108, 0.1);
+  color: #E1306C;
+  border-color: rgba(225, 48, 108, 0.3);
+}
+
+.social-icon.instagram::before {
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.3), rgba(253, 29, 29, 0.3), rgba(245, 133, 41, 0.3));
+}
+
+.social-icon.instagram:hover {
+  background: rgba(225, 48, 108, 0.2);
+  border-color: #E1306C;
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.5);
+}
+
+.social-icon.instagram:hover::before {
+  opacity: 1;
+}
+
+.social-icon.email {
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.social-icon.email::before {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 136, 0.3));
+}
+
+.social-icon.email:hover {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.social-icon.email:hover::before {
+  opacity: 1;
+}
+
+.social-icon svg {
+  position: relative;
+  z-index: 1;
 }
 
 /* ============================================
@@ -1068,3 +1179,142 @@
     padding: 15px;
   }
 }
+
+/* ============================================
+   EMAIL MODAL
+   ============================================ */
+
+.email-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.email-modal {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+  position: relative;
+}
+
+.email-modal h3 {
+  color: #00d4ff;
+  font-size: 28px;
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.email-modal p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+.email-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.email-modal-btn {
+  padding: 15px 25px;
+  border: 2px solid rgba(0, 212, 255, 0.3);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+}
+
+.email-modal-btn:hover {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.gmail-btn {
+  background: linear-gradient(135deg, rgba(234, 67, 53, 0.2), rgba(251, 188, 5, 0.2));
+  border-color: rgba(234, 67, 53, 0.5);
+  color: #ea4335;
+}
+
+.gmail-btn:hover {
+  background: linear-gradient(135deg, rgba(234, 67, 53, 0.3), rgba(251, 188, 5, 0.3));
+  border-color: #ea4335;
+  box-shadow: 0 0 20px rgba(234, 67, 53, 0.5);
+}
+
+.default-btn {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.1));
+  border-color: rgba(0, 212, 255, 0.3);
+  color: #00d4ff;
+}
+
+.default-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.2));
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.email-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.email-modal-close:hover {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: rgba(255, 0, 0, 0.5);
+  color: #ff0000;
+  transform: rotate(90deg);
+}
+
+@media (max-width: 480px) {
+  .email-modal {
+    padding: 30px 20px;
+  }
+  
+  .email-modal h3 {
+    font-size: 24px;
+  }
+  
+  .email-modal-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
